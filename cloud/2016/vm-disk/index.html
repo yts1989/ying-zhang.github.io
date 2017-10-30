@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>虚拟机及docker的存储，快照和镜像 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="VM的虚拟硬盘让我们能够把整个操作系统和应用软件、配置、数据都 封装 在一个（或多个）文件里，这样就实现了VM的迁移，再加上 差分硬盘 功能，实现了VM的快速克隆和快照。对VM镜像管理的需求也就随之而来了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟机及docker的存储，快照和镜像">
+<meta property="og:url" content="https://ying-zhang.github.io/cloud/2016/vm-disk/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="VM的虚拟硬盘让我们能够把整个操作系统和应用软件、配置、数据都 封装 在一个（或多个）文件里，这样就实现了VM的迁移，再加上 差分硬盘 功能，实现了VM的快速克隆和快照。对VM镜像管理的需求也就随之而来了。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vmware-snapshot.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vbox-snapshot.png">
+<meta property="og:updated_time" content="2017-10-30T03:41:50.175Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="虚拟机及docker的存储，快照和镜像">
+<meta name="twitter:description" content="VM的虚拟硬盘让我们能够把整个操作系统和应用软件、配置、数据都 封装 在一个（或多个）文件里，这样就实现了VM的迁移，再加上 差分硬盘 功能，实现了VM的快速克隆和快照。对VM镜像管理的需求也就随之而来了。">
+<meta name="twitter:image" content="https://ying-zhang.github.io/img/vmware-snapshot.png">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-vm-disk" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      虚拟机及docker的存储，快照和镜像
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/cloud/2016/vm-disk/" class="article-date">
+  <time datetime="2016-09-20T16:00:00.000Z" itemprop="datePublished">2016-09-21</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/cloud/">cloud</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>VM的虚拟硬盘让我们能够把整个操作系统和应用软件、配置、数据都 <strong>封装</strong> 在一个（或多个）文件里，这样就实现了VM的迁移，再加上 <strong>差分硬盘</strong> 功能，实现了VM的快速克隆和快照。对VM镜像管理的需求也就随之而来了。</p>
+<a id="more"></a>
+<hr>
+<!-- TOC -->
+<pre><code>- [title: 虚拟机及docker的存储，快照和镜像](#title-%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%8Adocker%E7%9A%84%E5%AD%98%E5%82%A8%EF%BC%8C%E5%BF%AB%E7%85%A7%E5%92%8C%E9%95%9C%E5%83%8F)
+</code></pre><ul>
+<li><a href="#%E8%99%9A%E6%8B%9F%E7%A1%AC%E7%9B%98">虚拟硬盘</a></li>
+<li><a href="#%E9%83%A8%E7%BD%B2%E5%92%8C%E8%BF%81%E7%A7%BB">部署和迁移</a></li>
+<li><a href="#%E5%B7%AE%E5%88%86%E7%A1%AC%E7%9B%98">差分硬盘</a></li>
+<li><a href="#%E5%BF%AB%E7%85%A7%E5%92%8C%E5%85%8B%E9%9A%86"><strong>快照和克隆</strong></a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86">镜像管理</a></li>
+<li><a href="#docker%E7%9A%84%E9%95%9C%E5%83%8F%EF%BC%8C%E5%AE%B9%E5%99%A8">docker的镜像，容器</a></li>
+<li><a href="#windows%E7%9A%84diskpart%E5%B7%A5%E5%85%B7"><strong>Windows的diskpart工具</strong></a></li>
+<li><a href="#windows%E4%BB%8Evhd%E5%90%AF%E5%8A%A8%E5%AE%9E%E7%8E%B0%E6%9E%81%E9%80%9F%E5%BF%AB%E7%85%A7%E5%92%8C%E6%81%A2%E5%A4%8D"><strong>Windows从VHD启动实现极速快照和恢复</strong></a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="虚拟硬盘"><a href="#虚拟硬盘" class="headerlink" title="虚拟硬盘"></a>虚拟硬盘</h1><p>硬盘被称为 <strong>块设备</strong>，传统的机械硬盘最小的读写单元是一个扇区（sector），而文件系统（FS）在引入了逻辑存储块（block），可能与物理扇区大小相同，也可以是扇区的整数倍。一个文件对应了若干block，多个文件又以文件夹的形式组成一棵树，这是FS的两层结构。</p>
+<p>虚拟硬盘只需要模拟出扇区结构就可以了，上层的逻辑块和文件树由VM里的Guest OS来负责。可以简单地创建一个空白的大文件（raw格式）来作为Guest OS的虚拟硬盘，Guest OS再将其格式化为某种FS。<br>虚拟硬盘在Host上是一个文件（vhd）或若干个相关的文件（vmdk），而其中又有Guest OS创建的文件。</p>
+<p>下面是几种VMM的虚拟硬盘格式。</p>
+<table>
+<thead>
+<tr>
+<th>VMM</th>
+<th>虚拟硬盘格式</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VirtualBox</td>
+<td><strong>vdi</strong> , virtual disk image</td>
+<td>还支持vmdk，vhd，qcow等多种格式</td>
+</tr>
+<tr>
+<td>VMware</td>
+<td><strong>vmdk</strong> , vm disk</td>
+<td>vmdk有单文件和多文件2种方式</td>
+</tr>
+<tr>
+<td>Hyper-V</td>
+<td><strong>vhd</strong> / <strong>vhdx</strong>, virutal hard disk</td>
+<td></td>
+</tr>
+<tr>
+<td>KVM</td>
+<td><strong>qcow</strong>, qemu copy on write</td>
+<td>还支持vmdk，raw格式</td>
+</tr>
+</tbody>
+</table>
+<p>各种虚拟硬盘格式大同小异，其中<a href="https://en.wikipedia.org/wiki/VHD_&#40;file_format&#41;" target="_blank" rel="external">vhd格式</a>不仅在vbox和hyper-v中得到支持，Windows7及以后版本的Windows系统中也内置了对它支持，所以用vbox创建VM建议选择vhd格式。Win7及以后的版本内置的<code>diskpart</code>工具（下面会介绍）可以创建vhd的差分镜像，Win8及以后版本可以通过双击挂载vhd镜像。如果vhd镜像的分区是windows支持的NTFS等格式，就可以在不用启动VM的情况下直接读写vhd，这就像把一台机器（VM）的硬盘拆下来拿到其它机器（Host）读写，然后再装回去。</p>
+<p>VMM为了管理虚拟硬盘，还会在虚拟硬盘文件中增加一些元数据信息，比如作为硬盘唯一标识的GUID。在vbox中，如果直接复制一个虚拟硬盘镜像挂载到其它的VM，就会报告已经存在了相同GUID的虚拟硬盘。<br>重置一个虚拟硬盘GUID可以执行下面的命令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">VBoxManage internalcommands sethduuid &quot;/path/file.vhd&quot;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>vbox支持多种虚拟硬盘格式，使用<code>VBoxManage.exe</code>这个命令行工具还可以进行不同虚拟硬盘格式之间的转换，启停VM等很多操作。<br>VMware可以将物理硬盘转换为虚拟硬盘，这样实际上是把一个物理机器（部分地）克隆到了VM（PM-&gt;VM）。<br>VMware还可以将一个物理硬盘分区直接加载给VM，这样会稍许提高一下访问硬盘的性能。</p>
+</blockquote>
+<p>虚拟硬盘有固定和动态大小两种：</p>
+<ul>
+<li>前者直接分配了全部硬盘空间，创建的时候会比较费时，而且通常会有大部分硬盘空间是空闲的，优势是所需空间已经预先分配好了，访问性能会好一些；</li>
+<li>而动态大小的虚拟硬盘在创建时是一个很小的文件，只有基本的信息。随着Guest OS使用硬盘，才会逐渐自动扩展，这样能极大节约硬盘空间，但动态分配会降低性能。要注意扩展是自动的，一旦扩展就不会收缩回去，哪怕Guest OS格式化了虚拟硬盘。</li>
+</ul>
+<h1 id="部署和迁移"><a href="#部署和迁移" class="headerlink" title="部署和迁移"></a>部署和迁移</h1><p>在VM出现之前，要想批量地安装OS，也就是部署OS的问题，有两种常用的方法</p>
+<ul>
+<li>使用OS本身支持的<code>应答文件</code></li>
+<li>比较常用的方法就是先在一台机器上安装好系统、驱动、应用软件，修改一些配置，然后用ghost克隆操作系统的分区到一个.gho镜像（所谓的基准镜像golden image），然后分别拷贝这个.gho到其它机器上，启动到pe环境，再从.gho镜像恢复系统；也可以从局域网的某个ghost server服务器上获取.gho镜像来恢复系统。gho系统镜像一般有几个GB，就算自动安装的话也要十几分钟。<br>这两种方法效率上相差不多。</li>
+</ul>
+<p>VM将整个OS放在一个虚拟硬盘文件里，在加上一个很小的VM配置文件（比如xml格式的.vbox文件）就是一个完整的计算机了，而且是统一的虚拟设备驱动，把这些文件拷贝到另一个Host上就可以得到一个新的VM。虽然一个虚拟硬盘文件也有几个GB，但只需要拷贝过去，节省了ghost从镜像恢复这一步，还是方便一些的。不足之处是虚拟化带来的一些性能开销，随着硬件对虚拟化的支持，这些开销已经很小了。</p>
+<p>基于虚拟硬盘实现的VM的封装性是虚拟化技术一个很重要的特性，这样就实现了VM的（离线）迁移。在此基础上，还开发出了VMM的 <strong>在线</strong> 迁移技术，就是在VM不停机的情况下迁移到其它Host上。在线迁移跟离线迁移一样需要拷贝虚拟硬盘文件，区别是在线迁移还要拷贝运行时刻的内存，一般有若干GB，经过网络传输比较耗时，所以内存迁移需要几次迭代才能完成。</p>
+<p>VM的迁移虽然是一个可以提高VM可用性的功能，但毕竟虚拟硬盘还是太大了，传统上除了视频文件，网络上很少有这种大流量传输的需求。VM迁移对已有网络的承受能力是一个考验。还有一个问题是很多虚拟硬盘中的数据都是重复的，占用了大量的存储空间。为了解决这些问题，就出现了下面的差分硬盘功能。</p>
+<h1 id="差分硬盘"><a href="#差分硬盘" class="headerlink" title="差分硬盘"></a>差分硬盘</h1><p>虽然可以预先制作一个标准VM镜像，然后批量拷贝得到很多VM，但VM运行后会在虚拟硬盘中写入不同的数据，所以每个VM的虚拟硬盘内的数据都是不同的，迁移时必须要分别拷贝。即便是给VM添加两个虚拟硬盘，一个OS（系统盘），另一个空白硬盘专门保存用户数据（数据盘），还是难以避免Guest OS在系统盘修改文件数据。</p>
+<p>差分硬盘的思路类似内存管理中的copy on write (COW) 技术。基于父虚拟硬盘创建一个差分硬盘（子盘），VM挂载子盘后，看上去跟父盘完全一样，只是后续增删的数据都是保存在子盘上的。</p>
+<p>子盘还可以再继续创建差分盘（孙盘），这样子子孙孙 <strong>纵向</strong> 延续下去。比如vhd可以支持创建127代，而且 <strong>每代差分硬盘的性能基本一致，不受代数层次的影响</strong>。另外，一个父盘还可以有多个子盘，也就是 <strong>横向</strong> 扩展，同一个父盘下面生成子盘的个数没有限制，因为父子关系信息，即父盘的位置和GUID，只保存在子盘里。横向和纵向的差分盘可能形成一棵树。下面就是VMware的快照管理器截图（快照实际上包括虚拟硬盘快照和VM配置快照两部分，显然硬盘快照是占大头的部分）。<img src="/img/vmware-snapshot.png" alt=""></p>
+<p>差分硬盘相比普通虚拟硬盘在性能上会有一点损失，但给运维带来的便利是很大的。微软有一个关于vhd在windows server 2008和2008 R2多种应用场景下的<a href="http://go.microsoft.com/fwlink/p/?LinkId=186519" target="_blank" rel="external">性能测试的文档</a>，包括物理硬盘 vs 固定分配的vhd vs 动态分配的vhd vs 差分vhd。结果是动态分配的vhd性能下降比较明显，固定分配的vhd和差分vhd的性能都接近物理硬盘。</p>
+<p>创建一个差分硬盘基本不到1秒钟，于是就可以实现秒级创建/克隆/离线迁移VM，秒级创建快照，克隆是针对多个VM，而快照是针对某一个VM的。<br>理论上来说，所有VM公用的父虚拟硬盘可以只保存一个，会减少很多原来虚拟硬盘占用的实际存储空间，当然这个父盘需要保存在可以远程访问的共享存储上，一般是samba/cifs或者NFS共享目录。</p>
+<h1 id="快照和克隆"><a href="#快照和克隆" class="headerlink" title="快照和克隆"></a><strong>快照和克隆</strong></h1><p>上面截图是VMware的快照功能，可以创建出一棵快照树。VMware这个快照管理器中</p>
+<blockquote>
+<p>“删除”：会将选中快照对应的虚拟硬盘数据 <strong>合并</strong> 到它的差分子盘上，然后删除该差分盘。<strong>不会改变</strong> VM的当前状态，只是删除了选中层次的差分硬盘。合并差分盘是一个比较耗时的操作。要求当前的虚拟硬盘只有一个子盘才能合并。<br>“转到”：将当前位置恢复到选中的快照。</p>
+</blockquote>
+<p>vbox的也有类似的快照功能，不过用起来不太直观。</p>
+<p><img src="/img/vbox-snapshot.png" alt="vbox快照"></p>
+<blockquote>
+<p>注：快照工具栏中的按钮分别是<br><code>快照</code>：只能对“当前状态”生成快照，实际是以“当前状态”的虚拟硬盘为父盘，创建一个差分盘，并将VM的虚拟硬盘设置为这个差分盘，即作为新的“当前状态”。<br><code>恢复</code>：基于选择快照的虚拟硬盘创建一个新的差分盘，并将VM的虚拟硬盘设置为这个差分盘，即作为新的“当前状态”。需要在VM停机状态下才能执行“恢复”操作<br><code>删除</code>：这个功能和VMware的“删除”一样。注意这个功能跟“恢复”的区别，我经常想恢复VM，结果搞不清这两个功能，选择了删除，不但耗时，还把中间的快照层次给弄丢了，相当于版本库中丢失了中间某个版本，虽然对当前版本没有影响，但还是丢掉了一些数据的。创建快照是为了尽可能快速恢复，快照越多，恢复的粒度就越细，重用的VM操作/数据就越多，当然管理起来会增加点工作量，通常情况是没有必要合并快照的，因此这个功能是不太常用的，而且称为 <strong>“合并快照”</strong> 比 <strong>删除快照</strong> 更合适些。<br><code>明细</code>：查看创建快照时写的备注和VM的参数变化。<br><code>克隆</code>：基于当前的VM克隆一个新的VM，既可以选择使用差分硬盘方式（连接），也可以使用传统的复制整个虚拟硬盘。</p>
+</blockquote>
+<h1 id="镜像管理"><a href="#镜像管理" class="headerlink" title="镜像管理"></a>镜像管理</h1><p>“镜像”现在有了两层含义，一个是前面一直说的虚拟硬盘，可以在VM运行中修改从而发生变化，一个是作为基准模板的VM，其中最重要的文件是差分硬盘的父盘。<br>所谓基准模板，或基准镜像 golden image ，与普通的VM并没有什么本质的区别，只是被标识了一个特别的身份而已，最多就是把相关的文件（配置，虚拟硬盘等）都打包在一起。</p>
+<p>随之而来的是基准镜像的管理问题，因为基准镜像也不是一成不变的，其中的软件或者用户应用/数据可能需要更新，这一般都是通过在VM里执行系统维护命令来实现的。基准镜像也不只有一个，为了减少重复操作，应该为常见的功能特征都创建好基准镜像，甚至实现开箱可用的目标。镜像管理要给镜像关联尽可能详细的描述信息，让开发人员方便地找的合适的镜像，避免发明轮子。从基础镜像出发，相当于IaaS的模式，而从一个安装和配置了特定功能的镜像开始，则相当于提升到PaaS的层次了。</p>
+<p>Openstack 中的Glance模块是镜像管理模块，vagrant使用的.box也算是一种简单的镜像管理方案，但与docker的镜像管理功能相比还有一定的差距。</p>
+<h1 id="docker的镜像，容器"><a href="#docker的镜像，容器" class="headerlink" title="docker的镜像，容器"></a>docker的镜像，容器</h1><p>docker一开始就通过公共镜像仓库docker hub和私有仓库docker registery，以及<code>build</code>，<code>pull</code>，<code>push</code>命令内置了镜像管理功能。</p>
+<p>docker为实现镜像管理采用了类似于差分硬盘的<a href="http://coolshell.cn/articles/17061.html" target="_blank" rel="external">aufs文件系统</a>。aufs是一个虚拟文件系统，是在某个实际的底层文件系统上重新组织的虚拟文件视图，aufs并不处理底层的硬盘数据块，只是把多个主机上已经存在的不同目录分层次挂载到同一个虚拟的目录下，上层会覆盖下层的同名文件，不同名的文件则会相安无事，这样每个层就类似于差分硬盘的一个子盘。然而aufs是在文件层次实现的，而VM的差分硬盘则是在更底层的数据块层实现的。<br>docker基于镜像创建容器container，容器类似于虚拟机实例，有创建、启动、运行、暂停、停止的生命周期。镜像的层是只读的，容器会重用这些层，然后在最上面新创建一个可读写的层。<br>通过<code>docker commit</code>命令，可以将容器固化成镜像。<br><a name="docker-image"></a><br>docker的镜像管理还有一些不足：</p>
+<ul>
+<li>虽然docker会管理单个Host下的镜像，利用graph功能重用已有的镜像层，但每个Host还是有重复的镜像拷贝。虚拟机为了实现在线迁移，要求VM镜像保存在一个共享目录，恰好实现了部分的去重效果。不过docker有私有的仓库，而且能跟共享目录结合起来就好了。<a href="https://www.usenix.org/node/194431" target="_blank" rel="external">FAST16 - Slacker: Fast Distribution with Lazy Docker Containers</a> 这篇文章为了加速Docker容器的启动速度，采用了集中的共享存储镜像仓库和惰性加载镜像的方式，只加载当前使用的镜像到本地，与我们的思路很相近了。另外，Docker镜像分层的结构还可以更精细，以提高重用的可能。</li>
+<li>从dockerfile构造镜像时，每行<code>RUN</code>命令对应一层镜像，需要注意避免分层太多，而一个<code>RUN</code>命令太复杂又会限制了重用镜像的可能，如果能够 <strong>显示地指定分层点</strong> 可能会好些，这也算是镜像分层结构精细化的一部分。</li>
+<li>从dockerfile构造镜像也不是完全可重现的，如果基于同一个dockerfile的2次构建相隔了比较长的时间，而dockerfile中又要从外部获取应用或数据，比如<code>apt</code>安装软件，有可能安装的软件版本就不同了，而且这还涉及到层的重用。docker目前已经通过计算镜像各层内文件的内容的Hash来唯一地确定该层，部分缓解了这一问题。</li>
+</ul>
+<p><code>docker run</code>命令基于镜像创建并运行一个容器。新手容易通过<code>docker run</code>创建很多临时的容器，占用过多物理硬盘空间，这需要在执行<code>docker run</code>命令时加上<code>--rm</code>参数，容器退出后就会被docker删除掉。</p>
+<p>docker官方建议开发人员应尽量避免通过<code>docker exec</code>或<code>ssh</code>进入容器执行操作，而应通过dockerfile将所有操作<code>build</code>到镜像中。这样的好处是所有的操作都在dockerfile中，从而可以被版本管理系统跟踪。对VM的操作一般是经chef，puppet，ansible或salt这类自动化工具，在多个VM上批量执行的。自动化工具的问题是每个VM都需要重复执行，不同VM执行可能会产生错误或不同的结果，而dockerfile只要build一次，然后基于镜像创建容器即可，能更好的保证一致性，而且节约了重复执行的时间和网络流量（没有缓存的情况下）。<br>有人将VM比喻为宠物：一个Host只能支持若干个VM，所以开发人员都小心翼翼地像宠物一样对待VM；而一个Host可以支持多得多的容器，对待容器就像家畜一样，生死都不足惜。</p>
+<p><a name="win-vhd-boot"></a></p>
+<h1 id="Windows的diskpart工具"><a href="#Windows的diskpart工具" class="headerlink" title="Windows的diskpart工具"></a><strong>Windows的diskpart工具</strong></h1><p>因为曾被vbox的“恢复”和“删除”搞晕，所以之前都是用windows的<code>diskpart</code>来创建差分硬盘，然后重新设置VM的硬盘，使用下面的命令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">C:\&gt;diskpart</div><div class="line"></div><div class="line">DISKPART&gt; create vdisk file=c:\diff.vhd parent=c:\parent.vhd</div></pre></td></tr></table></figure>
+<h1 id="Windows从VHD启动实现极速快照和恢复"><a href="#Windows从VHD启动实现极速快照和恢复" class="headerlink" title="Windows从VHD启动实现极速快照和恢复"></a><strong>Windows从VHD启动实现极速快照和恢复</strong></h1><p>Windows对vhd的内置支持远不止创建，挂载。最大的特色是支持从vhd启动（vhd native boot）：就是说把windows系统安装到一个vhd中，向普通硬盘分区一样从这个vhd启动windows。</p>
+<ul>
+<li>一种做法是把windows安装文件写入vhd中，然后将其加入BCD启动项，重启后系统会安装vhd在内。</li>
+<li>另一种做法比较费事，需要用安装盘中的维护工具，在命令行执行diskpart创建vhd，挂载并格式化，然后就可以像物理硬盘一样把系统装到vhd了。</li>
+<li>还有一种做法，将已经安装在物理硬盘上的系统用ghost克隆到vhd上，这需要在另一个windows系统或PE下进行，然后添加这个vhd的启动项到BCD。</li>
+</ul>
+<p>vhd加上差分硬盘功能，就可以实现windows的快速恢复了。具体的一种做法是基于一个父vhd创建两个差分vhd，分别称为<code>Current.vhd</code>和<code>Recovery.vhd</code>，分别添加这两个差分vhd的启动项为 <strong>Current</strong> 和 <strong>Recovery</strong>，这样就相当于已经安装了两个windows系统。正常使用 <strong>Current</strong> 系统，需要恢复时重启到 <strong>Recovery</strong> 系统，删除原来的<code>Current.vhd</code>，然后再基于父vhd创建一个新的差分vhd并命名为<code>Current.vhd</code>，再重启到 <strong>Current</strong> 系统，就完成了系统恢复。其中Recovery系统不是必须的，因为只需要能够进行简单的文件操作，用一个PE系统代替也可以。</p>
+<p>系统盘的文件布局如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">C:.</div><div class="line">│  Win8-Current.vhd    #正常工作系统</div><div class="line">│  Win8-Recovery.vhd   #恢复用系统</div><div class="line">│  Win8.vhd            #父vhd</div><div class="line">│  bootmgr             #启动管理器  </div><div class="line">└─boot                #系统启动相关文件</div><div class="line">        bcd</div><div class="line">        memtest.exe</div><div class="line">        ...</div><div class="line"></div></pre></td></tr></table></figure></p>
+<p><code>bootice</code>是一个操作vhd和系统启动项的小工具。此外还有<code>EasyBCD</code>和一些PE工具。当然，可以直接使用Windows内置的命令行工具<code>bcdboot</code>和<code>bcdedit</code>。</p>
+<p>Linux <strong>还没有</strong> 类似 vhd native boot的功能。虽然grub支持ramdisk或iso启动项，但功能上还是有些差距。<br>最近推出的CoreOS采用了双分区滚动升级的做法，实现了类似的功能，不过需要占用两倍的系统存储空间（没有差分），好在CoreOS本身比较精简。</p>
+<p>前面提到可以将物理硬盘转换成虚拟硬盘，相当于实现了从物理机到虚拟机的转换 PM -&gt; VM；而 vhd native boot则相当于从 VM -&gt; PM。</p>
+<hr>
+<p>这个介绍数据中心的<a href="http://v.youku.com/v_show/id_XMTMyMTI1ODQ4NA==.html" target="_blank" rel="external">视频</a> 里面有一段关于替换故障硬盘的细节值得注意。服务器的CPU，内存，硬盘和网卡 这几个主要部件里，因为硬盘是机械部件，而且一直在运转，不像普通机器大部分时间关机或休眠，所以是最容易出故障的，换硬盘应该是数据中心的日常维护工作了。 即便升级成没有了机械转动部件的SSD，还是有写入寿命的限制。</p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/cloud/2016/win-vhd-boot/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Windows从VHD启动实现极速快照和恢复
+        
+      </div>
+    </a>
+  
+  
+    <a href="/cloud/2016/vm-net/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">虚拟机及docker的网络连接</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

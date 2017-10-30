@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>CentOS 7 及 Ubuntu 16.04 设置 NAT 网络 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录一下设置一台双网卡的CentOS服务器提供 NAT 转发，作为内网网关，其它服务器的默认网关更改为此节点，添加路由，以及处理外部ssh登录变慢的问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 7 及 Ubuntu 16.04 设置 NAT 网络">
+<meta property="og:url" content="https://ying-zhang.github.io/misc/2017/setup-nat-x-route/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="记录一下设置一台双网卡的CentOS服务器提供 NAT 转发，作为内网网关，其它服务器的默认网关更改为此节点，添加路由，以及处理外部ssh登录变慢的问题。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ying-zhang.github.io/img/sock5-proxy.png">
+<meta property="og:updated_time" content="2017-10-30T03:42:06.185Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 7 及 Ubuntu 16.04 设置 NAT 网络">
+<meta name="twitter:description" content="记录一下设置一台双网卡的CentOS服务器提供 NAT 转发，作为内网网关，其它服务器的默认网关更改为此节点，添加路由，以及处理外部ssh登录变慢的问题。">
+<meta name="twitter:image" content="https://ying-zhang.github.io/img/sock5-proxy.png">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-setup-nat-x-route" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CentOS 7 及 Ubuntu 16.04 设置 NAT 网络
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/misc/2017/setup-nat-x-route/" class="article-date">
+  <time datetime="2017-04-14T16:00:00.000Z" itemprop="datePublished">2017-04-15</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/misc/">misc</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>记录一下设置一台双网卡的CentOS服务器提供 NAT 转发，作为内网网关，其它服务器的默认网关更改为此节点，添加路由，以及处理外部ssh登录变慢的问题。<br><a id="more"></a></p>
+<!-- TOC -->
+<ul>
+<li><a href="#centos-7-%E8%AE%BE%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8nat">CentOS 7 设置和使用NAT</a><ul>
+<li><a href="#nat%E7%BD%91%E5%85%B3%E7%9A%84%E8%AE%BE%E7%BD%AE">NAT网关的设置</a><ul>
+<li><a href="#%E5%85%81%E8%AE%B8ip%E8%BD%AC%E5%8F%91">允许IP转发</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AEiptables%E8%A7%84%E5%88%99">设置<code>iptables</code>规则</a></li>
+</ul>
+</li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%85%B6%E5%AE%83-centos-7-%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8nat%E7%BD%91%E7%BB%9C">设置其它 CentOS 7 机器使用NAT网络</a><ul>
+<li><a href="#%E5%88%87%E6%8D%A2%E9%BB%98%E8%AE%A4%E7%BD%91%E5%85%B3">切换默认网关</a></li>
+<li><a href="#%E4%B8%BAem1%E6%B7%BB%E5%8A%A0%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1">为<code>em1</code>添加静态路由</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#ubuntu-1604-%E8%AE%BE%E7%BD%AE%E5%92%8C%E4%BD%BF%E7%94%A8nat">Ubuntu 16.04 设置和使用NAT</a><ul>
+<li><a href="#%E8%AE%BE%E7%BD%AEnat">设置NAT</a><ul>
+<li><a href="#%E5%85%81%E8%AE%B8ip%E8%BD%AC%E5%8F%91">允许IP转发</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AEiptables%E8%A7%84%E5%88%99">设置iptables规则</a></li>
+</ul>
+</li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%85%B6%E5%AE%83%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8nat%E7%BD%91%E7%BB%9C">设置其它机器使用NAT网络</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%B6%E5%AE%83%E9%97%AE%E9%A2%98">其它问题</a><ul>
+<li><a href="#%E7%A6%81%E7%94%A8%E5%90%84%E6%9C%BA%E5%99%A8%E7%9A%84sshd-dns%E9%80%89%E9%A1%B9%EF%BC%8C%E8%A7%A3%E5%86%B3ssh%E7%99%BB%E5%BD%95%E5%BE%88%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98">禁用各机器的SSHD DNS选项，解决ssh登录很慢的问题</a></li>
+<li><a href="#%E5%8F%96%E6%B6%88%E5%8E%9F%E6%9D%A5%E8%AE%BE%E7%BD%AE%E7%9A%84http%E4%BB%A3%E7%90%86">取消原来设置的http代理</a></li>
+</ul>
+</li>
+<li><a href="#ps-%E4%BD%BF%E7%94%A8-ssh-%E9%9A%A7%E9%81%93">PS: 使用 SSH 隧道</a></li>
+</ul>
+<!-- /TOC -->
+<p>小组有一个Dell的刀片服务器机柜，每台机器都是双网卡，分别连到了2个LAN。</p>
+<ul>
+<li>一个LAN是学校的公网IP（下文记为<code>2.2.2.0/24</code>网段）。装好CentOS 7系统后，<code>em1</code>网卡在公网LAN，可以在校内直接访问<code>em1</code>的IP，但由于学校网络管理限制，校外无法访问。所以说这个公网IP跟私网IP差不了多少。</li>
+<li>另一个LAN是用于远程管理的机房内私网IP（下文记为<code>10.0.0.0/24</code>网段），<code>em2</code>网卡在这个私网LAN。服务器的iDRAC也在这个私网里。这个私网的网关是某个机器上的VPN服务提供的，IP是<code>10.0.0.1</code>。登录到这个VPN之后，就可以远程访问iDRAC，也可以通过私网IP ssh登录到机器。</li>
+</ul>
+<p>一直是远程管理，只去过一次机房，还不清楚服务器的具体组网拓扑。按理也可以修改一些设置，通过VPN的网关访问外网，不过没有VPN这台机器的管理权限，只好另外找机器设置NAT。</p>
+<h1 id="CentOS-7-设置和使用NAT"><a href="#CentOS-7-设置和使用NAT" class="headerlink" title="CentOS 7 设置和使用NAT"></a>CentOS 7 设置和使用NAT</h1><p>虽然学校的网络管理限制了刀片集群的LAN使用公网IP连不了校外网络，而且不能登录个人的外网帐号，好在可以填表申请一个<code>147</code>的公网IP（记对应的机器是<code>n147</code>）直通校外网。<br>之前是通过在<code>n147</code>上提供Squid HTTP代理服务的方式使其它机器能够访问外网，但代理用起来实在是不方便，所以改成NAT方式，这样其它机器将<code>n147</code>的私网IP作为网关，使用私网IP就可以访问外网了。在NAT模式下，<code>n147</code>就像一个软件实现的家用路由器。</p>
+<h2 id="NAT网关的设置"><a href="#NAT网关的设置" class="headerlink" title="NAT网关的设置"></a>NAT网关的设置</h2><p>作为网关的机器名是<code>n147</code>，公网IP是<code>2.2.2.147/24</code>，对应<code>em1</code>网卡；私网IP是<code>10.0.0.147/24</code>，对应<code>em2</code>网卡。</p>
+<h3 id="允许IP转发"><a href="#允许IP转发" class="headerlink" title="允许IP转发"></a>允许IP转发</h3><p>其它机器从<code>10.0.0.0/24</code>网段发送的数据包会被<code>em2</code>网卡接收，如果目标IP是外网，需要交给<code>em1</code>网卡发送出去。需要开启IP转发选项，才能允许不同网卡间转发数据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"># 查看是否启用IP转发，如果是0则没有开启，是1则已经开启</div><div class="line">cat /proc/sys/net/ipv4/ip_forward</div><div class="line"></div><div class="line"># 可以修改上述文件的值来改变设置，但重启后会恢复默认值。</div><div class="line"># 需要将设置写入系统配置文件 /etc/sysctl.conf 或 /etc/sysctl.d/ip_forward.conf</div><div class="line"># 内容为</div><div class="line">net.ipv4.ip_forward = 1</div></pre></td></tr></table></figure></p>
+<h3 id="设置iptables规则"><a href="#设置iptables规则" class="headerlink" title="设置iptables规则"></a>设置<code>iptables</code>规则</h3><p>安装必要软件并启用服务：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">yum install -y net-tools iproute iptables iptables-services</div><div class="line">systemctl disable firewalld</div><div class="line">systemctl stop firewalld</div><div class="line">systemctl enable iptables</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>net-tools</code>这个程序包有 <code>ifconfig</code>，<code>netstat</code>，<code>route</code>等命令，而<code>iproute2</code>（rpm包名为<code>iproute</code>）包括<code>tc</code>，<code>ip</code>，<code>ss</code>等命令，是<code>net-tools</code>的改进。</p>
+</blockquote>
+<p>通过<code>iptables</code>命令行可以添加NAT规则，但重启后也是会恢复默认值，应当将修改后的规则设置用<code>iptables-save</code>命令输出，然后保存起来。<br>这里直接使用<code>iptables-save</code>生成的配置项，保存到配置文件 <code>/etc/sysconfig/iptables</code>，内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"># Generated by iptables-save v1.4.21 on Thu Apr 20 22:14:39 2017</div><div class="line">*nat</div><div class="line">:PREROUTING ACCEPT [0:0]</div><div class="line">:INPUT ACCEPT [0:0]</div><div class="line">:OUTPUT ACCEPT [0:0]</div><div class="line">:POSTROUTING ACCEPT [0:0]</div><div class="line">-A POSTROUTING -o em1 -j MASQUERADE  </div><div class="line">COMMIT</div><div class="line"></div><div class="line">*filter</div><div class="line">:INPUT ACCEPT [0:0]</div><div class="line">:FORWARD ACCEPT [0:0]</div><div class="line">:OUTPUT ACCEPT [0:0]</div><div class="line">-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A INPUT -p icmp -j ACCEPT</div><div class="line">-A INPUT -i lo -j ACCEPT</div><div class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT</div><div class="line">-A FORWARD -i em2 -j ACCEPT</div><div class="line">COMMIT</div></pre></td></tr></table></figure></p>
+<p>其中涉及NAT转发的是<code>-A POSTROUTING -o em1 -j MASQUERADE</code> 和 <code>-A FORWARD -i em2 -j ACCEPT</code>。<br>此外还删除了原来禁止<code>ping</code>的规则：<br><code>-A INPUT -j REJECT --reject-with icmp-host-prohibited</code><br><code>-A FORWARD -j REJECT --reject-with icmp-host-prohibited</code></p>
+<p>重启<code>iptables</code>服务<code>systemctl restart iptables</code>。</p>
+<blockquote>
+<p>可以修改<code>/etc/sysconfig/iptables-config</code> 配置文件，设置下面三个选项均为<code>yes</code>来自动保存<code>iptables</code>规则</p>
+<ul>
+<li><code>IPTABLES_MODULES_UNLOAD=&quot;yes&quot;</code></li>
+<li><code>IPTABLES_SAVE_ON_STOP=&quot;yes&quot;</code></li>
+<li><code>IPTABLES_SAVE_ON_RESTART=&quot;yes&quot;</code></li>
+</ul>
+<p>参考</p>
+<ul>
+<li><a href="http://salogs.com/news/2015/08/20/iptables-save/" target="_blank" rel="external">保存iptable规则并开机自动加载</a></li>
+<li><a href="http://blog.csdn.net/hepeng597/article/details/8270138" target="_blank" rel="external">iptables用法初解</a></li>
+</ul>
+</blockquote>
+<h2 id="设置其它-CentOS-7-机器使用NAT网络"><a href="#设置其它-CentOS-7-机器使用NAT网络" class="headerlink" title="设置其它 CentOS 7 机器使用NAT网络"></a>设置其它 CentOS 7 机器使用NAT网络</h2><h3 id="切换默认网关"><a href="#切换默认网关" class="headerlink" title="切换默认网关"></a>切换默认网关</h3><p>安装系统后，默认网关是<code>em1</code>所在LAN的<code>2.2.2.1</code>，需要将其更改为<code>em2</code>所在LAN的<code>10.0.0.147</code>，修改如下的网卡配置文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"># /etc/sysconfig/network-scripts/ifcfg-em1</div><div class="line">DEFROUTE=no</div><div class="line"></div><div class="line"># /etc/sysconfig/network-scripts/ifcfg-em2</div><div class="line">DEFROUTE=yes</div><div class="line"># ...</div><div class="line">GATEWAY=10.0.0.147</div><div class="line">DNS1=233.5.5.5</div><div class="line">DNS2=223.6.6.6</div></pre></td></tr></table></figure></p>
+<p>其中<code>em2</code>的网关即刚才配置的<code>n147</code>的私网IP，由于没有在<code>n147</code>上运行DNS服务，这里使用的是阿里的DNS。也可以安装配置<code>dnsmasq</code>等DNS服务器。</p>
+<h3 id="为em1添加静态路由"><a href="#为em1添加静态路由" class="headerlink" title="为em1添加静态路由"></a>为<code>em1</code>添加静态路由</h3><p>修改默认网关后，查看路由表，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># route -n</div><div class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</div><div class="line">0.0.0.0         10.0.0.147      0.0.0.0         UG    100    0        0 em2</div><div class="line">10.0.0.0        0.0.0.0         255.255.0.0     U     100    0        0 em2</div><div class="line">2.2.2.0         0.0.0.0         255.255.255.0   U     100    0        0 em1</div><div class="line">172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0</div></pre></td></tr></table></figure></p>
+<p>发现从<code>em1</code>收发的数据包也要经过默认网关<code>10.0.0.147</code>，而这个网关在机房的私网内，<strong>外部不能直接访问，导致外部无法公网IP访问服务器</strong>。为此，需要为<code>em1</code>添加静态路由，不走<code>10.0.0.147</code>，新建文件<code>/etc/sysconfig/network-scripts/route-em1</code>，内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">2.2.0.0/16    via 2.2.2.1</div><div class="line">172.0.0.0/8   via 2.2.2.1</div></pre></td></tr></table></figure></p>
+<p>其中</p>
+<ul>
+<li><code>2.2.0.0/16</code>网段是学校 <strong>有线</strong> 网络的IP网段</li>
+<li><code>172.0.0.0/8</code>网段是学校 <strong>无线</strong> 网络的IP网段。<blockquote>
+<p>注意</p>
+</blockquote>
+</li>
+<li><code>docker0</code>网桥默认也是B类私网的<code>172.x.0.0/16</code>网段，但其路由项更具体，所以<a href="http://answ.me/post/configure-docker-subnet/" target="_blank" rel="external">不会造成冲突</a>。</li>
+<li><code>docker0</code>网桥实际也工作在NAT模式，也需要开启IP转发。</li>
+</ul>
+<p>重启网络，更新配置，<code>systemctl restart network</code>。</p>
+<blockquote>
+<p>参考：<a href="https://www.thomas-krenn.com/en/wiki/Two_Default_Gateways_on_One_System" target="_blank" rel="external">Two Default Gateways on One System</a></p>
+</blockquote>
+<h1 id="Ubuntu-16-04-设置和使用NAT"><a href="#Ubuntu-16-04-设置和使用NAT" class="headerlink" title="Ubuntu 16.04 设置和使用NAT"></a>Ubuntu 16.04 设置和使用NAT</h1><p>Ubuntu 16.04 参考上面 CentOS 7 设置和使用NAT的步骤即可————怎么可能！<br>因为用到的工具都是<code>net-tools</code>，<code>iproute</code>和<code>iptables</code>这3个包里的，配置文件的内容是一样的，但配置文件的路径和启动方式就不一样了。</p>
+<h2 id="设置NAT"><a href="#设置NAT" class="headerlink" title="设置NAT"></a>设置NAT</h2><h3 id="允许IP转发-1"><a href="#允许IP转发-1" class="headerlink" title="允许IP转发"></a>允许IP转发</h3><p>直接修改系统配置文件 <code>/etc/sysctl.conf</code>，里面已经有支持的配置项，取消<code>net.ipv4.ip_forward = 1</code>的注释即可。</p>
+<h3 id="设置iptables规则-1"><a href="#设置iptables规则-1" class="headerlink" title="设置iptables规则"></a>设置iptables规则</h3><p>还是使用的<code>iptables</code>，为了使修改后的规则能够保存，规则跟上面CentOS的基本一样。为什么说是基本呢？网卡的默认名字改了： CentOS 7下是<code>em1</code>，<code>em2</code>，Ubuntu 16.04下是<code>eno1</code>，<code>eno2</code>，所以要把规则中对应的网卡名改过来。</p>
+<p>然后要找到Ubuntu 16.04下系统会自动读取的iptables规则文件路径，参考<a href="https://help.ubuntu.com/community/IptablesHowTo" target="_blank" rel="external">IptablesHowTo - Ubuntu wiki</a>，，<strong>随便把规则保存到哪，反正系统不会自动加载</strong>，需要自己添加一个启动脚本。<br>因为机器是多网卡，启动脚本不好关联某个网卡，所以放在与网卡启动关联的脚本目录里，脚本文件是 <code>/etc/network/if-pre-up.d/iptablesload</code>，内容如下，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">iptables-restore &lt; /etc/iptables.rules</div><div class="line">exit 0</div></pre></td></tr></table></figure></p>
+<p>可见<code>/etc/iptables.rules</code>是保存的<code>iptables</code>规则，这个位置是任意的，只要跟启动脚本中保持一致就行了。启动脚本的名字也是任意的，只要放在那个路径下就可以了。<strong>但是，你要自己来写这个脚本</strong>。</p>
+<p>编辑好<code>/etc/iptables.rules</code> 和 <code>/etc/network/if-pre-up.d/iptablesload</code>之后，重启网络服务。</p>
+<p>虽然都是用<code>systemd</code>来管理系统服务，但服务的名字又不一样了，CentOS的网络服务名称是<code>network.service</code>，而Ubuntu则是<code>networking.service</code>。<br>执行命令<code>sudo systemctl restart networking</code>，重启网络服务。不过，其实我们是用<code>iptables</code>来实现的NAT，而不是<code>networking.service</code>相关服务，不过由于上面的那个脚本<code>iptablesload</code>会在网卡启动之前被执行，所以顺便完成了我们的目标。</p>
+<h2 id="设置其它机器使用NAT网络"><a href="#设置其它机器使用NAT网络" class="headerlink" title="设置其它机器使用NAT网络"></a>设置其它机器使用NAT网络</h2><p>同样，在其它Ubuntu机器上也要切换默认网关，为eno1添加静态路由。情况又不一样了，Ubuntu的所有网卡配置和静态路由都保存在<code>/etc/network/interface</code>这个文件里，这个倒是方便了—— <strong><a href="https://askubuntu.com/questions/168033/how-to-set-static-routes-in-ubuntu-server" target="_blank" rel="external">如果面对空空的配置文件，你能猜到各配置项是什么的时候</a></strong>。<br>好在安装系统的时候设置了网卡，给<code>eno2</code>生成了一些配置项可以参考。修改后的内容如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">auto lo</div><div class="line">iface lo inet loopback</div><div class="line"></div><div class="line">auto eno1</div><div class="line">iface eno1 inet static</div><div class="line">  address 2.2.2.140</div><div class="line">  netmask 255.255.255.0</div><div class="line">  network 2.2.2.0</div><div class="line">  broadcast 2.2.2.255</div><div class="line">  # gateway 2.2.2.1</div><div class="line">  up ip route add 2.2.0.0/16   via 2.2.2.1 || true</div><div class="line">  up ip route add 2.2.2.0/24   via 2.2.2.1 || true</div><div class="line">  up ip route add 172.0.0.0/8  via 2.2.2.1 || true</div><div class="line"></div><div class="line"># The primary network interface</div><div class="line">auto eno2</div><div class="line">iface eno2 inet static</div><div class="line">  address 10.0.0.140</div><div class="line">  netmask 255.255.255.0</div><div class="line">  network 10.0.0.0</div><div class="line">  broadcast 10.0.0.255</div><div class="line">  gateway 10.0.0.147</div><div class="line">  # dns-* options are implemented by the resolvconf package, if installed</div><div class="line">  dns-nameservers 233.5.5.5</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意</p>
+<ul>
+<li>不是像CentOS那样明确地在各网卡的配置文件中说明是否该网卡作为默认路由网关，而是哪个网卡写了<code>gateway</code>就以它作为默认网关，如果2个网卡都写了，只有最后写的那个有效，所以最好明确地只保留一个<code>gateway</code>项。</li>
+<li><code>up ip route add 2.2.0.0/16   via 2.2.2.1 || true</code>其实也就是一句启动网卡后顺便执行的脚本，如果你愿意，这里写一句<code>up echo helloworld</code>也没问题。后面的<code>|| true</code>是让脚本执行时忽略可能的错误，继续执行。这里使用的是<code>ip</code>命令，如果使用<code>route</code>命令，效果也是一样的，前提是已经安装了<code>net-tools</code>或<code>iproute</code>软件包。使用<code>netmask</code>和<code>CIDR</code>格式都可以。</li>
+<li>哪个网卡的路由就写到对应的网卡下，这样执行<code>ifup eno1</code>这样的单独启动某个网卡的命令也会自动执行相应的命令添加该网卡的路由。</li>
+</ul>
+</blockquote>
+<p>执行命令<code>sudo systemctl restart networking</code>，重启网络服务。<br>查看一下更新后的路由表，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># route -n</div><div class="line">Kernel IP routing table</div><div class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</div><div class="line">0.0.0.0         10.0.0.147      0.0.0.0         UG    0      0        0 eno2</div><div class="line">10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 eno2</div><div class="line">2.2.0.0         2.2.2.1         255.255.0.0     UG    0      0        0 eno1</div><div class="line">2.2.2.0         0.0.0.0         255.255.255.0   U     0      0        0 eno1</div><div class="line">172.0.0.0       2.2.2.1         255.0.0.0       UG    0      0        0 eno1</div></pre></td></tr></table></figure></p>
+<p>注意倒数第二行：<code>2.2.2.0    0.0.0.0    255.255.255.0   U    0    0    0    eno1</code>，这个是自动添加的。<br>它的网关并不是<code>2.2.2.1</code>，即便在<code>interface</code>中强制器网关为<code>2.2.2.1</code>，也会被改为<code>0.0.0.0</code>。因为<code>2.2.2.0/24</code>是本LAN的数据包，经<code>ARP</code>协议获得目标的<code>MAC</code>地址后，会被直接发到目标地址，而不会经网关<code>2.2.2.1</code>转发，虽然路由表中默认网关是<code>0.0.0.0</code>，也不会按路由表转发到<code>10.0.0.147</code>。</p>
+<h1 id="其它问题"><a href="#其它问题" class="headerlink" title="其它问题"></a>其它问题</h1><p>下面的问题是在除NAT网关外的其它机器上设置的。</p>
+<h2 id="禁用各机器的SSHD-DNS选项，解决ssh登录很慢的问题"><a href="#禁用各机器的SSHD-DNS选项，解决ssh登录很慢的问题" class="headerlink" title="禁用各机器的SSHD DNS选项，解决ssh登录很慢的问题"></a>禁用各机器的SSHD DNS选项，解决ssh登录很慢的问题</h2><p>修改默认网关，添加路由之后，虽然可以从外部通过公网IP <code>ping</code>通机房内的机器，但<code>ssh</code>登录过程需要等待很长时间。<br>参考<a href="http://blog.itpub.net/7345798/viewspace-1055461/" target="_blank" rel="external">ssh连接的时候很慢，ping的速度非常好</a>这篇文章，修改各机器上<code>sshd</code>的选项如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sed -i &quot;&apos;s/.*UseDNS.*/UseDNS no/g&apos;&quot; /etc/ssh/sshd_config</div><div class="line">systemctl restart sshd</div></pre></td></tr></table></figure></p>
+<h2 id="取消原来设置的http代理"><a href="#取消原来设置的http代理" class="headerlink" title="取消原来设置的http代理"></a>取消原来设置的http代理</h2><p>注释掉配置文件中<code>http_proxy</code>和<code>https_proxy</code>环境变量的声明，并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">unset http_proxy</div><div class="line">unset https_proxy</div></pre></td></tr></table></figure></p>
+<h1 id="PS-使用-SSH-隧道"><a href="#PS-使用-SSH-隧道" class="headerlink" title="PS: 使用 SSH 隧道"></a>PS: 使用 SSH 隧道</h1><p>一般可以通过服务器的公网IP在校内登录到机器上，有时把机器的配置搞乱了，需要连接到内网，使用iDRAC来管理机器，这时就要连接VPN了。其实也可以不连接VPN，而利用其它正常机器的SSH创建隧道，实现连接内网的目的。<br>以Windows客户端为例，安装了Windows版的<code>git</code>后，会附带一些<code>mingw</code>命令程序（不是完整的<code>mingw</code>），首先将这些命令的可执行文件所在路径添加到<code>Path</code>环境变量，比如是<code>E:\App\git\usr\bin;E:\App\git\mingw64\bin;E:\App\git\bin</code>，然后就可以在Windows命令行使用这些命令了。其中就有<code>ssh.exe</code>。<br>在Windows命令行窗口执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -NfD 1088 -i C:\Users\ying\.ssh\id_rsa root@n147</div></pre></td></tr></table></figure></p>
+<p>这个命令执行成功后会退出，返回到命令提示符，但实际仍在后台监听本机的1088端口<code>127.0.0.1:1088</code>。<strong>如果需要停止SSH隧道，关闭该命令窗口即可</strong>。<br>因为我在Windows的<code>C:\Windows\System32\drivers\etc\hosts</code>文件中添加了<code>n147</code>的项，所以可以直接输入名字而不必是IP地址。</p>
+<p>在IE或控制面板打开<code>Internet选项</code>，</p>
+<ul>
+<li>在<code>连接</code>选项卡单击<code>局域网设置</code>按钮，</li>
+<li>在弹出的对话框勾选<code>为LAN使用代理服务器</code>，然后单击<code>高级</code>，</li>
+<li>在弹出的对话框取消勾选<code>对所有协议使用相同的代理服务器</code>，然后在<code>套接字</code>对应的文本框填入<code>127.0.0.1</code>和上面命令中监听的端口号<code>1088</code>，</li>
+<li>在<code>例外</code>文本框中删掉<code>10.*0;</code>的内容，然后一路确定关闭所有对话框。<br>这时应该可以用IE或Chrome访问机房内网的iDRAC。<strong>如果需要正常访问网页，需要取消勾选<code>为LAN使用代理服务器</code></strong>。</li>
+</ul>
+<p><img src="/img/sock5-proxy.png" alt=""></p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/cloud/2017/docker-image-spec-v1.2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          【译文】Docker镜像格式规范，v1.2
+        
+      </div>
+    </a>
+  
+  
+    <a href="/misc/2017/setup-squid-proxy/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">设置及使用HTTP代理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

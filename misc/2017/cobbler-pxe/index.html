@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>使用Cobbler搭建PXE服务器 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="PXE （Preboot eXecution Environment，预执行环境）是通过 局域网 来启动计算机（和安装操作系统）的技术。一般是通过刻录到光驱或U盘的Live CD这样的本地存储来安装系统的，要通过网络来安装系统，首先要知道安装文件存放的服务器（TFTP服务器，Trivial File Transfer Protocol，精简FTP），而系统启动时网卡的IP都还没有。所以PXE必须要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Cobbler搭建PXE服务器">
+<meta property="og:url" content="https://ying-zhang.github.io/misc/2017/cobbler-pxe/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="PXE （Preboot eXecution Environment，预执行环境）是通过 局域网 来启动计算机（和安装操作系统）的技术。一般是通过刻录到光驱或U盘的Live CD这样的本地存储来安装系统的，要通过网络来安装系统，首先要知道安装文件存放的服务器（TFTP服务器，Trivial File Transfer Protocol，精简FTP），而系统启动时网卡的IP都还没有。所以PXE必须要">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ying-zhang.github.io/img/pxe-boot-config.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/pxe-boot-menu.png">
+<meta property="og:updated_time" content="2017-10-30T02:48:03.321Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Cobbler搭建PXE服务器">
+<meta name="twitter:description" content="PXE （Preboot eXecution Environment，预执行环境）是通过 局域网 来启动计算机（和安装操作系统）的技术。一般是通过刻录到光驱或U盘的Live CD这样的本地存储来安装系统的，要通过网络来安装系统，首先要知道安装文件存放的服务器（TFTP服务器，Trivial File Transfer Protocol，精简FTP），而系统启动时网卡的IP都还没有。所以PXE必须要">
+<meta name="twitter:image" content="https://ying-zhang.github.io/img/pxe-boot-config.png">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-cobbler-pxe" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用Cobbler搭建PXE服务器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/misc/2017/cobbler-pxe/" class="article-date">
+  <time datetime="2017-03-21T16:00:00.000Z" itemprop="datePublished">2017-03-22</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/misc/">misc</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://zh.wikipedia.org/wiki/%E9%A2%84%E5%90%AF%E5%8A%A8%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83" target="_blank" rel="external">PXE</a> （Preboot eXecution Environment，预执行环境）是通过 <strong>局域网</strong> 来启动计算机（和安装操作系统）的技术。<br>一般是通过刻录到光驱或U盘的Live CD这样的本地存储来安装系统的，要通过网络来安装系统，首先要知道安装文件存放的服务器（TFTP服务器，Trivial File Transfer Protocol，精简FTP），而系统启动时网卡的IP都还没有。所以PXE必须要有一个 <strong>DHCP（Dynamic Host Configuration Protocol，动态主机设置协议）</strong>，不但负责为机器分配 IP地址，还会告知安装文件所在的服务器的 IP地址。<br>Cobbler简化了安装配置DHCP、TFTP、关联Kickstart应答文件等搭建PXE服务器的过程。</p>
+<a id="more"></a>
+<hr>
+<!-- TOC -->
+<ul>
+<li><a href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83">测试环境</a></li>
+<li><a href="#cobbler%E8%AE%BE%E7%BD%AE%E6%AD%A5%E9%AA%A4">Cobbler设置步骤</a><ul>
+<li><a href="#%E7%A6%81%E7%94%A8selinux">禁用SELinux</a></li>
+<li><a href="#%E7%A6%81%E7%94%A8%E9%98%B2%E7%81%AB%E5%A2%99">禁用防火墙</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6">安装软件</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E4%B8%BA%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E7%9A%84%E6%9C%8D%E5%8A%A1">设置为开机启动的服务</a></li>
+<li><a href="#%E7%94%9F%E6%88%90%E5%8A%A0%E5%AF%86%E7%9A%84root%E5%AF%86%E7%A0%81">生成加密的root密码</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BF%AE%E6%94%B9cobbler%E7%9A%84%E9%85%8D%E7%BD%AE">修改cobbler的配置</a><ul>
+<li><a href="#%E4%BF%AE%E6%94%B9xinetd-tftp%E7%9A%84%E9%85%8D%E7%BD%AE">修改xinetd tftp的配置</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9dhcp%E9%85%8D%E7%BD%AE">修改dhcp配置</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8-dnsmasq-%E6%8F%90%E4%BE%9B-dhcp-%E6%9C%8D%E5%8A%A1">使用 dnsmasq 提供 dhcp 服务</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E7%9B%B8%E5%85%B3%E6%9C%8D%E5%8A%A1">启动相关服务</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8C-cobbler-check">执行 <code>cobbler check</code></a></li>
+<li><a href="#%E5%AF%BC%E5%85%A5centos%E7%B3%BB%E7%BB%9F%E7%9A%84iso%E5%AE%89%E8%A3%85%E9%95%9C%E5%83%8F">导入CentOS系统的iso安装镜像</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9kickstarts%E6%96%87%E4%BB%B6">修改Kickstarts文件</a></li>
+<li><a href="#%E6%9B%B4%E6%96%B0%E8%AE%BE%E7%BD%AE%EF%BC%8C%E6%9C%80%E5%90%8E%E7%9A%84%E6%A3%80%E6%9F%A5">更新设置，最后的检查</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9C%A8%E5%85%B6%E5%AE%83%E6%9C%BA%E5%99%A8%E4%BD%BF%E7%94%A8pxe%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F">在其它机器使用PXE安装系统</a></li>
+<li><a href="#%E5%9C%A8docker%E5%AE%B9%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8Ccobbler">在docker容器中运行cobbler</a><ul>
+<li><a href="#docker%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8systemd">docker容器使用systemd</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9D%91">使用容器的几个坑</a></li>
+</ul>
+</li>
+<li><a href="#%E7%9C%9F%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98">真机上部署遇到的问题</a><ul>
+<li><a href="#%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E7%BD%91%E5%8D%A1">选择合适的网卡</a></li>
+<li><a href="#dell-idrac">Dell iDRAC</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h1><p>虚拟机使用NAT网络，IP段10.1.1.0，子网掩码：255.255.255.0，DNS/DHCP/Gateway：10.1.1.2。</p>
+<p>新建一个虚拟机，安装CentOS 7，使用的镜像是 <strong><a href="http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1611.iso" target="_blank" rel="external">CentOS-7-x86_64-Minimal-1611.iso</a></strong> 。因为是Minimal的，不必选择附加的软件包。<br>安装后登录系统，查看IP地址<code>ip a</code>，可以通过ssh登录到VM。<br>关闭VM，拍摄一个快照。</p>
+<ul>
+<li>IP ： 10.1.1.10</li>
+<li>子网掩码：255.255.255.0</li>
+<li>用户：root</li>
+</ul>
+<h1 id="Cobbler设置步骤"><a href="#Cobbler设置步骤" class="headerlink" title="Cobbler设置步骤"></a>Cobbler设置步骤</h1><blockquote>
+<p>因为虚拟机已经加载了iso镜像，可以在Guest OS中直接挂载。对远程的服务器，可以配置的同时把iso镜像拷贝到远程机器上去，或者使用共享文件，节省一点拷贝文件的时间。</p>
+</blockquote>
+<h2 id="禁用SELinux"><a href="#禁用SELinux" class="headerlink" title="禁用SELinux"></a>禁用SELinux</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sed -i &apos;s/SELINUX\=enforcing/SELINUX\=disabled/g&apos; /etc/selinux/config</div><div class="line">setenforce 0</div></pre></td></tr></table></figure>
+<h2 id="禁用防火墙"><a href="#禁用防火墙" class="headerlink" title="禁用防火墙"></a>禁用防火墙</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl disable firewalld</div><div class="line">systemctl stop firewalld</div></pre></td></tr></table></figure>
+<h2 id="安装软件"><a href="#安装软件" class="headerlink" title="安装软件"></a>安装软件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">yum -y install epel-release</div><div class="line">yum -y install cobbler dhcp httpd xinetd pykickstart fence-agents</div></pre></td></tr></table></figure>
+<h2 id="设置为开机启动的服务"><a href="#设置为开机启动的服务" class="headerlink" title="设置为开机启动的服务"></a>设置为开机启动的服务</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable cobblerd dhcpd httpd rsyncd tftp xinetd</div></pre></td></tr></table></figure>
+<blockquote>
+<p>PXE 需要从 dhcp服务器获取新的IP地址，以及TFTP，HTTP服务器的IP地址， TFTP服务器提供操作系统的安装文件，HTTP服务器提供Kickstart应答文件。<br>cobbler_web 是cobbler的设置界面，跟HTTP服务不是一回事，可不必安装。</p>
+</blockquote>
+<h2 id="生成加密的root密码"><a href="#生成加密的root密码" class="headerlink" title="生成加密的root密码"></a>生成加密的root密码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">openssl passwd -1 -salt &quot;centos&quot; &quot;centos&quot;</div><div class="line"># 输出，由于salt和密码都是指定的，这段加密的字符串也就是确定的了</div><div class="line">$1$centos$Uq6E6Wp5SDZYbs6MCmamP0</div></pre></td></tr></table></figure>
+<h1 id="修改cobbler的配置"><a href="#修改cobbler的配置" class="headerlink" title="修改cobbler的配置"></a>修改cobbler的配置</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vi /etc/cobbler/settings</div><div class="line"># 改动 的内容如下</div><div class="line">default_password_crypted: &quot;$1$centos$Uq6E6Wp5SDZYbs6MCmamP0&quot;</div><div class="line">manage_dhcp: 1</div><div class="line">next_server: 10.1.1.10</div><div class="line">server: 10.1.1.10</div></pre></td></tr></table></figure>
+<blockquote>
+<p><a href="/doc/cobbler-setting.txt">修改后的完整 settings 文件 (删除了注释)</a></p>
+</blockquote>
+<h2 id="修改xinetd-tftp的配置"><a href="#修改xinetd-tftp的配置" class="headerlink" title="修改xinetd tftp的配置"></a>修改xinetd tftp的配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vi /etc/xinetd.d/tftp</div><div class="line"># 将 disable = yes 改为  disable = no</div></pre></td></tr></table></figure>
+<h2 id="修改dhcp配置"><a href="#修改dhcp配置" class="headerlink" title="修改dhcp配置"></a>修改dhcp配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">vi /etc/cobbler/dhcp.template</div><div class="line"># 改动的内容包括 子网段，分配的IP区间，</div><div class="line"># 以及 默认网关（路由器），DNS（默认网关和DNS的设置不影响PXE装机过程，只是新装的机器启动后可能无法访问外网）</div><div class="line"># $next-server 是指向 /etc/cobbler/settings 中的对应值</div><div class="line">#</div><div class="line">subnet 10.1.1.0 netmask 255.255.255.0 &#123;</div><div class="line">     option routers             10.1.1.2;</div><div class="line">     option domain-name-servers 10.1.1.2;</div><div class="line">     option subnet-mask         255.255.255.0;</div><div class="line">     range dynamic-bootp        10.1.1.100 10.1.1.110;</div><div class="line">     default-lease-time         21700;</div><div class="line">     max-lease-time             43100;</div><div class="line">     next-server                $next_server;</div><div class="line"></div><div class="line">     class &quot;pxeclients&quot; &#123;</div><div class="line">          match if substring (option vendor-class-identifier, 0, 9) = &quot;PXEClient&quot;;</div><div class="line">          if option pxe-system-type = 00:02 &#123;</div><div class="line">              filename &quot;ia64/elilo.efi&quot;;</div><div class="line">          &#125; else if option pxe-system-type = 00:06 &#123;</div><div class="line">              filename &quot;grub/grub-x86.efi&quot;;</div><div class="line">          &#125; else if option pxe-system-type = 00:07 &#123;</div><div class="line">              filename &quot;grub/grub-x86_64.efi&quot;;</div><div class="line">          &#125; else &#123;</div><div class="line">              filename &quot;pxelinux.0&quot;;</div><div class="line">          &#125;</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果遇到DHCP服务启动失败，可能是 dhcpd 先于 cobblerd 启动，导致 cobbler 来不及设置 dhcpd ，dhcpd.conf 配置文件还是空的。<br>遇到这种情况，可以将 <code>/etc/cobbler/settings</code> 中的 <code>manage_dhcp: 1</code> 改为 <code>0</code>， 然后手动管理 dhcp：修改 <code>/etc/dhcp/dhcpd.conf</code>，格式如下。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">subnet 10.1.1.0 netmask 255.255.255.0 &#123;</div><div class="line">        option routers 10.1.1.2;</div><div class="line">        option domain-name-servers 10.1.1.2;</div><div class="line">        option subnet-mask 255.255.255.0;</div><div class="line">        default-lease-time 21600;</div><div class="line">        max-lease-time 43200;</div><div class="line">        range 10.1.1.100 10.1.1.110;</div><div class="line">        next-server 10.1.1.10;</div><div class="line">        filename &quot;pxelinux.0&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意要把 <code>$next_server</code> 设置为 <strong>具体的 IP地址</strong>，这个配置项是 PXE 的关键。<br><!--这样的一个好处是可以设置 **多个** `subnet {...}` 段，以针对不同的网络环境，dhcpd会自动将 subnet段 与系统网卡的配置匹配，忽略不匹配的设置。
+很可惜 cobbler 的 next_server 只能指定一个 IP， 换了机器还要修改设置。--><br>如果dhcp服务器（也就是cobbler的服务器）有多个网卡，上面dhcp的配置项与哪个网卡的IP段匹配，就在这个网卡所在的局域网上提供 dhcp 服务。如果没有找到任何匹配的网卡， dhcpd 会报错退出。<br>如果所在的局域网已经有其它的dhcp服务器，那么会存在竞争，可以考虑使用 dnsmasq。<br><code>/etc/cobbler/settings</code> 中 <code>next_server</code> 和 <code>server</code> 指定的IP地址要和DHCP的网段在 <strong>同一个局域网段</strong> 才能正常工作。</p>
+<h2 id="使用-dnsmasq-提供-dhcp-服务"><a href="#使用-dnsmasq-提供-dhcp-服务" class="headerlink" title="使用 dnsmasq 提供 dhcp 服务"></a>使用 dnsmasq 提供 dhcp 服务</h2><p>参考<a href="http://cobbler.github.io/manuals/2.8.0/3/4/1_-_Managing_DHCP.html" target="_blank" rel="external">Managing DHCP - cobbler manual</a>，如果 dhcpd 无法正确配置，可以使用 dnsmasq。首先需要安装： <code>yum install -y dnsmasq</code>。<br>如果让cobbler来配置dnsmasq，需要设置<code>/etc/cobbler/settings</code> 中为 <code>manage_dhcp: 1</code>，<br>然后修改 <code>/etc/cobbler/modules.conf</code>，将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[dhcp]</div><div class="line">module = manage_isc   # isc 即 dhcpd</div><div class="line"># 改为</div><div class="line">[dhcp]</div><div class="line">module = manage_dnsmasq</div></pre></td></tr></table></figure></p>
+<p>然后修改 <code>/etc/cobbler/dnsmasq.template</code>，dnsmasq的配置比较简单，只要修改IP区间即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dhcp-range=10.1.1.100,10.1.1.110</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意 dhcpd 与 dnsmasq 的区间格式不同，配置文件的格式错误会导致服务无法启动。<br>如果只是临时提供 dhcp 服务，可设置比较小的区间，<strong>特别要避免与已有的重要服务器发生 IP地址 冲突</strong>！</p>
+</blockquote>
+<h2 id="启动相关服务"><a href="#启动相关服务" class="headerlink" title="启动相关服务"></a>启动相关服务</h2><blockquote>
+<p>注意： 重启服务器后，需要确认下面的几项服务是否正常启动。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start cobblerd dhcpd httpd rsyncd tftp xinetd</div></pre></td></tr></table></figure>
+<h2 id="执行-cobbler-check"><a href="#执行-cobbler-check" class="headerlink" title="执行 cobbler check"></a>执行 <code>cobbler check</code></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># 输出如下，可见只有一项问题，因为安装的是CentOS系统，可以忽略这一项。</div><div class="line">The following are potential configuration items that you may want to fix:</div><div class="line">1 : debmirror package is not installed, it will be required to manage debian deployments and repositories</div><div class="line">Restart cobblerd and then run &apos;cobbler sync&apos; to apply changes.</div></pre></td></tr></table></figure>
+<ul>
+<li>如果提示需下载额外的boot loader，可执行 <code>cobbler get-loaders</code> ，这 <strong>不是必须的</strong>，因为已经自带了常用系统的loader。如果确实要下载，且要使用代理的话，<code>/etc/cobbler/settings</code> 中可以在 <code>proxy_url_ext</code> 设置代理地址。</li>
+<li>如果输出中说 httpd无法访问 或 SELinux 没有关闭，执行<code>systemctl status httpd</code> 查看，还可以通过访问 <a href="http://10.1.1.10" target="_blank" rel="external">http://10.1.1.10</a> （next_server的IP地址）来确认.可能是 <code>/etc/cobbler/settings</code> 中 <code>next_server</code> 或 <code>server</code> 的 IP地址 设置错误，改正IP地址后尝试重启 httpd。</li>
+</ul>
+<p>再次执行 <code>cobbler check</code>，并检查相关的服务是否正常启动，然后继续执行下面的步骤。</p>
+<h2 id="导入CentOS系统的iso安装镜像"><a href="#导入CentOS系统的iso安装镜像" class="headerlink" title="导入CentOS系统的iso安装镜像"></a>导入CentOS系统的iso安装镜像</h2><p>虚拟机中已经为Guest OS加载了iso文件到<code>/dev/cdrom</code>，需要再挂载到<code>/mnt</code>：<code>mount -t auto -o loop,ro /dev/cdrom /mnt</code>；<br>也可以直接挂载iso文件：<code>mount -t iso9660 -o loop,ro /your/path/to/CentOS-7-x86_64-Minimal-1611.iso /mnt</code>。</p>
+<p>导入安装镜像：<code>cobbler import --name=centos --arch=x86_64 --path=/mnt</code>。<br>等几分钟才能执行完import，因为这一步把安装光盘拷贝到了 <code>/var/www/cobbler/ks_mirror/</code></p>
+<p>查看导入的项目：<code>cobbler profile list</code><br>输出为 centos-x86_64，进一步查看，<code>cobbler profile report --name=centos-x86_64</code>。</p>
+<h2 id="修改Kickstarts文件"><a href="#修改Kickstarts文件" class="headerlink" title="修改Kickstarts文件"></a>修改Kickstarts文件</h2><p>从上面的命令输出可知使用的Kickstart文件在 <code>/var/lib/cobbler/kickstarts/sample_end.ks</code><br>修改下面2项</p>
+<ul>
+<li><code>firewall --enable</code>            改为 <code>firewall --disable</code></li>
+<li><code>timezone  America/New_York</code>   改为 <code>timezone  Asia/Shanghai</code></li>
+</ul>
+<h2 id="更新设置，最后的检查"><a href="#更新设置，最后的检查" class="headerlink" title="更新设置，最后的检查"></a>更新设置，最后的检查</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cobbler sync</div><div class="line">systemctl restart cobblerd</div><div class="line">cobbler check</div></pre></td></tr></table></figure>
+<h1 id="在其它机器使用PXE安装系统"><a href="#在其它机器使用PXE安装系统" class="headerlink" title="在其它机器使用PXE安装系统"></a>在其它机器使用PXE安装系统</h1><p>新建一个虚拟机，不要直接启动，而是通过菜单选择“虚拟机 -&gt; 电源 -&gt; 打开电源时进入固件”，在虚拟机的BIOS中将网络启动设置为第一项，然后按 <code>F10</code> 键保存并重启虚拟机。<br><img src="/img/pxe-boot-config.png" alt=""></p>
+<p>稍等一下，DHCP配置完成后会显示启动项如下：<br><img src="/img/pxe-boot-menu.png" alt=""><br>选择第二项 centos-x86_64，回车，就会开始自动安装。</p>
+<p>稍等一会儿，安装完成后自动重启。可以按上面的步骤，在BIOS中修改默认启动项为本机硬盘。<br>从本机硬盘启动后，以root用户登录，密码就是之前使用openssl设置的密码，查看一下分配的IP地址，可以用ssh登录后继续系统管理操作。</p>
+<blockquote>
+<p>从Cobbler官网的手册来看，它支持profile和system命令，应该是支持多网卡和多种操作系统的Profile等复杂需求的；<br>此外还可以在<a href="/doc/cobbler-setting.txt">settings</a>中设置加入LDAP domain，代理，安装软件包，配置用户ssh key等等功能，以及构建定制的系统iso镜像，<br>在Kickstart文件中也可以完成硬盘分区，安装软件包，配置用户等等功能。<br>水平有限，就不深入这些功能了;-(</p>
+</blockquote>
+<hr>
+<h1 id="在docker容器中运行cobbler"><a href="#在docker容器中运行cobbler" class="headerlink" title="在docker容器中运行cobbler"></a>在docker容器中运行cobbler</h1><h2 id="docker容器使用systemd"><a href="#docker容器使用systemd" class="headerlink" title="docker容器使用systemd"></a>docker容器使用systemd</h2><p>通过 <code>docker pull centos:7</code> 直接pull下来的镜像 <strong>不能使用</strong> <code>systemd</code>， 因为这与 docker 的 <strong>单容器单进程</strong> 哲学不相容~~<br>我们需要自己build一个支持systemd的镜像，参考 <a href="https://hub.docker.com/_/centos/" target="_blank" rel="external">Docker Hub 的 CentOS镜像</a> 或<a href="https://store.docker.com/images/d5052416-4069-4619-8597-ba61df35ba6f" target="_blank" rel="external">Docker Store 的  CentOS</a>的页面中 <strong>Systemd integration</strong> 一节提供的 Dockerfile 即可。</p>
+<p>再此镜像之上再build一个cobbler的镜像，这里偷懒，cobbler的Dockerfile只是安装安装必要的软件（<strong>增加 which 和 curl</strong>），启用相关服务项，其它设置进入容器的shell手工修改。</p>
+<p>假设这个镜像的 tag 为 cobbler:default，启动一个容器，使用</p>
+<ul>
+<li>host 网络，<code>--network host</code></li>
+<li>特权模式，<code>--privileged</code></li>
+<li>挂载cgroup的fs，以使用systemd，<code>-v /sys/fs/cgroup:/sys/fs/cgroup:ro</code></li>
+<li>挂载<code>/mnt</code>，这是已经挂载到主机的CentOS安装文件iso镜像，<code>-v /mnt:/mnt:ro</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker run -d --privileged --network host -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /mnt:/mnt:ro \ </div><div class="line">--name cobbler cobbler:latest /usr/sbin/init</div></pre></td></tr></table></figure>
+<p>因为容器的<code>Entrypoint</code>是<code>/usr/sbin/init</code>，而且是<code>-d</code>，即detached，启动后不会进入shell。<br>可以通过<code>docker exec</code>执行容器的shell，需要增加 <code>-ti</code>选项为shell分配一个终端，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker exec -ti cobbler bash</div></pre></td></tr></table></figure></p>
+<p>退出容器（不会停止容器运行）的快捷键是 Ctrl + P, Q，或在容器的shell中执行<code>exit</code>。</p>
+<p>按上述步骤启动容器，在容器的shell中执行上一节的操作，修改配置，导入iso镜像，检查各项服务是否正常启动。</p>
+<h2 id="使用容器的几个坑"><a href="#使用容器的几个坑" class="headerlink" title="使用容器的几个坑"></a>使用容器的几个坑</h2><blockquote>
+<p>Docker官方的CentOS镜像太精简了，</p>
+<ul>
+<li>没有 <code>curl</code> 及 <code>wget</code>，还少了 <code>which</code>， 也需要装上；</li>
+<li><code>/etc/httpd/logs</code>是一个链接，但应该是一个目录，结果导致 httpd 无法启动。把原来的链接删掉，新建一个<code>/etc/httpd/logs/</code>目录即可；</li>
+<li>没有 <code>/var/log/cobbler/tasks</code> 目录，导致cobbler sync 失败，手动创建该目录。 </li>
+</ul>
+</blockquote>
+<h1 id="真机上部署遇到的问题"><a href="#真机上部署遇到的问题" class="headerlink" title="真机上部署遇到的问题"></a>真机上部署遇到的问题</h1><h2 id="选择合适的网卡"><a href="#选择合适的网卡" class="headerlink" title="选择合适的网卡"></a>选择合适的网卡</h2><p>服务器有2个网卡，BIOS默认只有一个网卡能通过PXE启动机器。一般的机器都是<code>em1</code>，但有的机器需要修改BIOS选择<code>em2</code>网卡才行。</p>
+<h2 id="Dell-iDRAC"><a href="#Dell-iDRAC" class="headerlink" title="Dell iDRAC"></a>Dell iDRAC</h2><p>服务器是Dell的，有2种型号，分别通过iDRAC6 和 iDRAC8 web界面远程管理。它们都可以提供服务器的画面显示，鼠标和键盘控制，并且可以将本地的iso镜像/光驱挂载为远程服务器的虚拟光驱。<br>在使用PXE之前，先要装好一台机器。<br>装机之前，先把iDRAC的固件升级了一下，通过机器的服务标签可以搜索到对应的固件。<br>iDRAC6 的画面显示是通过 jnlp控件 显示的，要安装好 jre，并在控制面板的Java选项（或直接执行<code>javacpl.exe</code>）中添加 <code>安全例外项</code>。jnlp控件都是一次性的，每个会话都要重新下载，还要点击n个安全提示对话框。最好使用IE，使用Chrome出现过安装系统快结束时页面错误，功亏一篑。</p>
+<blockquote>
+<p>iDRAC6 的 jviewer jnlp控件对应的jar包证书比较旧了，如果使用较新的jre，会因为证书过期而无法执行jnlp控件，所以需要安装 java 7 版本的 jre。</p>
+</blockquote>
+<p>通过jnlp安装CentOS不管什么版本都是图形化的安装界面，太耗资源了，先要黑屏等着等传过去一堆文件之后才能显示出安装界面来，在安装界面虽然鼠标指针可以移动，但单击没有反应，键盘也没有反应;-(<br>安装Ubuntu Server版基于的文本安装界面，很快就可以显示出来，可以只用键盘操作。</p>
+<p>旧版iDRAC8 的jnlp同样是有显示但无法操作，好在升级后可以使用 html5 的新界面，而且支持多个会话。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://cobbler.github.io/manuals/quickstart/" target="_blank" rel="external">Cobbler Quick Start</a></li>
+<li><a href="http://readshlinux.blog.51cto.com/9322509/1812402" target="_blank" rel="external">Centos7.2安装Cobbler 并安装系统</a></li>
+<li><a href="http://www.linuxtechi.com/install-and-configure-cobbler-on-centos-7/" target="_blank" rel="external">How to Install and Configure Cobbler on CentOS 7.x</a></li>
+</ul>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/cloud/2017/vm-net-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          再说docker及云中的网络连接
+        
+      </div>
+    </a>
+  
+  
+    <a href="/cloud/2017/spanner-truetime-cap/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">【译文】Spanner, TrueTime 和CAP理论</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>

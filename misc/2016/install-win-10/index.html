@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>安装和设置Windows 10 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录一下安装Windows 10 LTSB 及 基本设置作为备忘。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装和设置Windows 10">
+<meta property="og:url" content="https://ying-zhang.github.io/misc/2016/install-win-10/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="记录一下安装Windows 10 LTSB 及 基本设置作为备忘。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-30T03:42:23.339Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安装和设置Windows 10">
+<meta name="twitter:description" content="记录一下安装Windows 10 LTSB 及 基本设置作为备忘。">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-install-win-10" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      安装和设置Windows 10
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/misc/2016/install-win-10/" class="article-date">
+  <time datetime="2016-09-16T16:00:00.000Z" itemprop="datePublished">2016-09-17</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/misc/">misc</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>记录一下安装Windows 10 LTSB 及 基本设置作为备忘。</p>
+<a id="more"></a>
+<!-- TOC -->
+<ul>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-ltsb">为什么是 LTSB</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAusb%E5%AE%89%E8%A3%85%E7%9B%98%EF%BC%8C%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F">创建USB安装盘，安装系统</a></li>
+<li><a href="#%E7%A1%AC%E7%9B%98%E5%88%86%E5%8C%BA%E8%A7%84%E5%88%92">硬盘分区规划</a></li>
+<li><a href="#%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE">常用快捷键</a></li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE">系统设置</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7">安装Linux常用工具</a></li>
+<li><a href="#windows-server-2016-%E7%9A%84%E8%AE%BE%E7%BD%AE">Windows Server 2016 的设置</a></li>
+<li><a href="#reg%E6%96%87%E4%BB%B6">Reg文件</a></li>
+<li><a href="#%E5%85%B6%E5%AE%83">其它</a><ul>
+<li><a href="#%E5%BC%80%E5%90%AF%E8%99%9A%E6%8B%9Fwifi">开启虚拟wifi</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="为什么是-LTSB"><a href="#为什么是-LTSB" class="headerlink" title="为什么是 LTSB"></a>为什么是 LTSB</h1><p>1、Win10 LTSB企业版没有Edge浏览器<br>2、无应用商店<br>3、无任何系统自带磁贴程序<br>4、无Cortana<br>5、在系统更新方面，用户能完全手动控制更新，选择和决定自己要的更新和驱动，更新内容和更新时间可以随意控制，但不能无限期推迟。<br>总结起来就是微软官方精简版啊。而且学校的KMS可以正常激活2015版的LTSB。<br>此外，还可以使用有学校后缀的Email在微软的[<a href="https://imagine.microsoft.com/zh-cn" target="_blank" rel="external">https://imagine.microsoft.com/zh-cn</a>] 认证一个学生帐号，即可免费获得一个Windows Server 2016版的密钥。Win Server也是精简的，还可以彻底卸载Defender。</p>
+<h1 id="创建USB安装盘，安装系统"><a href="#创建USB安装盘，安装系统" class="headerlink" title="创建USB安装盘，安装系统"></a>创建USB安装盘，安装系统</h1><p>搜索<code>cn_windows_10_enterprise_2016_ltsb_x64_dvd_9060409.iso</code> 或在[<a href="http://msdn.itellyou.cn" target="_blank" rel="external">http://msdn.itellyou.cn</a>] 找到下载的ED2K链接，下载后用<a href="http://rufus.akeo.ie/" target="_blank" rel="external">Rufus</a> 制作USB启动安装盘，注意要 <strong>取消</strong> <code>高级选项</code> 中的 <code>使用Rufus MBR配合 BIOS ID...</code>。<br>然后重启机器，选择从U盘启动，按界面一步步安装系统即可。新建的用户一定要设置密码，方便后面远程操作。</p>
+<h1 id="硬盘分区规划"><a href="#硬盘分区规划" class="headerlink" title="硬盘分区规划"></a>硬盘分区规划</h1><p>买一个SSD，只分一个区，即C盘，系统装在上面，以后的应用程序一般也按默认路径装在C盘。机器自带的机械硬盘，也只分一个区，保存个人数据。如果只有一块硬盘，也只要分一个系统分区和一个数据分区即可。多分无用，平添麻烦。如果需要Linux，装在虚拟机里，不要搞双系统。</p>
+<h1 id="常用快捷键"><a href="#常用快捷键" class="headerlink" title="常用快捷键"></a>常用快捷键</h1><ul>
+<li>Win + D : 切换显示桌面</li>
+<li>Win + E : 打开<code>文件资源管理器</code></li>
+<li>Win + R : 打开<code>运行</code>对话框</li>
+<li>Win + X : 打开<code>开始</code>按钮的右键快捷菜单，<em>基本</em> 对应于<code>C:\Users\Ying\AppData\Local\Microsoft\Windows\WinX</code>目录的快捷方式<ul>
+<li>F : 程序和功能（即弹出上面的菜单后，松开手，再按小写的 <code>F</code> 键，或写成<code>Win+X, F</code>，这些键都在每个菜单项后面标出来了）</li>
+<li>P : 控制面板</li>
+<li>Y : 系统属性</li>
+<li>C/A : 命令窗口</li>
+<li>G : 计算机管理</li>
+<li>U, I : 注销</li>
+<li>U, R : 重启</li>
+<li>U, U : 关机</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><a href="http://blog.sina.com.cn/s/blog_a0c06a350102y239.html" target="_blank" rel="external">向Win+X添加快捷方式</a>。为了方便使用git附带的minGW，创建了一个指向<code>git-bash.exe</code>的快捷方式。可以在<code>C:\Users\Ying\.bash_profile</code>增加一个<code>cd /E/Code</code>的命令来修改<code>git-bash</code>的默认启动目录。</p>
+</blockquote>
+<h1 id="系统设置"><a href="#系统设置" class="headerlink" title="系统设置"></a>系统设置</h1><ol>
+<li>安装系统更新（会自动安装大部分驱动）</li>
+<li>在<code>系统属性</code>对话框中<ul>
+<li>更改计算机名</li>
+<li>调整视觉效果，禁用虚拟内存，修改默认启动项和等待时间，修改环境变量</li>
+<li>禁用系统保护</li>
+<li>禁用远程协助，开启远程桌面</li>
+</ul>
+</li>
+<li>关闭休眠：Win+X, A，然后再命令行输入 <code>powercfg /h off</code></li>
+<li>在每个分区，打开<code>分区属性</code>对话框，取消<code>除了文件属性外，还允许索引此驱动器上的文件内容</code>；磁盘清理，删除<code>Windows.old</code></li>
+<li>安装字体，如<code>Microsoft Yahei Mono</code>，更改命令行窗口的默认字体（使用Microsoft Yahei Mono，见下面的注册表项）、颜色和半透明效果；更改记事本的字体</li>
+<li>更改IE主页为<code>about:tabs</code>，删除内置的加速器</li>
+<li>在<code>文件夹选项</code><ul>
+<li>设置<code>打开文件资源管理器时打开</code>此电脑</li>
+<li>取消隐私相关选项</li>
+<li><code>查看</code>中将大图标文件夹视图<code>应用到文件夹</code></li>
+<li>取消<code>使用共享向导</code></li>
+<li>取消<code>始终显示图标，从不显示缩略图</code></li>
+<li>取消<code>隐藏受保护的操作系统文件</code>，选择<code>显示隐藏的文件、文件夹或驱动器</code></li>
+<li>取消<code>隐藏已知文件类型的扩展名</code></li>
+</ul>
+</li>
+<li>在<code>个性化-&gt;主题-&gt;桌面图标设置</code>中选中显示<code>计算机</code>桌面图标</li>
+<li>任务栏上不显示搜索和任务视图按钮，使用小图标，显示所有托盘图标</li>
+<li>禁用防火墙，取消<code>安全性与维护</code>中的所有消息</li>
+<li>禁用Defender，：组策略，计算机配置，管理模板，Windows组件，Windows Defender</li>
+<li>禁用contana：组策略，计算机配置，管理模板，Windows组件，搜索</li>
+<li>安装<code>百度输入法</code>，设置使用双拼；安装<code>7zip</code>，<code>迅雷精简版</code>，<code>Everything</code></li>
+<li>移动系统默认文件夹<ul>
+<li>在D盘新建<code>D:\桌面</code>，<code>D:\下载</code>，<code>D:\App</code>，<code>D:\文档\音乐</code>，<code>D:文档\图片</code>，<code>D:\文档\视频</code>，<code>D:文档\收藏夹</code></li>
+<li>在<code>C:\Users\Ying\</code>各系统默认文件夹的属性对话框的<code>位置</code>选项卡中，将其移动到对应的D盘新位置</li>
+<li><code>D:\App</code>存放一些绿色免安装的程序</li>
+<li><strong>不要</strong> 使用以前的更改注册表的方法来移动默认文件夹</li>
+</ul>
+</li>
+<li>删除/合并开始菜单项<ul>
+<li><code>C:\ProgramData\Microsoft\Windows\Start Menu</code></li>
+<li><code>C:\Users\Ying\AppData\Roaming\Microsoft\Windows\Start Menu</code></li>
+</ul>
+</li>
+<li>禁用某些服务</li>
+<li>安装360，检查/清理系统，优化设置，然后卸掉；下载魔方PC Master绿色版，删掉自动更新等无关程序，使用<code>cleanmaster.exe</code>清理磁盘和隐私项，使用<code>winmaster.exe</code>清理右键菜单</li>
+</ol>
+<p>Ghost制作系统备份。之后安装Office，Acrobat，QQ影音，Paint.net，xshell，Chrome，QQ，微信，百度云，Visual Studio Code，VMWare，MikTex，TexStudio，Jetbrains全家桶，打印机驱动等。</p>
+<h1 id="安装Linux常用工具"><a href="#安装Linux常用工具" class="headerlink" title="安装Linux常用工具"></a>安装Linux常用工具</h1><p>安装git（不是Github，当然也可以），其中自带<code>MinGW</code>，其中有<code>bash</code>、<code>curl</code>、<code>vim</code>、<code>ssh</code>等工具。<br>在<code>PATH</code>环境变量中添上其路径（<code>D:\App\git\mingw64\bin</code>，<code>D:\App\Git\usr\bin</code>和<code>D:\App\Git\bin</code>）即可。<br>还可以安装 <a href="https://msdn.microsoft.com/en-us/commandline/wsl/install_guide" target="_blank" rel="external">Linux Subsystem on Windows（WSL）</a> 和 ‎Bash on Ubuntu on Windows。</p>
+<h1 id="Windows-Server-2016-的设置"><a href="#Windows-Server-2016-的设置" class="headerlink" title="Windows Server 2016 的设置"></a>Windows Server 2016 的设置</h1><ul>
+<li>安装系统更新，鲁大师安装不能识别的设备驱动</li>
+<li>设置Windows audio服务为自动启动</li>
+<li>卸载Defender</li>
+<li>组策略-&gt; 计算机配置<ul>
+<li>Windows设置-&gt; 安全设置-&gt; 帐户策略-&gt; 密码策略-&gt; 密码必须符合复杂性要求</li>
+<li>Windows设置-&gt; 安全设置-&gt; 本地策略-&gt; 安全选项-&gt; 交互式登录：无须按Ctrl+Alt+Del</li>
+<li>管理模板-&gt; 系统-&gt; 显示“关闭事件跟踪程序”</li>
+</ul>
+</li>
+</ul>
+<h1 id="Reg文件"><a href="#Reg文件" class="headerlink" title="Reg文件"></a>Reg文件</h1><p><a href="/doc/win10.reg">直接下载Win10.reg</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">Windows Registry Editor Version 5.00</div><div class="line"></div><div class="line">;更改命令行窗口字体</div><div class="line">[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont]</div><div class="line">&quot;0&quot;=&quot;Lucida Console&quot;</div><div class="line">&quot;936&quot;=&quot;*Microsoft YaHei Mono&quot;</div><div class="line">&quot;00&quot;=&quot;Consolas&quot;</div><div class="line"></div><div class="line">;开启的分区共享(C$, D$...)</div><div class="line">[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System]</div><div class="line">&quot;LocalAccountTokenFilterPolicy&quot;=dword:00000001</div><div class="line"></div><div class="line">;清除通知区域图标，需重启文件资源管理器</div><div class="line">[-HKEY_CURRENT_USER\Software\Classes\LocalSettings\Software\Microsoft\Windows\CurrentVersion\TrayNotify\PastIconsStream]</div><div class="line">[-HKEY_CURRENT_USER\Software\Classes\LocalSettings\Software\Microsoft\Windows\CurrentVersion\TrayNotify\IconStreams]</div><div class="line"></div><div class="line">;删除“此电脑”下的6个文件夹</div><div class="line">;视频</div><div class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a&#125;]</div><div class="line">;文档</div><div class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;d3162b92-9365-467a-956b-92703aca08af&#125;]</div><div class="line">;桌面</div><div class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;B4BFCC3A-DB2C-424C-B029-7FE99A87C641&#125;]</div><div class="line">;音乐</div><div class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;3dfdf296-dbec-4fb4-81d1-6a3438bcf4de&#125;]</div><div class="line">;下载</div><div class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;088e3905-0323-4b02-9826-5d99428e115f&#125;]</div><div class="line">;图片</div><div class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;24ad3ad4-a569-4530-98e1-ab02f9417aa8&#125;]</div><div class="line"></div><div class="line">;删除文件资源管理器左侧的OneDrive</div><div class="line">[HKEY_CLASSES_ROOT\CLSID\&#123;018D5C66-4533-4307-9B53-224DE2ED1FE6&#125;\ShellFolder]</div><div class="line">&quot;FolderValueFlags&quot;=dword:00000028</div><div class="line">&quot;Attributes&quot;=dword:f090004d</div><div class="line"></div><div class="line">;使用“照片查看器”打开图片</div><div class="line">[HKEY_CURRENT_USER\Software\Classes\.jpg]</div><div class="line">@=&quot;PhotoViewer.FileAssoc.Tiff&quot;</div><div class="line">[HKEY_CURRENT_USER\Software\Classes\.jpeg]</div><div class="line">@=&quot;PhotoViewer.FileAssoc.Tiff&quot;</div><div class="line">[HKEY_CURRENT_USER\Software\Classes\.gif]</div><div class="line">@=&quot;PhotoViewer.FileAssoc.Tiff&quot;</div><div class="line">[HKEY_CURRENT_USER\Software\Classes\.png]</div><div class="line">@=&quot;PhotoViewer.FileAssoc.Tiff&quot;</div><div class="line">[HKEY_CURRENT_USER\Software\Classes\.bmp]</div><div class="line">@=&quot;PhotoViewer.FileAssoc.Tiff&quot;</div><div class="line">[HKEY_CURRENT_USER\Software\Classes\.tiff]</div><div class="line">@=&quot;PhotoViewer.FileAssoc.Tiff&quot;</div></pre></td></tr></table></figure>
+<h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><h2 id="开启虚拟wifi"><a href="#开启虚拟wifi" class="headerlink" title="开启虚拟wifi"></a>开启虚拟wifi</h2><p>设置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">netsh wlan set hostednetwork mode=allow ssid=Ying key=12345678</div></pre></td></tr></table></figure></p>
+<p>开启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">netsh wlan start hostednetwork</div></pre></td></tr></table></figure></p>
+<p>连接外网<br>有线网卡 的属性中选择<code>共享</code></p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/misc/2016/remote/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          局域网内的远程操作
+        
+      </div>
+    </a>
+  
+  
+    <a href="/misc/2016/install-ubuntu/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">安装Ubuntu Server 16.04 lts</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>

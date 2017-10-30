@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>Hello Hexo！ | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="欢迎访问。本博客使用Hexo生成。本文记录了设置过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hello Hexo！">
+<meta property="og:url" content="https://ying-zhang.github.io/misc/2016/hello-hexo/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="欢迎访问。本博客使用Hexo生成。本文记录了设置过程。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-30T03:51:50.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hello Hexo！">
+<meta name="twitter:description" content="欢迎访问。本博客使用Hexo生成。本文记录了设置过程。">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-hello-hexo" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hello Hexo！
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/misc/2016/hello-hexo/" class="article-date">
+  <time datetime="2016-09-14T16:00:00.000Z" itemprop="datePublished">2016-09-15</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/misc/">misc</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>欢迎访问。<br>本博客使用<a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>生成。本文记录了设置过程。</p>
+<a id="more"></a>
+<hr>
+<!-- TOC -->
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#%E5%9C%A8ubuntu-1604%E4%B8%8A%E5%AE%89%E8%A3%85%E6%89%80%E9%9C%80%E7%A8%8B%E5%BA%8F">在Ubuntu 16.04上安装所需程序</a><ul>
+<li><a href="#%E5%AE%89%E8%A3%85git">安装git</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85nodejs">安装node.js</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85hexo">安装hexo</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9C%A8windows-10%E4%B8%8A%E5%AE%89%E8%A3%85%E6%89%80%E9%9C%80%E7%A8%8B%E5%BA%8F">在Windows 10上安装所需程序</a><ul>
+<li><a href="#%E5%AE%89%E8%A3%85git">安装git</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85nodejs">安装node.js</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85hexo">安装hexo</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%9D%E6%AC%A1%E8%AE%BE%E7%BD%AE">初次设置</a><ul>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8D%9A%E5%AE%A2%E6%96%87%E4%BB%B6%E5%A4%B9">初始化博客文件夹</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85rss%E6%8F%92%E4%BB%B6%EF%BC%8Cgit%E6%8F%92%E4%BB%B6%EF%BC%8Cmath%E6%8F%92%E4%BB%B6">安装rss插件，git插件，math插件</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE-configyml">设置 <code>_config.yml</code></a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8jane%E4%B8%BB%E9%A2%98httpsgithubcomhejianxianhexo-theme-jane">使用<a href="https://github.com/hejianxian/hexo-theme-jane" target="_blank" rel="external">jane主题</a></a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84">文件结构</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9scaffoldpostmd%E6%A8%A1%E6%9D%BF">修改<code>scaffold/post.md</code>模板</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9-hexo-server%E9%BB%98%E8%AE%A4%E7%9A%844000%E7%AB%AF%E5%8F%A3%E5%8F%B7%E4%B8%BA80">修改 hexo-server默认的4000端口号为80</a></li>
+</ul>
+</li>
+<li><a href="#hexo-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C">hexo 基本操作</a><ul>
+<li><a href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4">常用命令</a></li>
+<li><a href="#%E6%92%B0%E5%86%99%E6%96%87%E7%AB%A0">撰写文章</a></li>
+<li><a href="#%E5%8F%91%E5%B8%83%E9%9D%99%E6%80%81html%E7%9A%84%E5%8D%9A%E5%AE%A2%E7%BD%91%E7%AB%99%E5%88%B0-github">发布静态html的博客网站到 Github</a></li>
+<li><a href="#%E4%B8%BA%E6%95%B4%E4%B8%AAblog%E5%BB%BA%E7%AB%8Brepo">为整个blog建立repo</a></li>
+<li><a href="#%E5%85%8B%E9%9A%86%E5%B7%B2%E6%9C%89%E7%9A%84blog%E9%A1%B9%E7%9B%AE">克隆已有的blog项目</a></li>
+</ul>
+</li>
+<li><a href="#tips">Tips</a><ul>
+<li><a href="#%E7%BC%96%E8%BE%91%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F">编辑数学公式</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%A0%81%E5%9D%97%E4%B8%8D%E6%98%BE%E7%A4%BA%E8%A1%8C%E5%8F%B7">设置代码块不显示行号</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>是一个基于<a href="https://nodejs.org/" target="_blank" rel="external">Node.js</a>的博客生成工具。它把 <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank" rel="external">Markdown 格式</a>的博客文章(Post)转换成一个静态的html博客网站，除了生成文章正文的html页面，还生成了博客列表，分类，tag等辅助页面.<br>hexo有多种博客主题可选，这里使用了 <a href="https://github.com/hejianxian/hexo-theme-jane" target="_blank" rel="external">jane 主题</a>。<br><a href="https://github.com" target="_blank" rel="external">Github</a>提供了<code>https://[github-userId].github.io</code> 这样的二级域名的静态html站点的托管服务，还可以通过<code>CNAME</code>设置自己的域名（需向域名服务商购买）。</p>
+<p>下面的设置过程参考了<a href="http://mclspace.com/2014/10/19/about-hexo/" target="_blank" rel="external">hexo简易教程</a> 和 <a href="http://methor.github.io/%E5%B7%A5%E5%85%B7/hexo/hexo-install-config/" target="_blank" rel="external">hexo_install_config</a>。</p>
+<h1 id="在Ubuntu-16-04上安装所需程序"><a href="#在Ubuntu-16-04上安装所需程序" class="headerlink" title="在Ubuntu 16.04上安装所需程序"></a>在Ubuntu 16.04上安装所需程序</h1><p>如果是桌面版的Ubuntu，打开终端（快捷键为<code>Ctrl+Alt+T</code>），执行下面的命令。</p>
+<h2 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt install git</div></pre></td></tr></table></figure>
+<p>设置 git</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git config --global user.name  &quot;ZHANG Ying&quot;</div><div class="line">git config --global user.email &quot;your@email.com&quot;</div><div class="line">git config --global core.autocrlf input  # true会将LF转换为CRLF，false则不做任何处理</div></pre></td></tr></table></figure>
+<p>git默认使用<code>~/.ssh</code>下的 key，需要在Github上注册对应的public key才能提交代码。</p>
+<h2 id="安装node-js"><a href="#安装node-js" class="headerlink" title="安装node.js"></a>安装node.js</h2><p>a. 从Node.js官网 <a href="https://nodejs.org/en/download/" target="_blank" rel="external">https://nodejs.org/en/download/</a> 下载Linux-x64系统的二进制安装包，解压到<code>/usr/local/</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">cd ~</div><div class="line">ver=v6.9.2</div><div class="line">wget https://nodejs.org/dist/$&#123;ver&#125;/node-$&#123;ver&#125;-linux-x64.tar.xz</div><div class="line"></div><div class="line">tar axf node-$&#123;ver&#125;-linux-x64.tar.xz</div><div class="line">cd node-$&#123;ver&#125;-linux-x64/</div><div class="line">sudo cp -r ./ /usr/local/</div><div class="line">cd ..</div><div class="line">rm -rf node-$&#123;ver&#125;-linux-x64.tar.xz</div></pre></td></tr></table></figure>
+<p>b. 通过添加软件源的方式<br>参考<a href="https://nodejs.org/en/download/package-manager/" target="_blank" rel="external">Installing Node.js via package manager</a>，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -</div><div class="line">sudo apt install -y nodejs</div><div class="line"></div><div class="line">sudo apt install -y build-essential #如果npm安装的包需要在本地编译，则需要安装编译工具如gcc等</div></pre></td></tr></table></figure>
+<h2 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo npm install hexo-cli -g</div></pre></td></tr></table></figure>
+<h1 id="在Windows-10上安装所需程序"><a href="#在Windows-10上安装所需程序" class="headerlink" title="在Windows 10上安装所需程序"></a>在Windows 10上安装所需程序</h1><h2 id="安装git-1"><a href="#安装git-1" class="headerlink" title="安装git"></a>安装git</h2><p>从git官网 <a href="https://git-scm.com/downloads" target="_blank" rel="external">https://git-scm.com/downloads</a> 下载Windows 系统的<a href="https://github.com/git-for-windows/git/releases/download/v2.10.0.windows.1/Git-2.10.0-64-bit.exe" target="_blank" rel="external">git客户端安装程序</a> 。<br>执行安装程序，建议</p>
+<ul>
+<li>将其安装到<code>C:\git</code>这样比较短的路径下，方便以后敲命令，</li>
+<li>并且选择 Use Git and optional Unix tools from the Windows Command Prompt ，</li>
+<li>还要在 How should Git treat line endings in text files? （处理换行符）选项中选择 Checkout as-is, commit Unix-style line endings 。</li>
+</ul>
+<blockquote>
+<p>安装git的同时会安装<a href="http://www.mingw.org/" target="_blank" rel="external">MinGW(Minimalist GNU for Windows)</a>，上面的选项会把git和MinGW的可执行程序添加到<code>PATH</code>环境变量中，这样就可以方便地在Windows命令行窗口直接使用git和其它常用的Unix命令了。<br>安装git后，<code>C:\git\usr\bin</code>下面的<code>.exe</code>程序就是MinGW支持的Unix命令，如bash, ls, mv, cp, grep, cat, sort, head, tail, wc, vim, tar, curl, ssh, scp等。</p>
+</blockquote>
+<p>打开命令窗口（快捷键为Win+X，C或A），参考上面Ubuntu系统的命令设置git 的用户名，Email。<br>Windows系统上git默认使用<code>C:\Users\[UserName]\.ssh</code>下的 key。</p>
+<blockquote>
+<p>以<code>.</code>开头的文件夹需要在命令窗口执行<code>mkdir</code>来创建。</p>
+</blockquote>
+<h2 id="安装node-js-1"><a href="#安装node-js-1" class="headerlink" title="安装node.js"></a>安装node.js</h2><p>从Node.js <a href="https://nodejs.org/en/download/" target="_blank" rel="external">https://nodejs.org/en/download/</a> 下载<a href="https://nodejs.org/dist/v4.5.0/node-v4.5.0-x64.msi" target="_blank" rel="external">Windows x64系统的二进制安装包</a> 。<br>执行安装程序，建议将其安装到<code>C:\nodejs</code>，并选择将其添加到<code>PATH</code>路径中。</p>
+<h2 id="安装hexo-1"><a href="#安装hexo-1" class="headerlink" title="安装hexo"></a>安装hexo</h2><p>打开命令窗口，执行下面的命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-cli -g</div></pre></td></tr></table></figure></p>
+<h1 id="初次设置"><a href="#初次设置" class="headerlink" title="初次设置"></a>初次设置</h1><h2 id="初始化博客文件夹"><a href="#初始化博客文件夹" class="headerlink" title="初始化博客文件夹"></a>初始化博客文件夹</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init blog</div></pre></td></tr></table></figure>
+<p>在Github创建一个名为<code>[github-userId].github.io</code>的项目。</p>
+<h2 id="安装rss插件，git插件，math插件"><a href="#安装rss插件，git插件，math插件" class="headerlink" title="安装rss插件，git插件，math插件"></a>安装rss插件，git插件，math插件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install hexo-generator-feed --save</div><div class="line">npm install hexo-deployer-git   --save</div><div class="line">npm install hexo-math           --save</div></pre></td></tr></table></figure>
+<h2 id="设置-config-yml"><a href="#设置-config-yml" class="headerlink" title="设置 _config.yml"></a>设置 <code>_config.yml</code></h2><p>在 <code>_config.yml</code> 修改博客名，固定链接格式，主题，deploy的repo等。部分设置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">## Themes: https://hexo.io/themes/</div><div class="line">theme: jane</div><div class="line"></div><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repository: git@github.com:ying-zhang/ying-zhang.github.io.git</div><div class="line">  branch: master</div></pre></td></tr></table></figure>
+<h2 id="使用jane主题"><a href="#使用jane主题" class="headerlink" title="使用jane主题"></a>使用<a href="https://github.com/hejianxian/hexo-theme-jane" target="_blank" rel="external">jane主题</a></h2><p>这里没有使用git clone来下载 jane 主题的代码库，而是直接下载代码库的zip文件，解压到<code>themes/</code>文件夹。<br>直接在主题文件中修改了等宽字体，及正文的宽度。<br>顺便删除默认主题landscape。</p>
+<h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><table>
+<thead>
+<tr>
+<th>文件/文件夹</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_config.yml</code></td>
+<td>博客的主配置文件</td>
+</tr>
+<tr>
+<td><code>.deploy_git/</code></td>
+<td>用于push到Github、heroku等的git仓库，里面有与<code>public/</code>相同的内容及<code>.git</code>的记录</td>
+</tr>
+<tr>
+<td><code>public/</code></td>
+<td>生成的完整的静态html网站，执行 <code>hexo clean</code> 会清除此文件夹</td>
+</tr>
+<tr>
+<td><code>scaffolds/</code></td>
+<td>里面有三个<code>.md</code>文件，其中<code>post.md</code>是博客文章的默认模板</td>
+</tr>
+<tr>
+<td><code>node_modules/</code></td>
+<td>每个blog的文件夹中安装的hexo插件</td>
+</tr>
+<tr>
+<td><code>source/</code></td>
+<td>撰写的博客文章要放在<code>source/_post</code>下，<code>source/</code>文件夹下的.md文件都会被生成为.html文件，其它类型的文件和文件夹则保持原样复制到 <code>public/</code>。可以在这里新建一个 <code>img/</code> 文件夹用于保存图片，文章中可以用<code>![图片说明](/img/image.png)</code>这样的代码来插入图片。</td>
+</tr>
+<tr>
+<td><code>themes/</code></td>
+<td>存放主题相关文件，各主题也有自己的<code>_config.yml。</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="修改scaffold-post-md模板"><a href="#修改scaffold-post-md模板" class="headerlink" title="修改scaffold/post.md模板"></a>修改<code>scaffold/post.md</code>模板</h2><p>增加catagory，tags，及摘要和正文的分割线<code>&lt;!--more--&gt;</code>。</p>
+<blockquote>
+<p>注意，Markdown对空格和空行敏感。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">---</div><div class="line">title: &#123;&#123; title &#125;&#125;</div><div class="line">date: &#123;&#123; date &#125;&#125;</div><div class="line">category: misc</div><div class="line">tags: [tag1, tag2]</div><div class="line">---</div><div class="line">摘要部分</div><div class="line">&lt;!--more--&gt;</div><div class="line">---</div><div class="line">正文部分</div></pre></td></tr></table></figure>
+<h2 id="修改-hexo-server默认的4000端口号为80"><a href="#修改-hexo-server默认的4000端口号为80" class="headerlink" title="修改 hexo-server默认的4000端口号为80"></a>修改 hexo-server默认的4000端口号为80</h2><p>如果本机没有跑web服务器占用80端口的话，可以让hexo-server使用80端口而不是默认的4000端口，这样在浏览器直接输入机器名就可以预览blog了。<br>需修改<code>node_modules/hexo-server/index.js</code> 第8行 <code>port</code>。<br>比如我的机器名是z，在chrome地址栏直接输入 <code>z/</code> 即可，ie则需要输入 <a href="http://z/" target="_blank" rel="external">http://z/</a></p>
+<h1 id="hexo-基本操作"><a href="#hexo-基本操作" class="headerlink" title="hexo 基本操作"></a>hexo 基本操作</h1><h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">hexo s     # server   本地预览，http://localhost:4000 。</div><div class="line">hexo d     # deploy   部署整个网站到heroku</div><div class="line">hexo g     # generate 生成静态html</div><div class="line"></div><div class="line">hexo s -g  # 本地预览，编辑了博客文章后，不必重新运行该命令，刷新页面即可，直到按 `Ctrl + C`会退出。</div><div class="line">hexo d -g  # 依次执行生成和部署</div><div class="line"></div><div class="line">hexo clean # 删除 public/ 文件夹下所有内容</div></pre></td></tr></table></figure>
+<h2 id="撰写文章"><a href="#撰写文章" class="headerlink" title="撰写文章"></a>撰写文章</h2><p>执行下面的命令，在<code>source/_posts/</code>下生成名为 <code>New-Post.md</code> 的文件。<br>也可以通过常规的文件操作在<code>source/_posts/</code>下新建一个 <code>New-Post.md</code> 文件。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">hexo n &quot;New Post&quot;</div></pre></td></tr></table></figure>
+<p>更多详情可参考<a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">使用hexo写作</a>的文档。</p>
+<h2 id="发布静态html的博客网站到-Github"><a href="#发布静态html的博客网站到-Github" class="headerlink" title="发布静态html的博客网站到 Github"></a>发布静态html的博客网站到 Github</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">hexo d -g</div></pre></td></tr></table></figure>
+<h2 id="为整个blog建立repo"><a href="#为整个blog建立repo" class="headerlink" title="为整个blog建立repo"></a>为整个blog建立repo</h2><p>Hexo可以将生成的静态html博客网站发布到git仓库，但不会同步<code>source/</code>下源文件，<code>_config.yml</code>设置等。<br>如果需要在别的机器上写blog，还要重新设置，并拷贝这些文件。<br>为此，为已经设置好的博客建立一个新的git repo。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">cd blog/</div><div class="line">git init</div></pre></td></tr></table></figure>
+<p>编辑<code>.gitignore</code>如下。<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">.DS_Store</div><div class="line">Thumbs.db</div><div class="line">node_modules/</div><div class="line">themes/</div><div class="line">public/</div><div class="line">.deploy_git/</div><div class="line">.npmignore</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意：把<code>node_modules/</code>和<code>themes/</code>排除，但把这两个文件夹分别压缩后，这里使用7zip压缩，生成<code>node_modules.7z</code> 和 <code>themes.7z</code> 会包括在git repo中。</p>
+</blockquote>
+<p>在Github创建一个名为<code>blog</code>的项目，<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">git add .</div><div class="line">git commit -m &quot;Init&quot;</div><div class="line">git remote add github git@github.com:ying-zhang/blog.git</div><div class="line">git push -u github master</div></pre></td></tr></table></figure></p>
+<h2 id="克隆已有的blog项目"><a href="#克隆已有的blog项目" class="headerlink" title="克隆已有的blog项目"></a>克隆已有的blog项目</h2><p>当然需要已经安装好git，nodejs和hexo。<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">git clone git@github.com:ying-zhang/blog.git</div><div class="line">cd blog</div><div class="line"></div><div class="line">git remote rename origin github</div><div class="line"></div><div class="line">7z x node_modules.7z    # 不要忘了这一步</div><div class="line">7z x themes.7z</div></pre></td></tr></table></figure></p>
+<h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h1><p>Windows下编辑文本需要注意编码，应使用utf8无bom格式的编码，建议使用<a href="https://atom.io/" target="_blank" rel="external">Atom编辑器</a> (并安装Markdown插件)</p>
+<h2 id="编辑数学公式"><a href="#编辑数学公式" class="headerlink" title="编辑数学公式"></a>编辑数学公式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;% math %&#125;</div><div class="line">\begin&#123;align*&#125;</div><div class="line">-\sum_i&#123;P_i\log_2\frac&#123;P_i&#125;&#123;Q_i&#125;&#125; =&amp; \sum_i&#123;P_i\log_2\frac&#123;Q_i&#125;&#123;P_i&#125;&#125; \\</div><div class="line">\le&amp; \log_2\sum_i&#123;P_i\frac&#123;Q_i&#125;&#123;P_i&#125;&#125; \tag&#123;Jensen 不等式&#125; \\</div><div class="line">=&amp; \log_2\sum_i&#123;Q_i&#125; \\</div><div class="line">=&amp; 0</div><div class="line">\end&#123;align*&#125;</div><div class="line">&#123;% endmath %&#125;</div></pre></td></tr></table></figure>
+<span>$$\begin{align*}
+-\sum_i{P_i\log_2\frac{P_i}{Q_i}} =&amp; \sum_i{P_i\log_2\frac{Q_i}{P_i}} \\
+\le&amp; \log_2\sum_i{P_i\frac{Q_i}{P_i}} \tag{Jensen 不等式} \\
+=&amp; \log_2\sum_i{Q_i} \\
+=&amp; 0
+\end{align*}$$</span><!-- Has MathJax -->
+<h2 id="设置代码块不显示行号"><a href="#设置代码块不显示行号" class="headerlink" title="设置代码块不显示行号"></a>设置代码块不显示行号</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;% codeblock line_number:false%&#125;</div><div class="line">echo &quot;Hello Hexo!&quot;</div><div class="line">&#123;% endcodeblock %&#125;</div></pre></td></tr></table></figure>
+<hr>
+<p>飞鸟集 第128</p>
+<blockquote>
+<p>如果你不等待着要说出完全的真理，那末把话说出来是很容易的。</p>
+</blockquote>
+<p>所以，就随便写吧。</p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/misc/2016/install-ubuntu/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          安装Ubuntu Server 16.04 lts
+        
+      </div>
+    </a>
+  
+  
+    <a href="/misc/2016/obstinate-are-the-trammels/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">罗网是坚韧的</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>

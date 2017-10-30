@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>再说docker及云中的网络连接 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="之前写过一篇关于虚拟机和docker网络的日志，主要介绍的是VM的虚拟网络，顺带提了一下docker的桥接。经过2016年的几次版本升级，docker的网络功能有了很大的改善，已经基本稳定可用了。去年与一个大四做毕设的学弟折腾过一段时间docker网络，这里参考浙大SEL实验室的《Docker容器与容器云 第2版》（下面简称《容器云》书） 4.2节 Docker高级网络实战 ，整理一下相关内容。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再说docker及云中的网络连接">
+<meta property="og:url" content="https://ying-zhang.github.io/cloud/2017/vm-net-2/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="之前写过一篇关于虚拟机和docker网络的日志，主要介绍的是VM的虚拟网络，顺带提了一下docker的桥接。经过2016年的几次版本升级，docker的网络功能有了很大的改善，已经基本稳定可用了。去年与一个大四做毕设的学弟折腾过一段时间docker网络，这里参考浙大SEL实验室的《Docker容器与容器云 第2版》（下面简称《容器云》书） 4.2节 Docker高级网络实战 ，整理一下相关内容。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ying-zhang.github.io/img/wifi-router.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vnet-vxlan.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vnet-pk.png">
+<meta property="og:updated_time" content="2017-10-30T03:41:43.317Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="再说docker及云中的网络连接">
+<meta name="twitter:description" content="之前写过一篇关于虚拟机和docker网络的日志，主要介绍的是VM的虚拟网络，顺带提了一下docker的桥接。经过2016年的几次版本升级，docker的网络功能有了很大的改善，已经基本稳定可用了。去年与一个大四做毕设的学弟折腾过一段时间docker网络，这里参考浙大SEL实验室的《Docker容器与容器云 第2版》（下面简称《容器云》书） 4.2节 Docker高级网络实战 ，整理一下相关内容。">
+<meta name="twitter:image" content="https://ying-zhang.github.io/img/wifi-router.png">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-vm-net-2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      再说docker及云中的网络连接
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/cloud/2017/vm-net-2/" class="article-date">
+  <time datetime="2017-04-07T16:00:00.000Z" itemprop="datePublished">2017-04-08</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/cloud/">cloud</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前写过一篇<a href="https://ying-zhang.github.io/cloud/2016/vm-net/">关于虚拟机和docker网络的日志</a>，主要介绍的是VM的虚拟网络，顺带提了一下docker的桥接。<br>经过2016年的几次版本升级，docker的网络功能有了很大的改善，已经基本稳定可用了。<br>去年<a href="https://github.com/NAP-GHJ/NetTool/blob/master/blog/%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C.md" target="_blank" rel="external">与一个大四做毕设的学弟折腾过一段时间docker网络</a>，这里参考浙大SEL实验室的《Docker容器与容器云 第2版》（下面简称《容器云》书） <strong>4.2节 Docker高级网络实战</strong> ，整理一下相关内容。</p>
+<a id="more"></a>
+<hr>
+<!-- TOC -->
+<pre><code>- [title: 再说docker及云中的网络连接](#title-%E5%86%8D%E8%AF%B4docker%E5%8F%8A%E4%BA%91%E4%B8%AD%E7%9A%84%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5)
+</code></pre><ul>
+<li><a href="#%E5%86%8D%E8%AF%B4docker%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F%EF%BC%8C%E8%B7%AF%E7%94%B1%E5%99%A8%EF%BC%8Cnat%EF%BC%8C%E4%BA%A4%E6%8D%A2%E6%9C%BA">再说Docker桥接模式，路由器，NAT，交换机</a></li>
+<li><a href="#docker%E8%B7%A8%E4%B8%BB%E6%9C%BA%E7%9A%84%E7%BD%91%E7%BB%9C">Docker跨主机的网络</a></li>
+<li><a href="#%E8%B7%A8%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6">跨主机网络的实现机制</a></li>
+<li><a href="#macvlan">macvlan</a></li>
+<li><a href="#overlay%E7%BD%91%E7%BB%9C">overlay网络</a></li>
+<li><a href="#%E5%AF%B9%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E7%9A%84%E9%9C%80%E6%B1%82">对容器网络的需求</a></li>
+<li><a href="#%E5%85%B6%E5%AE%83">其它</a></li>
+<li><a href="#%E8%84%91%E6%B4%9E">脑洞</a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="再说Docker桥接模式，路由器，NAT，交换机"><a href="#再说Docker桥接模式，路由器，NAT，交换机" class="headerlink" title="再说Docker桥接模式，路由器，NAT，交换机"></a>再说Docker桥接模式，路由器，NAT，交换机</h1><p><a href="https://ying-zhang.github.io/cloud/2016/vm-net/index.html#docker-bridge">上篇日志提到Docker的桥接模式（bridge）实际上是NAT方式</a>，也给了两个设置Docker“名副其实”的bridge模式的链接，这点在《容器云》的 “4.2.2 pipework 原理解析：1. 将Docker配置到本地网络环境中” 一节也提到了。<br>实际为NAT的docker bridge模式和类似VM的bridge模式都是用到了Linux bridge虚拟网桥。这个虚拟设备其实既是一个 <strong>虚拟路由器</strong>，也是一个 <strong>虚拟交换机</strong>，因为（家用）路由器的一侧就包括了一个交换机。<br>参考下图。<br><img src="/img/wifi-router.png" alt="家用无线路由器拓扑"></p>
+<ul>
+<li>如果把墙上的网口用网线接到路由器的 <strong>WAN口</strong>，把家里的PC，手机等接到路由器的 <strong>有线LAN口</strong> 或 <strong>wifi</strong>，这是路由器的正常工作模式，即 <strong>NAT模式</strong>，类似于 <strong>docker的bridge模式</strong>。</li>
+<li>如果稍稍开一下脑洞，把网线接到 <strong>有线LAN口中的任意一个</strong>，留着WAN口什么也不接，这时PC，手机等设备还是能连到网络上的！这时只用了路由器的LAN一侧，只工作在 <strong>交换机</strong> 模式，这类似于 <strong>VM的bridge模式</strong>。其实交换机的功能就是把一个网络端口变成多个网络端口。</li>
+</ul>
+<h1 id="Docker跨主机的网络"><a href="#Docker跨主机的网络" class="headerlink" title="Docker跨主机的网络"></a>Docker跨主机的网络</h1><p>上面强调docker的bridge模式名不副实，其实是因为docker早期版本缺少跨主机的网络功能，造成了诸多不便。在“传统的”VM技术中，是使用bridge模式来实现不同物理主机上VM直接联网的，即将VM网络接入到主机网络环境中。docker虽然用了同样的称呼，但没有提供同样的功能，除了端口映射和host模式，没有办法方便地将不同物理主机上的容器互相连通，让docker的用户非常痛苦。<br>多个第三方工具，比如pipework、weave、socketplane、flannel，calico等都是为了实现docker的跨主机网络。最终，在docker 1.9，docker提供了内置的Overlay网络模式。</p>
+<p>回顾一下docker支持的网络模式 <a href="https://docs.docker.com/engine/userguide/networking/" target="_blank" rel="external">https://docs.docker.com/engine/userguide/networking/</a> ：</p>
+<ul>
+<li>none：docker撒手不管，由用户或第三方工具提供网络功能，上节中pipework就是这样的工具；</li>
+<li>host：直接使用主机的网络栈，即没有网络隔离；</li>
+<li>bridge：NAT模式，容器可以使用主机的网络访问外部，但外部访问容器的应用需要做端口映射，即在<code>docker run</code>命令中提供<code>-p</code>参数</li>
+<li>overlay, gwbridge：这是ver 1.9引入的覆盖网络，下面会单独介绍。</li>
+</ul>
+<blockquote>
+<p>docker还有一种<code>container</code>模式，使用已有容器的网络。Kubernetes的Pod是依赖于这种网络模式的：一个Pod包括多个功能相关的容器，它们共用一个网络栈，是 <a href="https://github.com/kubernetes/kubernetes/tree/master/build/pause" target="_blank" rel="external"><strong>史上最小的docker镜像</strong> <code>pause</code> </a>创建的。<br>新版本（我使用的17.05.0-ce版）的docker使用这种模式的命令参数是<code>docker run --net container:&lt;network-container-name&gt; &lt;image&gt; &lt;entrypoint&gt;</code></p>
+</blockquote>
+<h1 id="跨主机网络的实现机制"><a href="#跨主机网络的实现机制" class="headerlink" title="跨主机网络的实现机制"></a>跨主机网络的实现机制</h1><p>跨主机网络需要处理：</p>
+<ul>
+<li>容器和主机网络的拓扑：即哪个容器子网对应于哪台物理主机。拓扑信息的源头当然是容器启动命令，可以通过标准路由协议在各主机的网络组件守护进程之间交换信息，也可以将拓扑信息写入etcd这样的高可用集中存储。</li>
+<li>数据包的转发：iptables，VXLAN等。</li>
+<li>子网隔离：对跨主机的网络，除了实现不同主机上的容器之间能够联网互通，还要能 <strong>不通</strong>，属于不同子网的容器之间不能通讯。</li>
+</ul>
+<p>不同的实现机制，在功能和性能上有所区别：</p>
+<ul>
+<li>将容器置于主机网络中：类似上面提到的VM的bridge模式，及macvlan方式；这种方式需要 <strong>外部机制</strong> 来支持子网，一般是传统的 <strong>VLAN</strong>，即交换机端口设置不同的VLAN ID；VLAN的12位长度限制了子网的数量，对公有云平台是一个限制，但对企业内的私有云一般是够用了。</li>
+<li>路由转发：如<code>calico</code>，仍然使用docker的bridge模式，但不再使用NAT，而是 <strong>路由转发</strong>；NAT的出现是解决私有子网（<code>10.0.0.0/8， 172.16.0.0/12， 192.168.0.0/24</code>），所以路由器对这几个IP网段特别处理了。如果把这3个网段当成普通的IP网段，容器网络和主机网络就跟普通的多层IP网络是一样的（当然主机可以直接通讯，多数情况不必经过物理的核心路由器）。这样 <strong>虚拟交换机</strong> 就不够用了， 需要 <strong>虚拟路由器</strong>，<code>iptables</code> 就是这样一个虚拟路由器（软件路由器，也被作为防火墙）。可以手动添加iptables的路由条目；也可以使用工具自动化这个过程，比如通过标准的路由协议，或开发非标准的方式。</li>
+<li>overlay网络：docker内置了overlay支持，CoreOS的flannel也是早期比较常用的overlay网络工具，Kubernetes就是使用的flannel。overlay网络是将容器的数据包封装起来，当成普通的数据，到目的主机后再拆开，转发给对应的目的容器。</li>
+</ul>
+<blockquote>
+<p>路由转发和overlay方式都有一个 <strong>限制</strong>：每个物理主机上的容器子网必须在 <strong>不同</strong> 的网段。因为这2种方式都会用到docker网桥（docker0），网桥会聪明地通过子网掩码识别哪些数据包是它负责的本地LAN，只有不是同一子网的数据包才会从这个网桥发出去。<br>不过这个限制可以被绕过去。比如从calico或flannel的设置看起来，不同主机上的容器子网是在同一个IP网段的（比如<code>10.0.0.0/16</code>），但实际上每个主机上的容器子网是更细的网段，比如主机A上是<code>10.0.1.0/24</code>，主机B上是<code>10.0.2.0/24</code>，甚至使用了<code>10.0.0.1/32</code>这样的“子网”。</p>
+<p>早期docker在每个主机上只能设置一个bridge，同一主机上的容器彼此无法隔离。目前版本的docker可以设置多个网络。</p>
+</blockquote>
+<h1 id="macvlan"><a href="#macvlan" class="headerlink" title="macvlan"></a>macvlan</h1><p>Linux bridge是一个软件实现的虚拟网桥，而macvlan则利用了网卡硬件的支持。<br>目前的docker内置了macvlan支持。参考<a href="https://docs.docker.com/engine/userguide/networking/get-started-macvlan/" target="_blank" rel="external">docker的macvlan文档</a> 和 <a href="https://github.com/alfredhuang211/study-docker-doc/blob/master/docker%E8%B7%A8%E4%B8%BB%E6%9C%BAmacvlan%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE.md" target="_blank" rel="external">数人云的一篇文档 - docker跨主机macvlan网络配置</a>，按下面的例子可以设置macvlan：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"># 主机IP为10.1.1.10/24，网卡名称ens33，首先开启网卡的混杂模式</div><div class="line">ip link set ens33 promisc on</div><div class="line"></div><div class="line"># 创建名为macvlan_net的docker网络</div><div class="line">docker network create -d macvlan --subnet=10.1.1.0/24 --gateway=10.1.1.2 -o parent=ens33 macvlan_net</div><div class="line"></div><div class="line"># 运行容器时指定或动态分配IP。注意，动态分配的IP可能与主机IP冲突</div><div class="line">docker run -ti --net macvlan_net --ip=10.1.1.101  centos:net /bin/bash</div><div class="line">docker run -ti --net macvlan_net centos:net /bin/bash</div></pre></td></tr></table></figure></p>
+<p>上面使用的<code>centos:net</code>镜像是在centos:7基础上安装了<code>iproute</code>和<code>net-tools</code>软件包，以在镜像内提供<code>ip</code>，<code>ifconfig</code>等网络管理命令。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># Dockerfile</div><div class="line">FROM centos:7</div><div class="line">RUN yum install net-tools iproute -y</div><div class="line"></div><div class="line"># docker build . -t centos:net</div></pre></td></tr></table></figure></p>
+<p>按上面的命令创建的2个容器彼此可以pin通，也可以ping通网关和其它主机，但 <strong>不能ping同本主机</strong>，这是macvlan本身的限制（摊手）。macvlan有4种工作模式，可以参考<a href="https://cizixs.github.io/2017/02/14/network-virtualization-macvlan" target="_blank" rel="external">linux 网络虚拟化： macvlan</a>、<a href="https://www.ibm.com/developerworks/cn/linux/1312_xiawc_linuxvirtnet/" target="_blank" rel="external">Linux 上虚拟网络与真实网络的映射</a>和<a href="http://backreference.org/2014/03/20/some-notes-on-macvlanmacvtap/" target="_blank" rel="external">Some notes on macvlan/macvtap</a>，分别为VEPA（不常用，需交换机支持hairpin模式，又称reflective relay反射中继），桥接，私有和Passthru（直通）。<br>使用macvlan网络的容器被置于主机网络中。子网隔离需要VLAN，但实际上同一主机上的容器都使用主机的网线，对应的是交换机的同一个端口，也就是同一个VLAN ID，所以需要macvlan作为一个虚拟交换机，也支持设置VLAN ID。这方面可以参考 <a href="http://t.cn/RXpdDrf" target="_blank" rel="external">基于macvlan的Docker容器网络系统的设计与实现 - 浙江大学硕士学位论文 - 万方</a> 和 <a href="/doc/Virtual_switching_technologies_and_Linux_bridge_ppt.pdf">Virtual switching technologies and Linux bridge - ppt</a>。</p>
+<h1 id="overlay网络"><a href="#overlay网络" class="headerlink" title="overlay网络"></a>overlay网络</h1><p>flannel开始是自己实现的overlay机制，将IP包封装到UDP的数据段，即IP in IP，需要拦截并应答容器的ARP包；后来加入了VXLAN的转发方式。VXLAN是将完整的二层以太网包封装到UDP的数据段，即MAC in IP，提供了完整的虚拟二层网络，而且VXLAN是内核支持的，性能好得多。<br>早期版本flannel的配置可以参考<a href="http://dockone.io/article/618" target="_blank" rel="external">一篇文章带你了解Flannel</a>。<br>关于<a href="https://tools.ietf.org/html/rfc7348" target="_blank" rel="external">VXLAN</a>，从名字上看似乎是VLAN的扩展，但它跟VLAN的实现方式有很大的差别。<br>VLAN是二层以太网包的一个段。对VLAN的支持和VLAN ID是在交换机上设置的（针对交换机各端口，计算机上不需要特别设置）。虽然把VLAN从12位拓展到24位似乎比较简单直接，但需要 <strong>升级交换机</strong> 才能支持新的以太网数据包格式。所以VXLAN把扩展的24位VLAN ID放到了UDP的数据段。VXLAN数据包的处理是通过虚拟的VTEP网卡实现的，实际上是发生在主机上，对交换机而言是透明的。交换机要支持VXLAN还比较复杂些，看起来VXLAN是为主机上的虚拟交换机量身定制的。VXLAN的下层网络可以手动设置点对点的拓扑，也支持通过组播自动发现并组网，不过这样就比较复杂了。<br><img src="/img/vnet-vxlan.png" alt="">。</p>
+<p>VXLAN设计的一个应用场景是在不同的三层网络（如多个数据中心）之上（即overlay）建立一个虚拟的二层网络，即所谓的“大二层”。大二层的需求是为了应对虚拟机的在线迁移。虚拟机一般使用桥接模式，与主机有相同的网络环境。当VM迁移到另一个主机后，VM的MAC和IP应保持不变，以便减少对VM内应用和其用户的影响（虽然VM的MAC和IP没有变化，但新主机对应于交换机的端口发生了变化，用户会经历一小段时间的网络中断，以等待交换机端口学习新的ARP映射）。如果不同主机在不同的VLAN甚至跨数据中心，那么迁移后VM将无法与原VLAN的节点通讯。所以在线迁移需要没有隔离的大二层网络，但这样会造成广播风暴。点对点的VXLAN overlay网络可以比较好的解决这个矛盾。<br>docker出现后，面临的跨主机网络与大二层需求不同但也有类似之处，docker内置的overlay网络就使用了VXLAN转发。</p>
+<blockquote>
+<p>VLAN作为传统的子网隔离机制，是工作在二层的。除了VLAN ID不同，每个VLAN的IP网段也不同，即三层通过IP子网来隔离。VLAN之间如果需要通讯，则需设置经路由转发。</p>
+</blockquote>
+<p>VXLAN是由VMware为主提出来的，微软提出了类似的<a href="https://tools.ietf.org/html/rfc7637" target="_blank" rel="external">NVGRE</a>。NVGRE的数据包格式与VXLAN相比向下兼容性不够好，需要升级设备才能应用。</p>
+<blockquote>
+<p>参考</p>
+<ul>
+<li><a href="http://support.huawei.com/huaweiconnect/enterprise/thread-334207.html" target="_blank" rel="external">【华为悦读汇】技术发烧友：认识VXLAN</a></li>
+<li><a href="http://support.huawei.com/huaweiconnect/enterprise/thread-333013.html" target="_blank" rel="external">【华为悦读汇】技术发烧友：闲话大二层网络</a></li>
+<li><a href="https://www.zhihu.com/question/24393680" target="_blank" rel="external">Overlay 网络技术，最想解决什么问题？</a></li>
+<li><a href="http://t.cn/RXpdege" target="_blank" rel="external">基于容器云平台的网络资源管理与配置系统 - 浙江大学硕士论文 - 万方</a></li>
+</ul>
+</blockquote>
+<h1 id="对容器网络的需求"><a href="#对容器网络的需求" class="headerlink" title="对容器网络的需求"></a>对容器网络的需求</h1><ul>
+<li>提供类似传统网络的体验<ul>
+<li>VPS（Virtual Private Server）× n + 虚拟网络 = VPC（Virtual Private Cloud）：不同租户的子网彼此隔离，租户可以指定或被分配IP网段，DHCP或静态指定IP，关联公网IP以便与互联网连通；</li>
+<li>租户可以有多个子网，设置虚拟路由器；</li>
+<li>安全组，防火墙，负载均衡，DNS；</li>
+</ul>
+</li>
+<li>性能：高带宽，低延迟，扩展性。VXLAN和calico是目前性能比较好的2种技术。</li>
+<li>容器与物理主机，虚拟机互联共存：这一点目前还没有比较好的实现。</li>
+</ul>
+<h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><p>关于Calico，可参考<a href="http://docs.projectcalico.org/v2.1/getting-started/docker/" target="_blank" rel="external">其官网</a>和<a href="http://blog.dataman-inc.com/shurenyun-docker-133/" target="_blank" rel="external">将Docker网络方案进行到底</a>。<br>关于不同网络方式的性能，可参考豆瓣上（是的，豆瓣）的这篇<a href="https://www.douban.com/note/530365327/" target="_blank" rel="external">Docker network on cloud 中文</a>或者 <a href="https://cmgs.me/life/docker-network-cloud" target="_blank" rel="external">https://cmgs.me/life/docker-network-cloud</a> 。这里盗个图。<br><img src="/img/vnet-pk.png" alt=""></p>
+<h1 id="脑洞"><a href="#脑洞" class="headerlink" title="脑洞"></a>脑洞</h1><p>上面的一堆方案，有的自称为SDN，但实际与SDN还有些差距。SDN是针对网络设备的，而这些方案多是在服务器主机上实现虚拟网络设备（交换机，路由器），更接近NFV的目标。<br><strong>被上面一堆方案搞得头痛的，不妨看看这样一个有意思的想法：<a href="https://coreos.com/blog/jumpers-and-the-software-defined-localhost.html" target="_blank" rel="external">Jumpers and the Software Defined Localhost</a>：容器中只有一个loop（127.0.0.1）网卡！完全由外部来管理容器网络。</strong><br>隔离是肯定没问题，都不需要子网的概念了，但都只有一个<code>127.0.0.1</code>的IP，如何与其它容器通讯呢？jumpers使用的是端口，域名应该更好些，Docker 已经为每个容器内置了一个<a href="https://www.infoq.com/news/2016/08/docker-service-load-balancing" target="_blank" rel="external">DNS（127.0.0.11）</a>来帮助实现服务发现。</p>
+<p><a href="http://dockone.io/article/2504" target="_blank" rel="external">DockOne微信分享（一三零）：探究PaaS网络模型设计</a></p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/misc/2017/install-linpack-xhpl/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          在MPI集群执行Linpack测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="/misc/2017/cobbler-pxe/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">使用Cobbler搭建PXE服务器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

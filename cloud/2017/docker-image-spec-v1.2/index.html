@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>【译文】Docker镜像格式规范，v1.2 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原文见 https://github.com/moby/moby/blob/master/image/spec/v1.2.mdDocker已经迁移到Moby项目了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【译文】Docker镜像格式规范，v1.2">
+<meta property="og:url" content="https://ying-zhang.github.io/cloud/2017/docker-image-spec-v1.2/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="原文见 https://github.com/moby/moby/blob/master/image/spec/v1.2.mdDocker已经迁移到Moby项目了。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-30T03:41:07.104Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【译文】Docker镜像格式规范，v1.2">
+<meta name="twitter:description" content="原文见 https://github.com/moby/moby/blob/master/image/spec/v1.2.mdDocker已经迁移到Moby项目了。">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-docker-image-spec-v1.2" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      【译文】Docker镜像格式规范，v1.2
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/cloud/2017/docker-image-spec-v1.2/" class="article-date">
+  <time datetime="2017-05-15T16:00:00.000Z" itemprop="datePublished">2017-05-16</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/cloud/">cloud</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>原文见 <a href="https://github.com/moby/moby/blob/master/image/spec/v1.2.md" target="_blank" rel="external">https://github.com/moby/moby/blob/master/image/spec/v1.2.md</a><br>Docker已经迁移到Moby项目了。</p>
+<a id="more"></a>
+<!-- TOC -->
+<pre><code>- [title: 【译文】Docker镜像格式规范，v1.2](#title-%E3%80%90%E8%AF%91%E6%96%87%E3%80%91docker%E9%95%9C%E5%83%8F%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83%EF%BC%8Cv12)
+</code></pre><ul>
+<li><a href="#docker%E9%95%9C%E5%83%8F%E8%A7%84%E8%8C%83v120">Docker镜像规范v1.2.0</a><ul>
+<li><a href="#%E6%9C%AF%E8%AF%AD">术语</a><ul>
+<li><a href="#%E5%B1%82%EF%BC%88layer%EF%BC%89">层（Layer）</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84json%E6%8F%8F%E8%BF%B0%E6%96%87%E4%BB%B6">镜像的JSON描述文件</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E5%8F%98%E6%9B%B4%E9%9B%86%EF%BC%88changeset%EF%BC%89">镜像文件变更集（changeset）</a></li>
+<li><a href="#%E5%B1%82%E7%9A%84diffid">层的DiffID</a></li>
+<li><a href="#%E5%B1%82%E7%9A%84chainid">层的ChainID</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84imageid">镜像的ImageID</a></li>
+<li><a href="#%E6%A0%87%E7%AD%BE%EF%BC%88tag%EF%BC%89">标签（Tag）</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E5%90%8D%EF%BC%88repository%EF%BC%89">镜像名（Repository）</a></li>
+</ul>
+</li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84json%E6%8F%8F%E8%BF%B0%E6%96%87%E4%BB%B6%E7%A4%BA%E4%BE%8B">镜像的JSON描述文件示例</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84json%E6%8F%8F%E8%BF%B0%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E">镜像的JSON描述文件说明</a><ul>
+<li><a href="#created">created</a></li>
+<li><a href="#author">author</a></li>
+<li><a href="#architecture">architecture</a></li>
+<li><a href="#os">os</a></li>
+<li><a href="#config">config</a><ul>
+<li><a href="#user">User</a></li>
+<li><a href="#memory">Memory</a></li>
+<li><a href="#memoryswap">MemorySwap</a></li>
+<li><a href="#cpushares">CpuShares</a></li>
+<li><a href="#exposedports">ExposedPorts</a></li>
+<li><a href="#env">Env</a></li>
+<li><a href="#entrypoint">Entrypoint</a></li>
+<li><a href="#cmd">Cmd</a></li>
+<li><a href="#healthcheck">Healthcheck</a><ul>
+<li><a href="#test">Test</a></li>
+<li><a href="#volumes">Volumes</a></li>
+<li><a href="#workingdir">WorkingDir</a></li>
+<li><a href="#rootfs">rootfs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#history">history</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E5%8F%98%E6%9B%B4%E9%9B%86">创建镜像文件变更集</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84%E7%BB%84%E5%90%88%E6%A0%BC%E5%BC%8F">镜像的组合格式</a></li>
+</ul>
+</li>
+<li><a href="#todo">TODO</a></li>
+<li><a href="#%E8%A1%A5%E5%85%85">补充</a><ul>
+<li><a href="#alpine%E9%95%9C%E5%83%8F%E7%9A%84%E4%B8%BB%E6%9C%BA%E5%AD%98%E5%82%A8%E5%B8%83%E5%B1%80">alpine镜像的主机存储布局</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="Docker镜像规范v1-2-0"><a href="#Docker镜像规范v1-2-0" class="headerlink" title="Docker镜像规范v1.2.0"></a>Docker镜像规范v1.2.0</h1><p><strong>镜像（Image）</strong>是在基础文件集（root filesystem）之上依次变更的集合，及在容器运行的默认执行参数。本规范概述这些文件变更及执行参数的格式，创建和使用它们的方法。<br>此版本的镜像规范自Docker 1.12开始采用。</p>
+<blockquote>
+<p>译注：本规范中的 <strong>filesystem</strong> 并非通常意义的文件系统，实际上只是一组文件及文件夹的集合，故译为 <strong>文件集</strong>。</p>
+</blockquote>
+<h2 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h2><p>本规范使用以下术语:</p>
+<h3 id="层（Layer）"><a href="#层（Layer）" class="headerlink" title="层（Layer）"></a>层（Layer）</h3><p>镜像由 <strong>层</strong> 组成。 每一层都是若干文件的变更集合。层不包含环境变量或默认参数等元数据。这些元数据是镜像整体的属性，而不是特定层的。</p>
+<h3 id="镜像的JSON描述文件"><a href="#镜像的JSON描述文件" class="headerlink" title="镜像的JSON描述文件"></a>镜像的JSON描述文件</h3><p>整个镜像有一个JSON描述文件，它包含镜像的基本信息，如创建的日期、作者、父镜像的ID、以及启动/运行的配置（如入口命令、默认参数、CPU / 内存份额、网络和数据卷等）。JSON文件还列出了组成镜像的每个层的加密散列及其命令历史。<br>该JSON文件是不可变的，更改它会导致重新计算整个镜像的ImageID（译注：见下面ImageID的计算方法小节），这意味着派生出一个新的镜像，而不是改变现有的镜像。</p>
+<h3 id="镜像文件变更集（changeset）"><a href="#镜像文件变更集（changeset）" class="headerlink" title="镜像文件变更集（changeset）"></a>镜像文件变更集（changeset）</h3><p>每个层都是一组在其父层之上增加、修改或删除文件的归档。使用分层或联合文件系统（如AUFS），或通过从文件系统快照计算差异（Diff），可以将一系列的层（即文件变更集）合并成一个虚拟的单层文件集合（one cohesive filesystem）。</p>
+<h3 id="层的DiffID"><a href="#层的DiffID" class="headerlink" title="层的DiffID"></a>层的DiffID</h3><p>将一个层的所有文件内容序列化后，计算出一个加密散列来作为该层的标识。具体是将层打包为一个<code>tar</code>包，然后计算其SHA256摘要，用十六进制编码表示长度为256比特的串（共64个字符），<br>如<code>sha256:a9561eb1b190625c9adb5a9513e72c4dedafc1cb2d4c5236c9a6957ec7dfd5a9</code>。<br>层的打包和解包必须是可重复的，以免更改层的ID，例如，应使用<code>tar-split</code>来保存tar包的header。注意，层的ID是基于未压缩的tar包计算的。</p>
+<blockquote>
+<p>译注：关于层的打包和解包的可重复性，<code>tar</code>程序将一组文件打包的 <strong>顺序</strong> 是与文件系统相关的，此处没有详细说明可重复性的实现方式，可参考Docker源码深入了解。<br>参考：<a href="https://unix.stackexchange.com/questions/120143/how-is-the-order-in-which-tar-works-on-files-determined" target="_blank" rel="external">tar打包的顺序</a>。</p>
+</blockquote>
+<h3 id="层的ChainID"><a href="#层的ChainID" class="headerlink" title="层的ChainID"></a>层的ChainID</h3><p>为方便起见，可以给一串有序的层计算出一个ID，称为 <strong>ChainID</strong>。<br>仅有一个层时，其ChainID与该层的DiffID相同。多个层时，其ChainID由下面的递归公式给出：</p>
+<p>$$ChainID(layerN)=SHA256hex(ChainID(layer(N-1))+ “ \quad” +DiffID(layerN))$$ </p>
+<h3 id="镜像的ImageID"><a href="#镜像的ImageID" class="headerlink" title="镜像的ImageID"></a>镜像的ImageID</h3><p>每个镜像的ID是其JSON描述文件的SHA256散列值，用十六进制编码表示，<br>如<code>sha256:a9561eb1b190625c9adb5a9513e72c4dedafc1cb2d4c5236c9a6957ec7dfd5a9</code>。<br>由于JSON文件包含镜像所有层的散列ID，据此计算出的ImageID，使得可以对镜像的即各层按内容寻址（Content Addressable，地址即各层的DiffID）。</p>
+<h3 id="标签（Tag）"><a href="#标签（Tag）" class="headerlink" title="标签（Tag）"></a>标签（Tag）</h3><p>Tag是用户为ImageID指定的说明文字。Tag中的字符只能是大小写英文字母、数字、短线、下划线和点，即<code>[a-zA-Z0-9_.-]</code>，首个字符不能是<code>.</code>或<code>-</code>。Tag不能超过127个字符。</p>
+<h3 id="镜像名（Repository）"><a href="#镜像名（Repository）" class="headerlink" title="镜像名（Repository）"></a>镜像名（Repository）</h3><p>这里的<code>Repository</code>是指镜像全名在冒号<code>:</code>之前的部分，冒号<code>:</code>之后的部分是镜像的标签（tag），用来区分镜像的版本。 如名为<code>my-app:3.1.4</code>的镜像，<code>my-app</code>就是镜像的 Repository 部分。<br>Repository又可以用斜杠<code>/</code>分隔开，<code>/</code>之前的部分是可选的DNS格式的主机名。主机名必须符合DNS规则，但 <strong>不得</strong> 包含下划线<code>_</code>字符，主机名可以有如<code>：8080</code>格式的端口号。<br>镜像名可以包含小写字符，数字和分隔符。 分隔符是句点<code>.</code>，一个或两个下划线<code>_</code>，或一个或多个短横线<code>-</code>，镜像名 <strong>不允许</strong> 以分隔符开头或结尾。</p>
+<blockquote>
+<p>译注：</p>
+<ul>
+<li>这里的 Repository 容易与git的 <strong>代码仓库</strong> 概念混淆。</li>
+<li>DNS名和主机名的格式稍有不同，一般来说，主机名不允许使用下划线<code>_</code>，参考<a href="https://tools.ietf.org/html/rfc1123" target="_blank" rel="external">RFC 1123</a></li>
+</ul>
+</blockquote>
+<h2 id="镜像的JSON描述文件示例"><a href="#镜像的JSON描述文件示例" class="headerlink" title="镜像的JSON描述文件示例"></a>镜像的JSON描述文件示例</h2><p>下面是一个镜像的JSON描述文件示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;architecture&quot;: &quot;amd64&quot;,</div><div class="line">  &quot;author&quot;: &quot;Alyssa P. Hacker &amp;ltalyspdev@example.com&amp;gt&quot;,</div><div class="line">  &quot;config&quot;: &#123;</div><div class="line">    &quot;Cmd&quot;: [</div><div class="line">      &quot;--foreground&quot;,</div><div class="line">      &quot;--config&quot;,</div><div class="line">      &quot;/etc/my-app.d/default.cfg&quot;</div><div class="line">    ],</div><div class="line">    &quot;CpuShares&quot;: 8,</div><div class="line">    &quot;Entrypoint&quot;: [</div><div class="line">      &quot;/bin/my-app-binary&quot;</div><div class="line">    ],</div><div class="line">    &quot;Env&quot;: [</div><div class="line">      &quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,</div><div class="line">      &quot;FOO=docker_is_a_really&quot;,</div><div class="line">      &quot;BAR=great_tool_you_know&quot;</div><div class="line">    ],</div><div class="line">    &quot;ExposedPorts&quot;: &#123;</div><div class="line">      &quot;8080/tcp&quot;: &#123;&#125;</div><div class="line">    &#125;,</div><div class="line">    &quot;Memory&quot;: 2048,</div><div class="line">    &quot;MemorySwap&quot;: 4096,</div><div class="line">    &quot;User&quot;: &quot;alice&quot;,</div><div class="line">    &quot;Volumes&quot;: &#123;</div><div class="line">      &quot;/var/job-result-data&quot;: &#123;&#125;,</div><div class="line">      &quot;/var/log/my-app-logs&quot;: &#123;&#125;</div><div class="line">    &#125;,</div><div class="line">    &quot;WorkingDir&quot;: &quot;/home/alice&quot;</div><div class="line">  &#125;,</div><div class="line">  &quot;created&quot;: &quot;2015-10-31T22:22:56.015925234Z&quot;,</div><div class="line">  &quot;history&quot;: [</div><div class="line">    &#123;</div><div class="line">      &quot;created&quot;: &quot;2015-10-31T22:22:54.690851953Z&quot;,</div><div class="line">      &quot;created_by&quot;: &quot;/bin/sh -c #(nop) ADD file:a3bc1e842b69636f9df5256c49c5374fb4eef1e281fe3f282c65fb853ee171c5 in /&quot;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      &quot;created&quot;: &quot;2015-10-31T22:22:55.613815829Z&quot;,</div><div class="line">      &quot;created_by&quot;: &quot;/bin/sh -c #(nop) CMD [\&quot;sh\&quot;]&quot;,</div><div class="line">      &quot;empty_layer&quot;: true</div><div class="line">    &#125;</div><div class="line">  ],</div><div class="line">  &quot;os&quot;: &quot;linux&quot;,</div><div class="line">  &quot;rootfs&quot;: &#123;</div><div class="line">    &quot;diff_ids&quot;: [</div><div class="line">      &quot;sha256:c6f988f4874bb0add23a778f753c65efe992244e148a1d2ec2a8b664fb66bbd1&quot;,</div><div class="line">      &quot;sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef&quot;</div><div class="line">    ],</div><div class="line">    &quot;type&quot;: &quot;layers&quot;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意，Docker生成的镜像JSON描述文件不包含为了格式化而插入的空格，这里是为了方便阅读。</p>
+<h2 id="镜像的JSON描述文件说明"><a href="#镜像的JSON描述文件说明" class="headerlink" title="镜像的JSON描述文件说明"></a>镜像的JSON描述文件说明</h2><h3 id="created"><a href="#created" class="headerlink" title="created"></a>created</h3><p><code>string</code><br>镜像创建的日期和时间，<a href="https://zh.wikipedia.org/wiki/ISO_8601" target="_blank" rel="external">ISO-8601格式</a>。</p>
+<h3 id="author"><a href="#author" class="headerlink" title="author"></a>author</h3><p><code>string</code><br>创建和负责维护改镜像的人员或组织名，或Email。</p>
+<h3 id="architecture"><a href="#architecture" class="headerlink" title="architecture"></a>architecture</h3><p><code>string</code><br>镜像中可执行文件的CPU架构，可以是 </p>
+<ul>
+<li><code>386</code></li>
+<li><code>amd64</code></li>
+<li><code>arm</code><br>未来可能会支持更多的架构，有的容器引擎可能不支持某些架构。</li>
+</ul>
+<h3 id="os"><a href="#os" class="headerlink" title="os"></a>os</h3><p><code>string</code><br>镜像运行的操作系统名，可以是 </p>
+<ul>
+<li><code>darwin</code></li>
+<li><code>freebsd</code></li>
+<li><code>linux</code><br>未来可能会支持更多的架构，有的容器引擎可能不支持某些操作系统。</li>
+</ul>
+<h3 id="config"><a href="#config" class="headerlink" title="config"></a>config</h3><p><code>struct</code><br><code>config</code>结构是从镜像创建容器时，使用的基本执行参数。<code>config</code>可以是空值<code>null</code>，则创建容器时必须提供所有必要的执行参数。</p>
+<p><code>config</code>结构的各字段说明</p>
+<h4 id="User"><a href="#User" class="headerlink" title="User"></a>User</h4><p><code>string</code><br>容器中进程执行使用的用户名或UID。如果创建容器时没有在命令行给出，将使用此配置项的值。下面的格式都是有效的：</p>
+<ul>
+<li><code>user</code></li>
+<li><code>uid</code></li>
+<li><code>user:group</code></li>
+<li><code>uid:gid</code></li>
+<li><code>uid:group</code></li>
+<li><code>user:gid</code></li>
+</ul>
+<p>如果没有给出组名 <code>group</code>/<code>gid</code>，默认的组使用容器中<code>/etc/passwd</code>文件对应的<code>user</code>/<code>uid</code>项。</p>
+<h4 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h4><p><code>integer</code><br>内存限值（以 <strong>字节</strong> 为单位）。如果创建容器时没有在命令行给出，则使用此配置项的值。</p>
+<h4 id="MemorySwap"><a href="#MemorySwap" class="headerlink" title="MemorySwap"></a>MemorySwap</h4><p><code>integer</code><br>总的内存使用量（内存 + swap），设置为<code>-1</code>则禁用 swap。如果创建容器时没有在命令行给出，则使用此配置项的值。</p>
+<h4 id="CpuShares"><a href="#CpuShares" class="headerlink" title="CpuShares"></a>CpuShares</h4><p><code>integer</code><br>CPU份额（相对其它容器的权重）。如果创建容器时没有在命令行给出，则使用此配置项的值。</p>
+<h4 id="ExposedPorts"><a href="#ExposedPorts" class="headerlink" title="ExposedPorts"></a>ExposedPorts</h4><p><code>struct</code><br>基于此镜像创建的容器公开的端口列表。此JSON结构的特殊之处在于它是由Go语言的<code>map[string]struct{}</code>结构直接序列化为JSON格式的，形式为每个键对应着 <strong>值为空对象{}</strong> 的JSON对象。如下面的例子所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;8080&quot;: &#123;&#125;,</div><div class="line">    &quot;53/udp&quot;: &#123;&#125;,</div><div class="line">    &quot;2356/tcp&quot;: &#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中的键可以是下面的格式：</p>
+<ul>
+<li><code>&quot;port/tcp&quot;</code></li>
+<li><code>&quot;port/udp&quot;</code></li>
+<li><code>&quot;port&quot;</code><br>如果没有给出协议，默认使用<code>tcp</code>协议。这是创建容器使用的默认值，可以与命令行提供的端口列表合并。</li>
+</ul>
+<h4 id="Env"><a href="#Env" class="headerlink" title="Env"></a>Env</h4><p><code>array of strings</code><br>Env的每项都是 <code>VARNAME=&quot;var value&quot;</code> 的格式。这是创建容器使用的默认值，可以与命令行提供的环境变量列表合并。</p>
+<h4 id="Entrypoint"><a href="#Entrypoint" class="headerlink" title="Entrypoint"></a>Entrypoint</h4><p><code>array of strings</code><br>容器启动时执行的命令参数列表。这是创建容器使用的默认值，可以被命令行提供的入口命令替换。</p>
+<h4 id="Cmd"><a href="#Cmd" class="headerlink" title="Cmd"></a>Cmd</h4><p><code>array of strings</code><br>容器启动时执行的命令参数列表（附加在<code>Entrypoint</code>之后）。这是创建容器使用的默认值，可以被命令行提供的入口命令替换。如果没有给出<code>Entrypoint</code>，那么<code>Cmd</code>列表的第一项将被认为是可执行的程序名。</p>
+<h4 id="Healthcheck"><a href="#Healthcheck" class="headerlink" title="Healthcheck"></a>Healthcheck</h4><p><code>struct</code><br>用以检查容器是否正常的测试命令，如下面的例子所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;Test&quot;: [</div><div class="line">      &quot;CMD-SHELL&quot;,</div><div class="line">      &quot;/usr/bin/check-health localhost&quot;</div><div class="line">  ],</div><div class="line">  &quot;Interval&quot;: 30000000000,</div><div class="line">  &quot;Timeout&quot;:  10000000000,</div><div class="line">  &quot;Retries&quot;:  3</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此结构有如下字段，</p>
+<h5 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h5><p><code>array of strings</code><br>用以检查容器是否正常的测试命令，可以是</p>
+<ul>
+<li><code>[]</code> : 继承父镜像的健康检查命令；</li>
+<li><code>[&quot;NONE&quot;]</code> : 禁用健康检查；</li>
+<li><code>[&quot;CMD&quot;, arg1, arg2, ...]</code> : 直接执行命令和参数；</li>
+<li><code>[&quot;CMD-SHELL&quot;, command]</code> : 使用系统默认shell执行命令；</li>
+</ul>
+<p>如果容器状态正常，测试命令退出后应返回 <code>0</code>，否则返回 <code>1</code>。</p>
+<ul>
+<li>Interval <code>integer</code>：相邻两次尝试的间隔，单位为纳秒；</li>
+<li>Timeout <code>integer</code>：认为异常的超时间隔，单位为纳秒；</li>
+<li>Retries <code>integer</code>：认为异常的重试次数。</li>
+</ul>
+<p>任何缺失的值都会从基础镜像继承。这是创建容器使用的默认值，可以与命令行提供的值合并（替代？）。</p>
+<h5 id="Volumes"><a href="#Volumes" class="headerlink" title="Volumes"></a>Volumes</h5><p><code>struct</code><br>创建容器时作为数据卷的一组目录。此JSON结构的特殊之处在于它是由Go语言的<code>map[string]struct{}</code>结构直接序列化为JSON格式的，形式为每个键对应着 <strong>值为空对象{}</strong> 的JSON对象。如下面的例子所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;/var/my-app-data/&quot;: &#123;&#125;,</div><div class="line">    &quot;/etc/some-config.d/&quot;: &#123;&#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h5 id="WorkingDir"><a href="#WorkingDir" class="headerlink" title="WorkingDir"></a>WorkingDir</h5><p><code>string</code><br>容器入口程序的工作目录，这是创建容器使用的默认值，可以被命令行提供的值替代。</p>
+<h5 id="rootfs"><a href="#rootfs" class="headerlink" title="rootfs"></a>rootfs</h5><p><code>struct</code><br>rootfs结构是镜像各层的<code>DiffID</code>列表，此结构使镜像的描述文件的散列与各层的散列（及内容）相对应。rootfs有两个字段:</p>
+<ul>
+<li><code>type</code>，其值一般为 <code>layers</code>.</li>
+<li><code>diff_ids</code> 各层散列（<code>DiffID</code>）的数组，顺序为从最底层到最顶层。</li>
+</ul>
+<p>下面是 rootfs 的一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&quot;rootfs&quot;: &#123;</div><div class="line">  &quot;diff_ids&quot;: [</div><div class="line">    &quot;sha256:c6f988f4874bb0add23a778f753c65efe992244e148a1d2ec2a8b664fb66bbd1&quot;,</div><div class="line">    &quot;sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef&quot;,</div><div class="line">    &quot;sha256:13f53e08df5a220ab6d13c58b2bf83a59cbdc2e04d0a3f041ddf4b0ba4112d49&quot;</div><div class="line">  ],</div><div class="line">  &quot;type&quot;: &quot;layers&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="history"><a href="#history" class="headerlink" title="history"></a>history</h3><p><code>struct</code><br><code>history</code>结构是描述每层历史的一组对象，顺序为从最底层到最顶层。每个对象有以下字段。</p>
+<ul>
+<li><code>created</code>: 创建的日期和时间，<a href="https://zh.wikipedia.org/wiki/ISO_8601" target="_blank" rel="external">ISO-8601格式</a>；</li>
+<li><code>author</code>: 创建的作者；</li>
+<li><code>created_by</code>: 创建该层的命令；</li>
+<li><code>comment</code>: 创建该层的注释；</li>
+<li><code>empty_layer</code>: 标识此项历史记录是否会创建一个文件变更集。如果值为<code>true</code>，则此项历史不会对应一个实际的文件集（如<code>ENV</code>命令就对层的文件没有影响）。<br>下面是 history 结构的一个例子：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&quot;history&quot;: [</div><div class="line">  &#123;</div><div class="line">    &quot;created&quot;: &quot;2015-10-31T22:22:54.690851953Z&quot;,</div><div class="line">    &quot;created_by&quot;: &quot;/bin/sh -c #(nop) ADD file:a3bc1e842b69636f9df5256c49c5374fb4eef1e281fe3f282c65fb853ee171c5 in /&quot;</div><div class="line">  &#125;,</div><div class="line">  &#123;</div><div class="line">    &quot;created&quot;: &quot;2015-10-31T22:22:55.613815829Z&quot;,</div><div class="line">    &quot;created_by&quot;: &quot;/bin/sh -c #(nop) CMD [\&quot;sh\&quot;]&quot;,</div><div class="line">    &quot;empty_layer&quot;: true</div><div class="line">  &#125;</div><div class="line">]</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>镜像的JSON文件中任何额外的字段应被认为是特定于实现的，如果无法处理，应该将其忽略。</p>
+<h2 id="创建镜像文件变更集"><a href="#创建镜像文件变更集" class="headerlink" title="创建镜像文件变更集"></a>创建镜像文件变更集</h2><p>创建镜像文件变更集的例子如下：<br>首先，镜像的基础文件是一个空的目录，使用了随机生成的目录名<code>c3167915dc9d</code>（层的DiffID是基于目录内的文件内容生成的）。</p>
+<p>然后在其中创建文件和目录:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">c3167915dc9d/</div><div class="line">    etc/</div><div class="line">        my-app-config</div><div class="line">    bin/</div><div class="line">        my-app-binary</div><div class="line">        my-app-tools</div></pre></td></tr></table></figure></p>
+<p>将目录<code>c3167915dc9d</code>提交为一个 <code>tar</code> 包（无压缩），其中包含如下的文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">etc/my-app-config</div><div class="line">bin/my-app-binary</div><div class="line">bin/my-app-tools</div></pre></td></tr></table></figure>
+<p>如果要在此基础上更改文件，则创建一个新的目录，假如为<code>f60c56784b83</code>，将其初始化为父镜像的快照，即与目录<code>c3167915dc9d</code>的内容相同。</p>
+<blockquote>
+<p>注意：支持 Copy-on-Write 或联合机制的文件系统创建快照很高效。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">f60c56784b83/</div><div class="line">    etc/</div><div class="line">        my-app-config</div><div class="line">    bin/</div><div class="line">        my-app-binary</div><div class="line">        my-app-tools</div></pre></td></tr></table></figure>
+<p>然后添加一个配置目录<code>/etc/my-app.d</code>，其中包含默认的配置文件。可执行程序<code>my-app-tools</code>也更新了，以便处理新的配置文件路径。<br>修改后的目录<code>f60c56784b83</code>如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">f60c56784b83/</div><div class="line">    etc/</div><div class="line">        my-app.d/</div><div class="line">            default.cfg</div><div class="line">    bin/</div><div class="line">        my-app-binary</div><div class="line">        my-app-tools</div></pre></td></tr></table></figure></p>
+<p>其中移除了<code>/etc/my-app-config</code>，然后创建了新的目录和文件<code>/etc/my-app.d/default.cfg</code>。<code>/bin/my-app-tools</code>也替换成新的版本。在将此目录提交为变更集之前，首先需要与其父镜像的快照<code>f60c56784b83</code>比较，找出增加、修改及删除的文件和目录。本例中找到如下的变更集：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">增加：  /etc/my-app.d/default.cfg</div><div class="line">修改：  /bin/my-app-tools</div><div class="line">删除：  /etc/my-app-config</div></pre></td></tr></table></figure></p>
+<p>创建一个 <strong>仅包含</strong> 此变更集的tar包：增加和修改的文件内容及目录被完整地包含在tar包中；而删除的项则对应为相同路径的空文件，其文件名或目录名增加<code>.wh.</code>前缀（表示已删除）。</p>
+<blockquote>
+<p>注意：无法直接创建以名称<code>.wh.</code>开头的文件或目录。</p>
+</blockquote>
+<p>目录<code>f60c56784b83</code>生成的<code>tar</code> 包中有如下的文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/etc/my-app.d/default.cfg</div><div class="line">/bin/my-app-tools</div><div class="line">/etc/.wh.my-app-config</div></pre></td></tr></table></figure>
+<p>任何镜像都是由若干类似的文件变更集的tar包组成的。</p>
+<h2 id="镜像的组合格式"><a href="#镜像的组合格式" class="headerlink" title="镜像的组合格式"></a>镜像的组合格式</h2><p>包含镜像完整内容的单一tar包格式如下：</p>
+<ul>
+<li>镜像名：tag</li>
+<li>镜像的 JSON 配置文件</li>
+<li>各层的tar包</li>
+</ul>
+<p>如镜像<code>library/busybox</code>的组合tar包内容如下（使用<code>tree</code>命令输出）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── 47bcc53f74dc94b1920f0b34f6036096526296767650f223433fe65c35f149eb.json</div><div class="line">├── 5f29f704785248ddb9d06b90a11b5ea36c534865e9035e4022bb2e71d4ecbb9a</div><div class="line">│   ├── VERSION</div><div class="line">│   ├── json</div><div class="line">│   └── layer.tar</div><div class="line">├── a65da33792c5187473faa80fa3e1b975acba06712852d1dea860692ccddf3198</div><div class="line">│   ├── VERSION</div><div class="line">│   ├── json</div><div class="line">│   └── layer.tar</div><div class="line">├── manifest.json</div><div class="line">└── repositories</div></pre></td></tr></table></figure>
+<p>镜像的每层都对应一个目录，其名称是64个十六进制的字符，是根据该层的文件内容确定性地生成的。</p>
+<blockquote>
+<p>注意：该目录名 <strong>不必</strong> 是层的<code>DiffID</code>或<code>ChainID</code>。</p>
+</blockquote>
+<p>每个目录包含3个文件：</p>
+<ul>
+<li><code>VERSION</code> - <code>json</code>文件模式的版本号；</li>
+<li><code>json</code> - 旧的JSON格式镜像层元数据。v1.2版的镜像规范中，各层没有JSON元数据，但在v1版中是存在的。此文件是为了向后兼容v1版格式。</li>
+<li><code>layer.tar</code> - 该层的tar包。</li>
+</ul>
+<p>注意：这个目录结构仅用于向后兼容。当前的实现使用<code>manifest.json</code>文件中列出的目录。</p>
+<p><code>VERSION</code>文件只是JSON元数据模式的版本号：<code>1.0</code>。</p>
+<p><code>repositories</code>也是一个JSON文件，包含镜像名和tag列表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;  </div><div class="line">    &quot;busybox&quot;:&#123;  </div><div class="line">        &quot;latest&quot;:&quot;5f29f704785248ddb9d06b90a11b5ea36c534865e9035e4022bb2e71d4ecbb9a&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中有镜像的<code>repository</code>和一组tag列表。每个tag关联着镜像的 ID。该文件仅用于向后兼容。当前的实现使用<code>manifest.json</code>文件。</p>
+<p><code>manifest.json</code>文件是顶层镜像的JSON配置。<br>该文件包含以下元数据：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[</div><div class="line">  &#123;</div><div class="line">    &quot;Config&quot;: &quot;47bcc53f74dc94b1920f0b34f6036096526296767650f223433fe65c35f149eb.json&quot;,</div><div class="line">    &quot;RepoTags&quot;: [&quot;busybox:latest&quot;],</div><div class="line">    &quot;Layers&quot;: [</div><div class="line">      &quot;a65da33792c5187473faa80fa3e1b975acba06712852d1dea860692ccddf3198/layer.tar&quot;,</div><div class="line">      &quot;5f29f704785248ddb9d06b90a11b5ea36c534865e9035e4022bb2e71d4ecbb9a/layer.tar&quot;</div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">]</div></pre></td></tr></table></figure></p>
+<p>上面这个JSON数组中，每项都对应着一个镜像。</p>
+<ul>
+<li><code>Config</code> 指向该镜像的JSON文件；</li>
+<li><code>RepoTags</code> 是该镜像的名称；</li>
+<li><code>Layers</code> 指向镜像各层的 tar 包；</li>
+<li><code>Parent</code> 可选，指向其父镜像的 imageID，父镜像的ID必须在同一个 <code>manifest.json</code> 文件中存在。</li>
+</ul>
+<p>不要把 <code>manifest.json</code> 与用来push和pull镜像的分发清单（distribution manifest）相混淆。<br>一般来说，支持v1.2版本镜像规范的实现将使用<code>manifest.json</code>文件，早期的实现仍使用 <code>*/json</code>和<code>repositories</code>文件。</p>
+<h1 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h1><p>其它相关文档：</p>
+<ul>
+<li><a href="https://github.com/opencontainers/image-spec" target="_blank" rel="external">Open Containers Initiative Image Spec</a></li>
+<li><a href="https://github.com/docker/distribution/blob/master/docs/spec/manifest-v2-2.md" target="_blank" rel="external">Image Manifest Version 2, Schema 2</a></li>
+<li><a href="https://github.com/docker/distribution/blob/master/docs/spec/api.md" target="_blank" rel="external">Docker Registry HTTP API V2</a></li>
+<li><a href="https://github.com/apache/mesos/blob/master/docs/container-image.md" target="_blank" rel="external">Supporting Container Images in Mesos Containerizer</a></li>
+</ul>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><blockquote>
+<p>注意：不要把上面的 <strong>镜像格式</strong> 与镜像的 <strong>主机存储布局</strong> 搞混了。</p>
+<ul>
+<li>镜像格式是执行<code>docker save &lt;镜像名或ID&gt;</code>之后得到的对应镜像<code>tar</code>包的格式。</li>
+<li>镜像在主机的存储布局，以及镜像push和pull都 <strong>不会</strong> 用到打包成一个文件的镜像，因为这样不利于多个层并行加速下载和利用本地缓存的层。</li>
+</ul>
+<p>镜像的各层存在顺序依赖，而镜像也有父子继承关系。<br>最初Docker只支持AUFS存储驱动，但AUFS没有合并到Linux内核，虽然Ubuntu内置了AUFS，但RHEL/CentOS则需要添加对应的内核模块。目前Docker在RHEL/CentOS默认使用OverlayFS作为存储驱动。OverlayFS只支持上下两层，所以其主机存储布局与AUFS不同，但镜像格式不受影响。</p>
+</blockquote>
+<h2 id="alpine镜像的主机存储布局"><a href="#alpine镜像的主机存储布局" class="headerlink" title="alpine镜像的主机存储布局"></a>alpine镜像的主机存储布局</h2><p>alpine镜像仅有一个层，比较简单。Ubuntu使用AUFS存储驱动的文件布局如下。layer.tar包 已经被解开了。</p>
+<ul>
+<li>./aufs是解开layer.tar后的文件内容；</li>
+<li>./aufs/mnt是容器文件系统的挂载点；</li>
+<li>./containers是创建的容器的读写层；</li>
+<li>./image/aufs/distribution中两个文件夹相当于正反查找的指针；</li>
+<li>./image/aufs/imagedb/content/sha256/[id] 接近镜像的JSON描述文件，但与上面的v1.2规范不完全一致；</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"># tree /var/lib/docker</div><div class="line">/var/lib/docker</div><div class="line">├── aufs</div><div class="line">│   ├── diff</div><div class="line">│   │   └── 0b9c9a223af5f795049b86fc4f3dace61a44ced8a08a3cc8ccad0699eecec951</div><div class="line">│   │       ├── bin</div><div class="line">│   │       │   ├── ash -&gt; /bin/busybox</div><div class="line">│   │       │  # ... alpine镜像中的文件列表（大部分是指向/bin/busybox的软链接）</div><div class="line">│   ├── layers</div><div class="line">│   │   └── 0b9c9a223af5f795049b86fc4f3dace61a44ced8a08a3cc8ccad0699eecec951</div><div class="line">│   └── mnt</div><div class="line">│       └── 0b9c9a223af5f795049b86fc4f3dace61a44ced8a08a3cc8ccad0699eecec951</div><div class="line">├── containers</div><div class="line">├── image</div><div class="line">│   └── aufs</div><div class="line">│       ├── distribution</div><div class="line">│       │   ├── diffid-by-digest</div><div class="line">│       │   │   └── sha256</div><div class="line">│       │   │       └── cfc728c1c5584d8e0ae69368fc9c34d54d72651355573ba42554c2469a0a6299</div><div class="line">│       │   └── v2metadata-by-diffid</div><div class="line">│       │       └── sha256</div><div class="line">│       │           └── e154057080f406372ebecadc0bfb5ff8a7982a0d13823bab1be5b86926c6f860</div><div class="line">│       ├── imagedb</div><div class="line">│       │   ├── content</div><div class="line">│       │   │   └── sha256</div><div class="line">│       │   │       └── 02674b9cb179d57c68b526733adf38b458bd31ba0abff0c2bf5ceca5bad72cd9</div><div class="line">│       │   └── metadata</div><div class="line">│       │       └── sha256</div><div class="line">│       ├── layerdb</div><div class="line">│       │   ├── sha256</div><div class="line">│       │   │   └── e154057080f406372ebecadc0bfb5ff8a7982a0d13823bab1be5b86926c6f860</div><div class="line">│       │   │       ├── cache-id </div><div class="line">│       │   │       ├── diff</div><div class="line">│       │   │       ├── size</div><div class="line">│       │   │       └── tar-split.json.gz # 如果是中间层，此处会有 parent 文件</div><div class="line">│       │   └── tmp</div><div class="line">│       └── repositories.json</div><div class="line">├── network</div><div class="line">│   └── files</div><div class="line">│       └── local-kv.db</div><div class="line">├── plugins</div><div class="line">│   ├── storage</div><div class="line">│   │   └── blobs</div><div class="line">│   │       └── tmp</div><div class="line">│   └── tmp</div><div class="line">├── swarm</div><div class="line">├── tmp</div><div class="line">├── trust</div><div class="line">└── volumes</div><div class="line">    └── metadata.db</div></pre></td></tr></table></figure>
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/misc/2017/setup-nat-x-route/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">CentOS 7 及 Ubuntu 16.04 设置 NAT 网络</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>

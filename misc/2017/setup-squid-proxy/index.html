@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>设置及使用HTTP代理 | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录一下设置Squid作为HTTP代理，及docker、yum、apt等的代理配置。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设置及使用HTTP代理">
+<meta property="og:url" content="https://ying-zhang.github.io/misc/2017/setup-squid-proxy/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="记录一下设置Squid作为HTTP代理，及docker、yum、apt等的代理配置。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-30T02:47:23.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设置及使用HTTP代理">
+<meta name="twitter:description" content="记录一下设置Squid作为HTTP代理，及docker、yum、apt等的代理配置。">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-setup-squid-proxy" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      设置及使用HTTP代理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/misc/2017/setup-squid-proxy/" class="article-date">
+  <time datetime="2017-04-13T16:00:00.000Z" itemprop="datePublished">2017-04-14</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/misc/">misc</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>记录一下设置Squid作为HTTP代理，及docker、yum、apt等的代理配置。<br><a id="more"></a></p>
+<!-- TOC -->
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8squid%E6%8F%90%E4%BE%9Bhttp%E4%BB%A3%E7%90%86">使用Squid提供HTTP代理</a><ul>
+<li><a href="#%E4%B8%BB%E6%9C%BA%E4%B8%8A%E5%AE%89%E8%A3%85%E5%92%8C%E8%AE%BE%E7%BD%AEsquid">主机上安装和设置Squid</a></li>
+<li><a href="#%E4%BB%A5docker%E5%AE%B9%E5%99%A8%E7%9A%84%E6%96%B9%E5%BC%8F%E8%BF%90%E8%A1%8Csquid">以Docker容器的方式运行Squid</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BD%BF%E7%94%A8http%E4%BB%A3%E7%90%86">使用HTTP代理</a><ul>
+<li><a href="#%E5%85%A8%E5%B1%80%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">全局的环境变量</a></li>
+<li><a href="#docker">Docker</a></li>
+<li><a href="#yum">yum</a></li>
+<li><a href="#apt">apt</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="使用Squid提供HTTP代理"><a href="#使用Squid提供HTTP代理" class="headerlink" title="使用Squid提供HTTP代理"></a>使用Squid提供HTTP代理</h1><h2 id="主机上安装和设置Squid"><a href="#主机上安装和设置Squid" class="headerlink" title="主机上安装和设置Squid"></a>主机上安装和设置Squid</h2><p>作为网关的<code>n147</code>机器，公网IP是<code>2.2.2.147</code>。安装Squid，然后修改配置，启用服务。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">yum install -y squid # CentOS</div><div class="line">apt install -y squid # Ubuntu</div><div class="line">apk add squid     # Alpine</div><div class="line"></div><div class="line"># squid的配置文件在 /etc/squid/squid.conf，修改内容可参考下面的 Dockerfile</div><div class="line"></div><div class="line"># 修改配置后，初始化squid的工作目录</div><div class="line">squid -z</div><div class="line"></div><div class="line"># 启动服务</div><div class="line">systemctl enable squid</div><div class="line">systemctl start  squid</div></pre></td></tr></table></figure></p>
+<h2 id="以Docker容器的方式运行Squid"><a href="#以Docker容器的方式运行Squid" class="headerlink" title="以Docker容器的方式运行Squid"></a>以Docker容器的方式运行Squid</h2><p>Dockerfile内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">FROM alpine:latest</div><div class="line"></div><div class="line">RUN apk update --no-cache; \</div><div class="line">    apk add squid --no-cache</div><div class="line"></div><div class="line"># 可以在squid.conf中限制允许访问此代理的IP范围，否则只有内网IP可以访问</div><div class="line">RUN sed  -i &quot;/RFC 4291/a acl ics src 2.2.2.0/24&quot; squid.conf; \</div><div class="line">    sed  -i &quot;/RFC 4291/a acl ics src 2.2.3.3/32&quot; squid.conf</div><div class="line"></div><div class="line"># 可以修改默认的端口号，如果修改了默认端口，需要修改下面的 EXPOSE 部分</div><div class="line">RUN sed -i &quot;/http_port/c http_port 8888&quot; squid.conf</div><div class="line"></div><div class="line"># 开启cache</div><div class="line">RUN sed -i &apos;/cache_dir/s/#//g&apos; /etc/squid/squid.conf</div><div class="line"></div><div class="line"># 或者直接使用修改过的配置文件</div><div class="line"># ADD squid.conf /etc/squid/squid.conf</div><div class="line"></div><div class="line"># squid -z用于初始化，创建cache目录，但直接在Dockerfile中</div><div class="line"># RUN squid -z</div><div class="line"># 却无法创建cache目录，导致squid无法启动</div><div class="line"># 故将初始化和启动命令写入脚本中</div><div class="line"></div><div class="line">RUN echo -e &apos;#!/bin/sh\n[ -d /var/cache/squid/00 ] || squid -z\nsquid -N&apos; &gt;/squid.sh; \</div><div class="line">    chmod +x /squid.sh</div><div class="line"></div><div class="line">EXPOSE 3128</div><div class="line">CMD [&quot;/squid.sh&quot;]</div></pre></td></tr></table></figure></p>
+<p>构造镜像：<code>docker build ./ -t squid:latest</code><br>启动容器：<code>docker run -d -p 3128:3128 --name squid squid:latest</code></p>
+<h1 id="使用HTTP代理"><a href="#使用HTTP代理" class="headerlink" title="使用HTTP代理"></a>使用HTTP代理</h1><p>内网其它不能直接访问外网的机器可以设置使用<code>n147</code>提供的代理服务。</p>
+<h2 id="全局的环境变量"><a href="#全局的环境变量" class="headerlink" title="全局的环境变量"></a>全局的环境变量</h2><p>在<code>/etc/environment</code>（不需要<code>export</code>），<code>/etc/profile</code>或<code>/etc/profile.d/http_proxy.sh</code>导出<code>http_proxy</code>和<code>https_proxy</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export http_proxy=http://2.2.2.147:3128</div><div class="line">export https_proxy=http://2.2.2.147:3128</div></pre></td></tr></table></figure></p>
+<p><code>squid</code>可以作为https代理，只要设置 <code>https_proxy=http://2.2.2.147:3128</code>， 即这个环境变量以<code>http://</code>开头。</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>Docker需要<a href="https://docs.docker.com/engine/admin/systemd/" target="_blank" rel="external">单独设置代理</a>，新建文件<code>/etc/systemd/system/docker.service.d/http-proxy.conf</code>，内容如下（注意多项环境变量之间要有空格，还设置了对私有镜像仓库不使用代理）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[Service]</div><div class="line">Environment=&quot;HTTP_PROXY=http://2.2.2.147:3128&quot; &quot;HTTPS_PROXY=http://2.2.2.147:3128&quot;  &quot;NO_PROXY=localhost,10.0.0.147&quot;</div></pre></td></tr></table></figure></p>
+<p>重启docker daemon： <code>systemctl restart docker</code>，执行<code>docker info</code>查看是否生效。</p>
+<h2 id="yum"><a href="#yum" class="headerlink" title="yum"></a>yum</h2><p>yum 会使用全局代理设置，也可以单独设置代理，在<code>/etc/yum.conf</code>中增加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">proxy=http://2.2.2.147:3128</div></pre></td></tr></table></figure></p>
+<h2 id="apt"><a href="#apt" class="headerlink" title="apt"></a>apt</h2><p>在文件<code>/etc/apt/apt.conf</code>中增加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Acquire::http::proxy  &quot;http://2.2.2.147:3128&quot;;</div><div class="line">Acquire::https::proxy &quot;http://2.2.2.147:3128&quot;;</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/misc/2017/setup-nat-x-route/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          CentOS 7 及 Ubuntu 16.04 设置 NAT 网络
+        
+      </div>
+    </a>
+  
+  
+    <a href="/misc/2017/install-linpack-xhpl/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">在MPI集群执行Linpack测试</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

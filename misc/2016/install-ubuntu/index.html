@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <title>安装Ubuntu Server 16.04 lts | Ying的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录一下安装Ubuntu Server 16.04 lts 及 基本设置作为备忘。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装Ubuntu Server 16.04 lts">
+<meta property="og:url" content="https://ying-zhang.github.io/misc/2016/install-ubuntu/index.html">
+<meta property="og:site_name" content="Ying的博客">
+<meta property="og:description" content="记录一下安装Ubuntu Server 16.04 lts 及 基本设置作为备忘。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vbox-headless.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vboxconf-NatNetwork.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vboxconf-hostonly.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vboxsetting-store.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vboxsetting-net.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vm-tty.png">
+<meta property="og:image" content="https://ying-zhang.github.io/img/vbox-snapshot.png">
+<meta property="og:updated_time" content="2017-10-30T02:47:52.591Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安装Ubuntu Server 16.04 lts">
+<meta name="twitter:description" content="记录一下安装Ubuntu Server 16.04 lts 及 基本设置作为备忘。">
+<meta name="twitter:image" content="https://ying-zhang.github.io/img/vbox-headless.png">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+</head>
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <section id="main"><article id="post-install-ubuntu" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      安装Ubuntu Server 16.04 lts
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/misc/2016/install-ubuntu/" class="article-date">
+  <time datetime="2016-09-15T16:00:00.000Z" itemprop="datePublished">2016-09-16</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/misc/">misc</a>
+  </div>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>记录一下安装Ubuntu Server 16.04 lts 及 基本设置作为备忘。</p>
+<a id="more"></a>
+<hr>
+<!-- TOC -->
+<ul>
+<li><a href="#%E8%AF%B4%E6%98%8E">说明</a><ul>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF1604">为什么是16.04</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AFserver%E7%89%88">为什么是Server版</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-vm">为什么使用 VM</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9C%A8%E8%99%9A%E6%8B%9F%E4%B8%AD%E5%AE%89%E8%A3%85ubuntu">在虚拟中安装Ubuntu</a><ul>
+<li><a href="#virtualbox%E7%9A%84%E5%85%A8%E5%B1%80%E8%AE%BE%E5%AE%9A">Virtualbox的全局设定</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85ubuntu">安装Ubuntu</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE">基本配置</a><ul>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E7%BB%9C">设置网络</a></li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E6%9B%B4%E6%96%B0%E5%92%8C%E5%8D%87%E7%BA%A7">系统更新和升级</a></li>
+<li><a href="#%E5%8F%AF%E9%80%89-%E5%88%87%E6%8D%A2%E4%B8%BAroot%E7%94%A8%E6%88%B7">[可选] 切换为root用户</a></li>
+<li><a href="#%E5%8F%AF%E9%80%89-%E8%AE%BE%E7%BD%AEsudo%E5%85%8D%E5%AF%86%E7%A0%81">[可选] 设置sudo免密码</a></li>
+<li><a href="#%E6%9D%82%E9%A1%B9%E8%AE%BE%E7%BD%AE">杂项设置</a></li>
+<li><a href="#tips">Tips</a><ul>
+<li><a href="#path%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">PATH环境变量</a></li>
+<li><a href="#which%E5%91%BD%E4%BB%A4"><code>which</code>命令</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC">查看系统版本</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><h2 id="为什么是16-04"><a href="#为什么是16-04" class="headerlink" title="为什么是16.04"></a>为什么是16.04</h2><ul>
+<li>16.04是lts版，相比非lts要稳定一些(不会瞎折腾)；虽然14.04也是lts版，但毕竟2014年都已经过去很久了。</li>
+<li>16.04的软件源更新比较快，而且可以用更简洁的<code>apt</code>命令代替<code>apt-get</code>来安装程序。</li>
+<li>另一个原因是<a href="https://zh.wikipedia.org/wiki/Systemd" target="_blank" rel="external">systemd</a>。<code>systemd</code>参考了Mac OS X的<code>launchd</code>，是一个替代<code>init</code>程序的系统服务管理组件。其它发行版，如RHEL/CentOS，CoreOS都已经采用了<code>systemd</code>。Ubuntu 14.04 lts采用的是<code>upstart</code>，直到15.04版才转用<code>systemd</code>。在运行一些 <strong>dokcer</strong>，<strong>etcd</strong> 等服务程序的示例时，经常会看到用<code>systemd</code>的unit文件定义的系统服务(service)，不能直接拿来用在Ubuntu 14.04 lts。当然在15.04版及以后的版本就可以了，由于一些默认路径不同，不同发行版的unit文件可能还是需要适当修改。</li>
+</ul>
+<h2 id="为什么是Server版"><a href="#为什么是Server版" class="headerlink" title="为什么是Server版"></a>为什么是Server版</h2><p>因为在Ubuntu下只是在 <strong>敲命令</strong>，极少有非使用图形界面不可的情况，又何必忍受Ubuntu臃肿的GUI呢。ssh远程登录到系统上，所有操作都通过命令行搞定，不必费心某个软件没有Linux版，或者QQ、输入法的功能弱，也不用被 <strong>Ubuntu桌面版默认强制</strong> 安装一堆充满bug的办公软件，多媒体软件等。</p>
+<h2 id="为什么使用-VM"><a href="#为什么使用-VM" class="headerlink" title="为什么使用 VM"></a>为什么使用 VM</h2><p>如果有两台机器，一个装Ubuntu Server，连上网络然后扔在一边（只是一个机箱，都不需要显示器、键盘鼠标），另一个装Windows，远程访问即可。<br>如果只有一台机器，那么用Virtulbox创建虚拟机，安装一个Server版，平时可以选择“无界面启动”(<code>headless</code>)，没有多余的窗口，然后就跟使用物理服务器一样ssh远程登录到系统上。</p>
+<blockquote>
+<p>如果通过ssh远程执行命令，就不必使用vbox的虚拟机窗口了。启动虚拟机时，可以选择“无界面启动”，也可以在Windows命令行启动虚拟机<br>“C:\Program Files\Oracle\VirtualBox\VBoxManage.exe” startvm &lt;虚拟机名&gt; –type headless<br>其中<code>C:\Program Files\Oracle\VirtualBox\</code>是vbox的安装路径，可以把它添加到<code>PATH</code>环境变量中。<br><img src="/img/vbox-headless.png" alt=""></p>
+</blockquote>
+<p>使用VM比物理机器更好的地方，</p>
+<ul>
+<li>一是可以使用主机的网络，对学校网络这种外网帐号只能在一处使用的场景很方便；</li>
+<li>另一点是可以利用VM的 <strong>快照功能</strong> 方便地进行全系统的备份和恢复。</li>
+</ul>
+<p>VM相比物理机器的性能损失，或者较少的CPU、内存资源其实影响并不大，毕竟云计算中都在普遍使用VM嘛。<br>即便是Mac OS X这样的Unix环境，也建议使用VM安装Ubuntu，除了上面两个优点，还可以防止误操作弄乱系统，另外可以避免Mac OS X内置命令与Linux不兼容的困扰。<br>不建议在物理机器上安装双系统。</p>
+<h1 id="在虚拟中安装Ubuntu"><a href="#在虚拟中安装Ubuntu" class="headerlink" title="在虚拟中安装Ubuntu"></a>在虚拟中安装Ubuntu</h1><h2 id="Virtualbox的全局设定"><a href="#Virtualbox的全局设定" class="headerlink" title="Virtualbox的全局设定"></a>Virtualbox的全局设定</h2><p>安装好Virtualbox后，可以在<code>管理-&gt;全局设定</code>中修改<code>默认虚拟电脑位置</code>；另外在<code>网络</code>中添加<code>Nat网络</code>，并修改IP网段；修改已经默认添加的<code>仅主机(Host-Only)网络</code>的IP网段。<br>如下图，设置Nat网络的IP网段为<code>10.0.1.0/24</code>，设置Host-Only网络的<code>主机虚拟网络界面</code>(即vbox的虚拟网卡)的IP为<code>10.1.1.1</code>，并启用DHCP服务器，设置其IP网段。当然使用Host-Only虚拟网卡默认的 <code>192.168.56.0</code>网段也是可以的。这里是为了说明如何设置任意的（私网）IP网段，二是为了以后敲命令时IP较简短。<br><img src="/img/vboxconf-NatNetwork.png" alt="添加Nat网络，并修改IP网段"></p>
+<p><img src="/img/vboxconf-hostonly.png" alt="修改默认Host-Only网络的IP网段"></p>
+<h2 id="安装Ubuntu"><a href="#安装Ubuntu" class="headerlink" title="安装Ubuntu"></a>安装Ubuntu</h2><p>从Ubuntu官网下载<a href="http://releases.ubuntu.com/16.04/ubuntu-16.04.2-server-amd64.iso" target="_blank" rel="external">Server 16.04.2 的.iso镜像</a>。<br>在vbox中新建Linux类型虚拟机，选择Ubuntu 64位，虚拟磁盘使用vhd格式，动态扩展，将下载的.iso镜像挂载到虚拟机，启动虚拟机后开始安装。<br><img src="/img/vboxsetting-store.png" alt=""></p>
+<ul>
+<li><strong>[可选]</strong> 安装系统前先 <strong>不接入网络</strong>，即在VM设置中不勾选<code>启用网络连接</code>，以免安装过程中联网更新耗时较长。</li>
+<li><strong>[强烈建议]</strong> 安装时语言选择为 <strong>英文</strong>：如果选择默认语言为中文，安装后一些命令会显示中文的帮助信息，结果因为终端不能显示中文而变成乱码，造成不便。英文系统也是使用UTF8编码，可以在ssh客户端正常显示中文。但<code>Location</code>要选择实际的区域，以匹配正确的时区。</li>
+</ul>
+<p>在最后的步骤中选中<code>Samba File Server</code>，<code>Standard System Utility</code>和<code>OpenSSH Server</code>（<code>空格键</code>选择或取消选择，<code>回车键</code>确认并继续下一步）。</p>
+<blockquote>
+<p>如果安装前没有接入网络，则安装后关闭虚拟机，添加“NAT网络”和“仅主机(Host-Only)网卡”两个网卡。</p>
+</blockquote>
+<p><img src="/img/vboxsetting-net.png" alt=""></p>
+<p>Server没有图形界面，启动系统，进入的是下面这样一个黑乎乎的界面。输入安装时设置的用户名（这里是<code>ying</code>），回车，输入密码（没有任何显示），回车，进入系统的<code>shell</code>。<br><img src="/img/vm-tty.png" alt=""></p>
+<h1 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h1><h2 id="设置网络"><a href="#设置网络" class="headerlink" title="设置网络"></a>设置网络</h2><p>如果安装时没有接入网络，添加网卡后需要在<code>/etc/network/interfaces</code>中设置一下。<br>Ubuntu 16.04的网卡命名不是以前的类似<code>eth0</code>，<code>eth1</code>，而是<code>enp0s?</code>这样。<code>?</code>代表一个数字，<br>执行<code>ip a</code>，如上图，输出的<code>2: enp0s3...</code>和<code>3: enp0s8...</code>就是已经识别出的网卡名。</p>
+<p>设置网卡：执行<code>sudo nano /etc/network/interfaces</code>，使用<code>nano</code>编辑<code>/etc/network/interfaces</code>，<strong>增加</strong> 下面的内容<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">auto  enp0s3       # NAT网络，用于连接外网</div><div class="line">iface enp0s3 inet dhcp</div><div class="line"></div><div class="line">auto  enp0s8       # Host-Only网卡，设置静态IP，内网</div><div class="line">iface enp0s8 inet static</div><div class="line">address 10.1.1.5</div><div class="line">netmask 255.255.255.0</div></pre></td></tr></table></figure></p>
+<p>按 <code>Ctrl+X</code> 快捷键，再按 <code>Y</code> 键，回车，保存并退出<code>nano</code>。</p>
+<blockquote>
+<p><code>nano</code> 是一个简单的命令行文本编辑器，功能比较弱，但比<code>vim</code>直观一些。</p>
+</blockquote>
+<p>启动网卡：执行<code>sudo ifup enp0s3 enp0s8</code>，再次执行<code>ip a</code>，可以看到这两个网卡已经获取了IP地址。</p>
+<p>确认网卡工作正常：</p>
+<ul>
+<li>Nat网络连接外网：执行<code>curl ip.cn</code>，应返回一个IP地址和乱码（乱码是IP地址对应的中文的地理位置）</li>
+<li>Host-only连接内网（主机）：执行<code>ping 10.1.1.1 -c 5</code>，应该能ping通。</li>
+</ul>
+<blockquote>
+<p>网络工作正常后，就可以通过ssh登录到虚拟机来执行命令了。</p>
+</blockquote>
+<h2 id="系统更新和升级"><a href="#系统更新和升级" class="headerlink" title="系统更新和升级"></a>系统更新和升级</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">sudo apt update   # 更新apt</div><div class="line">sudo apt upgrade  # 升级系统，可能耗时较长。</div></pre></td></tr></table></figure>
+<p>如果网络速度较慢，可将apt源更换为<a href="http://mirrors.163.com/.help/ubuntu.html" target="_blank" rel="external">国内163</a>的，或者[<a href="http://mirrors.nju.edu.cn]，其中Ubuntu" target="_blank" rel="external">http://mirrors.nju.edu.cn]，其中Ubuntu</a> 16.04的代号是<code>xenial</code>。</p>
+<h2 id="可选-切换为root用户"><a href="#可选-切换为root用户" class="headerlink" title="[可选] 切换为root用户"></a>[可选] 切换为root用户</h2><p>安装系统时设置的的用户有<code>sudo</code>权限。直接使用<code>root</code> <strong>不是</strong> 一种好的做法，不过可以省去很多权限相关的问题和很多命令前面的<code>sudo</code> 。<br>执行<code>sudo passwd</code>，先输入当前用户的密码以授权<code>sudo</code>，然后输入两次<code>root</code>的登录密码。执行<code>exit</code>注销当前用户，以<code>root</code>和刚才设置的密码登录。</p>
+<p>ssh默认禁止<code>root</code>用密码登录。可以修改<code>/etc/ssh/sshd_config</code>允许<code>root</code>使用密码登录，或为<code>root</code>设置使用密钥登录。</p>
+<h2 id="可选-设置sudo免密码"><a href="#可选-设置sudo免密码" class="headerlink" title="[可选] 设置sudo免密码"></a>[可选] 设置sudo免密码</h2><p>如果不想直接使用<code>root</code>用户，还可以设置执行<code>sudo</code>时 <strong>免输密码</strong>。执行<code>sudo visudo</code>(实际上是<code>nano</code>编辑器)，找到 <code>%sudo    ALL=(ALL:ALL) ALL</code>这一行，改为<code>%sudo    ALL=(ALL:ALL) NOPASSWD: ALL</code> 。</p>
+<h2 id="杂项设置"><a href="#杂项设置" class="headerlink" title="杂项设置"></a>杂项设置</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">; 安装常用软件</div><div class="line">sudo apt install git zsh tree</div><div class="line"></div><div class="line">; 设置Git的全局用户名和Email</div><div class="line">git config --global user.name  &quot;ZHANG Ying&quot;</div><div class="line">git config --global user.email &quot;your@email.com&quot;</div><div class="line"></div><div class="line">; 设置Git换行符转换规则，input选项会把Windows下的CRLF换行符转换成Linux下的LF</div><div class="line">; 参考https://git-scm.com/book/be/v2/Customizing-Git-Git-Configuration</div><div class="line">git config --global core.autocrlf input  # true会将LF转换为CRLF，false则不做任何处理</div><div class="line"></div><div class="line">; 设置zsh和oh-my-zsh</div><div class="line">sudo chsh ying -s /usr/bin/zsh</div><div class="line">wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh</div><div class="line">; 使用短网址  </div><div class="line">wget https://git.io/SM81Wg -O - | sh</div><div class="line"></div><div class="line">; 注销后重新登录，默认的shell已经从bash（dash）切换到了zsh。</div><div class="line"></div><div class="line">; 以下修改~/.zshrc，执行 source ~/.zshrc 应用更改</div><div class="line">; 禁用oh-my-zsh的自动更新，取消下面一行的注释</div><div class="line">DISABLE_AUTO_UPDATE=&quot;true&quot;</div><div class="line"></div><div class="line">; 默认已禁用oh-my-zsh的PATH，可在/etc/enviroment改PATH</div><div class="line"></div><div class="line">; 增加alias</div><div class="line">alias cls=&quot;clear&quot;</div><div class="line">alias dir=&quot;ls -alF&quot;</div><div class="line">alias ipconfig=&quot;ifconfig&quot;</div><div class="line">alias ping=&quot;ping -c 3&quot;</div><div class="line"></div><div class="line">alias ll=&quot;ls -alF&quot;</div><div class="line">alias ps=&quot;ps -af&quot;</div><div class="line">alias netstat=&quot;netstat -nap&quot;</div><div class="line">alias json=&quot;python -m json.tool&quot;</div></pre></td></tr></table></figure>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><h3 id="PATH环境变量"><a href="#PATH环境变量" class="headerlink" title="PATH环境变量"></a>PATH环境变量</h3><p>Linux下的绝大多数命令，其实是对应着一个可执行程序的 <strong>文件名</strong>。这些可执行文件分散在 <code>PATH</code> 环境变量设置的目录列表中，比如<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">echo $PATH</div><div class="line">; 输出为</div><div class="line">; /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games</div></pre></td></tr></table></figure></p>
+<p>可以查看这些目录中都有哪些可执行程序，也就是系统支持的命令了。比如Ubuntu系统安装后已经内置了Python2，Python3，Ruby，Perl，它们的可执行程序都在<code>/usr/bin</code>，可以通过<code>ls /usr/bin</code>来确认。<br>如果在上面的目录中都找不到要执行的程序文件名，那么就会得到 <em>无法找到命令</em> 的错误。如果不是敲错了命令，那么就需要完整的程序路径，或者将程序所在目录加到<code>PATH</code>。<br>当前目录（<code>.</code>）默认没有加入到<code>PATH</code>中去，这是出于安全考虑。要执行当前目录下的程序或脚本，需要<code>./foo.sh</code>这样。</p>
+<h3 id="which命令"><a href="#which命令" class="headerlink" title="which命令"></a><code>which</code>命令</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ which which</div><div class="line">which: shell built-in command</div><div class="line"></div><div class="line">$ which echo</div><div class="line">echo: shell built-in command</div><div class="line"></div><div class="line">$ which python</div><div class="line">/usr/bin/python</div></pre></td></tr></table></figure>
+<h3 id="查看系统版本"><a href="#查看系统版本" class="headerlink" title="查看系统版本"></a>查看系统版本</h3><p>查看发行版本和代号，执行<code>cat /etc/os-release</code><br>查看内核版本，执行<code>uname -a</code></p>
+<hr>
+<p>设置完成后，关闭VM，在vbox中创建一个快照，另外可以再将虚拟磁盘压缩备份。<br><img src="/img/vbox-snapshot.png" alt=""></p>
+
+      
+
+      
+        
+    </div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/misc/2016/install-win-10/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          安装和设置Windows 10
+        
+      </div>
+    </a>
+  
+  
+    <a href="/misc/2016/hello-hexo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello Hexo！</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        <aside id="sidebar">
+  <nav class="menus">
+  	<ul>
+  		<li><a href="/"><i class="icon icon-home"></i></a></li>
+  		
+			<li><a href="/archives"><i class="icon icon-fenlei"></i></a></li>
+  		
+  		
+  			<li><a href="https://github.com/ying-zhang" target="_blank"><i class="icon icon-github"></i></a></li>
+  		
+			
+  			<li><a href="/atom.xml" target="_blank"><i class="icon icon-tag"></i></a></li>
+  		
+  	</ul>
+  </nav>
+  <a id="go-top" href="#"><i class="icon icon-up"></i></a>
+</aside>
+      </div>
+      <footer id="footer">
+  
+	<div id="footer-info" class="inner">
+	  &copy; 2017 Ying ZHANG 
+	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
+		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
+	</div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="https://github.com/ying-zhang" class="mobile-nav-link">Github</a>
+  
+    <a href="/atom.xml" class="mobile-nav-link">RSS</a>
+  
+</nav>
+    
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+</html>
