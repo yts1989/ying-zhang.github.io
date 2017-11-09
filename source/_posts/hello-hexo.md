@@ -167,6 +167,9 @@ deploy:
 直接在主题文件中修改了等宽字体，及正文的宽度。
 顺便删除默认主题landscape。
 
+> 对jane主题的修改：将侧栏移到左侧，这个在项目repo已经[有人提过issue](https://github.com/hejianxian/hexo-theme-jane/issues/5)，作者的方案需要手动修改`style.sty`，跟我摸索发现的一样，我还修改了滚动条显示的样式。
+
+
 ## 文件结构
 
 | 文件/文件夹     |       说明     |
@@ -278,9 +281,10 @@ git remote rename origin github
 
 # Tips
 
-Windows下编辑文本需要注意编码，应使用utf8无bom格式的编码，建议使用[Atom编辑器](https://atom.io/) (并安装Markdown插件)
+Windows下编辑文本需要注意编码，应使用utf8无bom格式的编码，建议使用VS Code编辑器。
 
 ## 编辑数学公式
+注意，需要`hexo-math`插件，但这个插件的作者已经停止维护了，不知有什么替代的。
 ```
 {% math %}
 \begin{align*}
