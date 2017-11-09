@@ -176,13 +176,15 @@ body {
 @media screen and (min-width: 768px) {
   #main {
     width: 100%;
-    padding-right: 50px;
+    padding-left: 50px;
     margin: auto;
   }
 }
+/*
 ::-webkit-scrollbar {
-  width: 0px;
+    width: 0px;
 }
+*/
 .article-date,
 .article-category-link,
 .archive-year {
@@ -1029,7 +1031,7 @@ pre .javascript .function {
   #sidebar {
     display: block;
     position: fixed;
-    right: 0;
+    left: 0;
     top: 0;
     width: 50px;
     height: 100%;
