@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Ying的博客">
 <meta property="og:description" content="欢迎访问。本博客使用Hexo生成。本文记录了设置过程。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-30T03:51:50.679Z">
+<meta property="og:updated_time" content="2017-11-07T15:36:27.105Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hello Hexo！">
 <meta name="twitter:description" content="欢迎访问。本博客使用Hexo生成。本文记录了设置过程。">
@@ -131,6 +131,9 @@
 <h2 id="设置-config-yml"><a href="#设置-config-yml" class="headerlink" title="设置 _config.yml"></a>设置 <code>_config.yml</code></h2><p>在 <code>_config.yml</code> 修改博客名，固定链接格式，主题，deploy的repo等。部分设置如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">## Themes: https://hexo.io/themes/</div><div class="line">theme: jane</div><div class="line"></div><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repository: git@github.com:ying-zhang/ying-zhang.github.io.git</div><div class="line">  branch: master</div></pre></td></tr></table></figure>
 <h2 id="使用jane主题"><a href="#使用jane主题" class="headerlink" title="使用jane主题"></a>使用<a href="https://github.com/hejianxian/hexo-theme-jane" target="_blank" rel="external">jane主题</a></h2><p>这里没有使用git clone来下载 jane 主题的代码库，而是直接下载代码库的zip文件，解压到<code>themes/</code>文件夹。<br>直接在主题文件中修改了等宽字体，及正文的宽度。<br>顺便删除默认主题landscape。</p>
+<blockquote>
+<p>对jane主题的修改：将侧栏移到左侧，这个在项目repo已经<a href="https://github.com/hejianxian/hexo-theme-jane/issues/5" target="_blank" rel="external">有人提过issue</a>，作者的方案需要手动修改<code>style.sty</code>，跟我摸索发现的一样，我还修改了滚动条显示的样式。</p>
+</blockquote>
 <h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><table>
 <thead>
 <tr>
@@ -188,8 +191,8 @@
 </blockquote>
 <p>在Github创建一个名为<code>blog</code>的项目，<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">git add .</div><div class="line">git commit -m &quot;Init&quot;</div><div class="line">git remote add github git@github.com:ying-zhang/blog.git</div><div class="line">git push -u github master</div></pre></td></tr></table></figure></p>
 <h2 id="克隆已有的blog项目"><a href="#克隆已有的blog项目" class="headerlink" title="克隆已有的blog项目"></a>克隆已有的blog项目</h2><p>当然需要已经安装好git，nodejs和hexo。<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">git clone git@github.com:ying-zhang/blog.git</div><div class="line">cd blog</div><div class="line"></div><div class="line">git remote rename origin github</div><div class="line"></div><div class="line">7z x node_modules.7z    # 不要忘了这一步</div><div class="line">7z x themes.7z</div></pre></td></tr></table></figure></p>
-<h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h1><p>Windows下编辑文本需要注意编码，应使用utf8无bom格式的编码，建议使用<a href="https://atom.io/" target="_blank" rel="external">Atom编辑器</a> (并安装Markdown插件)</p>
-<h2 id="编辑数学公式"><a href="#编辑数学公式" class="headerlink" title="编辑数学公式"></a>编辑数学公式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;% math %&#125;</div><div class="line">\begin&#123;align*&#125;</div><div class="line">-\sum_i&#123;P_i\log_2\frac&#123;P_i&#125;&#123;Q_i&#125;&#125; =&amp; \sum_i&#123;P_i\log_2\frac&#123;Q_i&#125;&#123;P_i&#125;&#125; \\</div><div class="line">\le&amp; \log_2\sum_i&#123;P_i\frac&#123;Q_i&#125;&#123;P_i&#125;&#125; \tag&#123;Jensen 不等式&#125; \\</div><div class="line">=&amp; \log_2\sum_i&#123;Q_i&#125; \\</div><div class="line">=&amp; 0</div><div class="line">\end&#123;align*&#125;</div><div class="line">&#123;% endmath %&#125;</div></pre></td></tr></table></figure>
+<h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h1><p>Windows下编辑文本需要注意编码，应使用utf8无bom格式的编码，建议使用VS Code编辑器。</p>
+<h2 id="编辑数学公式"><a href="#编辑数学公式" class="headerlink" title="编辑数学公式"></a>编辑数学公式</h2><p>注意，需要<code>hexo-math</code>插件，但这个插件的作者已经停止维护了，不知有什么替代的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;% math %&#125;</div><div class="line">\begin&#123;align*&#125;</div><div class="line">-\sum_i&#123;P_i\log_2\frac&#123;P_i&#125;&#123;Q_i&#125;&#125; =&amp; \sum_i&#123;P_i\log_2\frac&#123;Q_i&#125;&#123;P_i&#125;&#125; \\</div><div class="line">\le&amp; \log_2\sum_i&#123;P_i\frac&#123;Q_i&#125;&#123;P_i&#125;&#125; \tag&#123;Jensen 不等式&#125; \\</div><div class="line">=&amp; \log_2\sum_i&#123;Q_i&#125; \\</div><div class="line">=&amp; 0</div><div class="line">\end&#123;align*&#125;</div><div class="line">&#123;% endmath %&#125;</div></pre></td></tr></table></figure></p>
 <span>$$\begin{align*}
 -\sum_i{P_i\log_2\frac{P_i}{Q_i}} =&amp; \sum_i{P_i\log_2\frac{Q_i}{P_i}} \\
 \le&amp; \log_2\sum_i{P_i\frac{Q_i}{P_i}} \tag{Jensen 不等式} \\
