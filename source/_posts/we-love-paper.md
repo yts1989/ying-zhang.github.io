@@ -1,70 +1,31 @@
-title: 如何收集和整理论文（面向CS专业）
+﻿title: 如何收集和整理论文（面向CS专业）
 category: misc
 date: 2016-09-28
 tags:
 ---
 
 论文（Paper）是每个研究生读研路上挥之不去的“阴云”。
-无论是否已经有了一个好的课题或想法，都首先要收集某个研究方向一定数量的论文，来了解相关的工作和最新进展(State of the art & practice）。
-本文介绍了如何检索、收集计算机科学（CS）专业的论文，还介绍了与相关的机构，学术会议和论文数据库。
+无论是否已经有了一个好的课题或想法，都首先要收集某个研究方向一定数量的论文，来了解相关的工作和最新进展（State of the art & practice）。
+本文介绍了如何检索、收集计算机科学（CS）专业的论文，还介绍了相关的机构，学术会议和论文数据库。
 文末有 [**Bonus**](#hosts) 哦;-)
 
 <!--more-->
 
 ---
 
-
-
 # tl;dr
 + 从[CCF推荐目录](https://ying-zhang.github.io/misc/2017/ccf-all-in-one/)中自己感兴趣的方向的 **A类会议及期刊** 中找论文即可。
 + 我关注的云计算，程序分析方向的[会议和期刊列表](#tldr)
 + [**Bonus**](#hosts) 修改Hosts
-
-<!-- TOC -->
-
-    - [title: 如何收集和整理论文（面向CS专业）](#title-%E5%A6%82%E4%BD%95%E6%94%B6%E9%9B%86%E5%92%8C%E6%95%B4%E7%90%86%E8%AE%BA%E6%96%87%EF%BC%88%E9%9D%A2%E5%90%91cs%E4%B8%93%E4%B8%9A%EF%BC%89)
-- [tl;dr](#tldr)
-- [引子](#%E5%BC%95%E5%AD%90)
-    - [论文发表的过程](#%E8%AE%BA%E6%96%87%E5%8F%91%E8%A1%A8%E7%9A%84%E8%BF%87%E7%A8%8B)
-- [CS论文数据库](#cs%E8%AE%BA%E6%96%87%E6%95%B0%E6%8D%AE%E5%BA%93)
-    - [ACM, IEEE Computer等](#acm-ieee-computer%E7%AD%89)
-        - [ACM SIGs](#acm-sigs)
-    - [[USENIX](https://www.usenix.org/)](#usenixhttpswwwusenixorg)
-    - [[arXiv](http://arxiv.org/)](#arxivhttparxivorg)
-    - [EI和SCI](#ei%E5%92%8Csci)
-    - [dblp](#dblp)
-    - [DOI](#doi)
-    - [其它](#%E5%85%B6%E5%AE%83)
-- [CCF目录](#ccf%E7%9B%AE%E5%BD%95)
-- [Google Scholar（谷歌学术）](#google-scholar%EF%BC%88%E8%B0%B7%E6%AD%8C%E5%AD%A6%E6%9C%AF%EF%BC%89)
-    - [创建快讯](#%E5%88%9B%E5%BB%BA%E5%BF%AB%E8%AE%AF)
-- [tl,dr：链接列表](#tldr%EF%BC%9A%E9%93%BE%E6%8E%A5%E5%88%97%E8%A1%A8)
-    - [体系结构，系统，存储，分布式系统](#%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%EF%BC%8C%E7%B3%BB%E7%BB%9F%EF%BC%8C%E5%AD%98%E5%82%A8%EF%BC%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F)
-    - [软件工程（软件分析）](#%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%EF%BC%88%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%EF%BC%89)
-    - [云计算，网络，大数据](#%E4%BA%91%E8%AE%A1%E7%AE%97%EF%BC%8C%E7%BD%91%E7%BB%9C%EF%BC%8C%E5%A4%A7%E6%95%B0%E6%8D%AE)
-    - [移动计算](#%E7%A7%BB%E5%8A%A8%E8%AE%A1%E7%AE%97)
-    - [ACM DL列表](#acm-dl%E5%88%97%E8%A1%A8)
-    - [IEEE Computer列表](#ieee-computer%E5%88%97%E8%A1%A8)
-    - [[USENIX组织的会议列表](https://www.usenix.org/conferences/byname)](#usenix%E7%BB%84%E7%BB%87%E7%9A%84%E4%BC%9A%E8%AE%AE%E5%88%97%E8%A1%A8httpswwwusenixorgconferencesbyname)
-    - [国内三个学报](#%E5%9B%BD%E5%86%85%E4%B8%89%E4%B8%AA%E5%AD%A6%E6%8A%A5)
-    - [国内论文数据库](#%E5%9B%BD%E5%86%85%E8%AE%BA%E6%96%87%E6%95%B0%E6%8D%AE%E5%BA%93)
-    - [其它链接](#%E5%85%B6%E5%AE%83%E9%93%BE%E6%8E%A5)
-- [如何读论文](#%E5%A6%82%E4%BD%95%E8%AF%BB%E8%AE%BA%E6%96%87)
-- [[Todo]辅助工具](#todo%E8%BE%85%E5%8A%A9%E5%B7%A5%E5%85%B7)
-    - [**改hosts**](#%E6%94%B9hosts)
-    - [**hosts文件的路径**](#hosts%E6%96%87%E4%BB%B6%E7%9A%84%E8%B7%AF%E5%BE%84)
-- [PS: [A Survival Guide to a PhD](http://karpathy.github.io/2016/09/07/phd/)](#ps-a-survival-guide-to-a-phdhttpkarpathygithubio20160907phd)
-
-<!-- /TOC -->
 
 # 引子
 按理说，开篇应该先要强调一下Paper对于科研的重要性的，直接把前辈的经验拿来吧：
 + 周志华老师的一篇关于[做研究与写论文的ppt](/doc/research_and_paper_zhou_zhihua_2007_ppt.pdf)
 + 凌晓峰和杨强的[《学术研究 - 你的成功之道》](http://item.jd.com/11127141.html)，这本书的英文原版是[Crafting Your Research Future - A Guide to Successful Master's and Ph.D. Degrees in Science & Engineering](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6813064)
 
-首先要从前辈的经验中端正对Paper的态度：Paper不是科研的原因，而是结果(的一部分)，结果是必要的，自然也就少不了Paper或者总结报告；
+首先要从前辈的经验中端正对Paper的态度：Paper不是科研的原因，而是结果（的一部分）。结果肯定是必要的，自然也就少不了Paper或者总结报告；
 再者要借鉴前辈的学习方法和技巧，所谓“工欲善其事，必先利其器”，除了科研课题本身，养成一套高效的科研方法和习惯也是重要的。
-重要的是要 *有意识地探索和总结适合自己的科研方法*，既要低头苦干，又要抬头看路，还要回头总结。
+重要的是要 **有意识地探索和总结适合自己的科研方法**，既要低头苦干，又要抬头看路，还要回头总结。
 
 ## 论文发表的过程
 
@@ -76,15 +37,15 @@ Idea -> 编程、实验、写Paper、投稿 <                                   
 
 简单介绍一下发表论文的过程：
 + 首先投稿的Paper作者，一般是高校的的研究生，也有教师，比如[UC Berkeley 的AMPLab](https://amplab.cs.berkeley.edu/)；还有一些公司的研究院，比如[微软](https://www.microsoft.com/en-us/research/)，[谷歌](https://research.google.com/pubs/papers.html)。显然，论文的出身对质量有很大影响。
-+ 期刊是传统的研究成果发表方式，一般期刊是季度，少有月度出版的，每期称为一个Issue，一年的各期集结为一个Volume。一般可以随时投稿给期刊，没有截稿日期(deadline)的压力。投稿后一般要经过同行评审(Peer Review)，针对审稿人的建议做大修，小修(Major，Minor Revision)等两三轮修改才能被接收，期间跨度一年多是常有的情况。不过如果有的期刊安排了专刊(Special Issue)计划，会公布一个截稿日期，审稿的进度会稍快些。
-期刊分为 **Transaction, Journal 和 Magazine** 。这三者的学术严肃性依次降低，这可以从它们的封面上直观地看出来。严格来说Magazine不算是学术期刊了，上面很少发表新的原创性的内容，而是对当前进展的简介和综述，也会转发一些已经发表过的重要的Paper。 *不过对于新手来说，先浏览一下Magazine，建立一个基本的概念还是很有必要的，特别是* [Communications of the ACM, CACM, ACM通讯](http://dl.acm.org/citation.cfm?id=J79) *值得关注*。
-+ 对快速发展的CS专业来说，期刊的节奏有点慢了，而且期刊版面有限，每期只能发布几篇到十几篇不等，所以上面发表的一般是一些理论性比较强的论文，或者综述性的论文；很多新成果转而发表在学术会议上来，这跟传统学科不太一样。
-很多会议每年举行一次，时间上也是比较固定的，会提前在会议网站上发布下一年的call for paper（cfp，征稿启事）和deadline（截稿日期）。投稿后，一般经过两三个月的审稿就会通知作者是否录用（Notifications）。被接收的Paper会要求按格式和Reviewers的意见稍修改后提交正式的最终版，称为Camera Ready。最后需要作者赴会做Presentation。
-会议录用的所有Paper会结集出版，称为 *Proceedings* 。有的会议还会推荐一些优秀的Paper到合作的期刊，扩展后作为期刊论文出版。
-会议分为 *Symposium , Conference 和 Workshop*。这三者的学术严肃性依次降低，大部分会议都称为 *Conference*。一般来说 *Workshop* 是随某个 *Conference* 一同举办，可能没有固定的主题，Paper质量与主会议有所差别。
++ 期刊是传统的研究成果发表方式，一般期刊是季度，少有月度出版的，每期称为一个Issue，一年的各期集结为一个Volume。一般可以随时投稿给期刊，没有截稿日期（Deadline，ddl）的压力。投稿后一般要经过同行评审（Peer Review），针对审稿人的建议做大修，小修（Major，Minor Revision）等两三轮修改才能被接收，期间跨度一年多是常有的情况。不过如果有的期刊安排了专刊（Special Issue）计划，会公布一个截稿日期，审稿的进度会稍快些。
+期刊分为 **Transaction, Journal 和 Magazine** 。这三者的学术严肃性依次降低，这可以从它们的封面上直观地看出来。严格来说Magazine不算是学术期刊了，上面很少发表新的原创性的内容，而是对当前进展的简介和综述，也会转发一些已经发表过的重要的Paper。 **不过对于新手来说，先浏览一下Magazine，建立一个基本的概念还是很有必要的，特别是 [Communications of the ACM（CACM, ACM通讯）](http://dl.acm.org/citation.cfm?id=J79) 值得关注**。
++ 对快速发展的CS专业来说，期刊的节奏有点慢了，而且期刊版面有限，每期只能发布几篇到十几篇不等（有的期刊则动辄一卷几千页，所以，文章质量嘛……），所以上面发表的一般是一些理论性比较强的论文，或者综述性的论文；很多新成果转而发表在学术会议上来，这跟传统学科不太一样。
+很多会议每年举行一次，时间上也是比较固定的月份，会提前在会议网站上发布下一年的call for paper（cfp，征稿启事）和deadline（截稿日期）。投稿后，一般经过两三个月的审稿就会通知作者是否录用（Notifications）。被接收的Paper会要求按格式和Reviewers的意见稍修改后提交正式的最终版，称为Camera Ready。最后需要作者赴会做Presentation。
+会议录用的所有Paper会结集出版，称为 **Proceedings** 。有的会议还会推荐一些优秀的Paper到合作的期刊，扩展后作为期刊论文出版。
+会议分为 **Symposium , Conference 和 Workshop**。这三者的学术严肃性依次降低，大部分会议都称为 **Conference**。一般来说 **Workshop** 是随某个 **Conference** 一同举办，可能没有固定的主题，Paper质量与主会议有所差别。
 
-通过这个过程，我们还可以知道如何**尽快**找到一篇感兴趣的文章：
-+ 对于期刊，一般投稿是很多的，编辑部会把已经接收但还没有排到出版期号的文章先放到网上在线出版，称为Early Access；
+通过这个过程，我们还可以知道如何 **尽快** 找到一篇感兴趣的文章：
++ 对于期刊，一般投稿是很多的，编辑部会把已经接收但还没有排到出版期号的文章先放到网上在线出版，称为Early Access，即在线预出版；
 + 对于会议，在确定了接收的文章后，会在会议网站的Program/Accepted Papers/Schedule等类似链接下给出列表，同时会Email通知作者准备提交Camera Ready版。这时有的作者就会把Camera Ready版放到自己的主页上。之后会议组委将论文集结提供给所有作者，还会将论文集发布到ACM或IEEE（这两个机构直接参与了很多会议的组织）的论文数据库中。不同的会议组委效率不同，有的在开会前就上线出版了，有的在会议结束后还要等一段时间。
 
 # CS论文数据库
@@ -102,11 +63,11 @@ Idea -> 编程、实验、写Paper、投稿 <                                   
 | Springer                                 | Springer Link http://link.springer.com/            | http://www.springer.com/   |
 | Wiley                                    | Wiley Online Lib http://onlinelibrary.wiley.com/   | http://www.wiley.com/      |
 
-ACM 和 IEEE Computer Society（计算机学会，IEEE还有电气、电子、通信等其它多个学会） 的网址后缀是 *.org*，这两个是CS领域最重要的学术组织，很多的CS学术会议都是由它们组织的。
-Elsevier，Springer，Wiley的网址后缀则是 *.com* ，这些是学术出版商，内容以期刊为主，涵盖了CS及其它多个学科。
+ACM 和 IEEE Computer Society（计算机学会，IEEE还有电气、电子、通信等其它多个学会） 的网址后缀是 **.org**，这两个是CS领域最重要的学术组织，很多的CS学术会议都是由它们组织的。
+Elsevier，Springer，Wiley的网址后缀则是 **.com** ，这些是学术出版商，内容以期刊为主，涵盖了CS及其它多个学科。
 上面这几个数据库是 **主要的论文全文来源**。它们各自收录的会议和期刊基本没有重叠，从它们的数据库下载的Paper也都有各自的排版样式。
 > ACM作为最“正统”的计算机学术组织，它的DL除了收录ACM组织的会议和期刊全文之外，还会索引其它几家数据库的 **元数据**，但没有全文，不过可以通过DOI链接跳转到这几家数据库的全文页面。
-> IEEE出版的一些论文在 computer.org （实际是[CSDL](https://www.computer.org/csdl/)）和 Xplore DL 都可能搜到，但这两个数据库是 *分别* 收费的，能在Xplore DL下载的不一定能在Computer.org下载。
+> IEEE出版的一些论文在 computer.org （实际是[CSDL](https://www.computer.org/csdl/)）和 Xplore DL 都可能搜到，但这两个数据库是 **分别** 收费的，能在Xplore DL下载的不一定能在Computer.org下载。
 
 ### ACM SIGs
 ACM之下针对CS多个子方向的“分舵”，称为Special Interest Group，SIG，目前有三十多个[ACM SIGs](http://www.acm.org/sigs/)（或参考DL的这个链接[SIGs ACM DL](http://dl.acm.org/sigs.cfm)），比如
@@ -116,39 +77,39 @@ ACM之下针对CS多个子方向的“分舵”，称为Special Interest Group�
 + 系统方向的[SIGOPS](http://www.sigops.org/)，
 + 软件工程方向的[SIGPLAN](http://www.sigplan.org/)、[SIGSOFT](http://www.sigsoft.org/)
 
-这些SIGs除了组织一系列的学术会议，还会评选本方向的一些奖项，包括 **最佳论文**，**优秀博士论文** 等(在DL中一般没有哪篇是Best Paper的信息)。此外，
+这些SIGs除了组织一系列的学术会议，还会评选本方向的一些奖项，包括 **最佳论文**，**优秀博士论文** 等（在DL中一般没有标明哪篇是Best Paper）。此外，
 + 有网站维护了一个[部分会议的最佳论文列表](http://jeffhuang.com/best_paper_awards.html)，
 + 还有下面要介绍的USENIX的[各会议最佳论文](https://www.usenix.org/conferences/best-papers)。
 
-除此之外，有的SIG会选择一些高质量的文章，以Review，Newsletter 或Notes的形式重新发表。
+有的SIG会选择一些高质量的文章，以Review，Newsletter 或 Notes 的形式重新发表，引用的时候最好引用最初的来源。
 
 ## [USENIX](https://www.usenix.org/)
 要是学校的图书馆不差钱，把所有有价值的论文数据库都买买买来，那么下面截图中的电子资源列表应该很全了吧？然而还是少了一个重要的数据库：USENIX —— 它是免费的。
-话说**[USENIX](https://www.usenix.org/)** 实在是个良心组织。USENIX最初称为Unix User Group。它组织了OSDI 、ATC、FAST、NSDI、LISA等会议，不但学术水平很高，贴近工业界，而且免费提供全文下载，还提供一些论文作者在会议上的slices及演讲视频。slices是对文章的提炼，读论文时可以参考。拿slices和视频来学习做Presentation，练习英语听力和口语也不错。
+话说**[USENIX](https://www.usenix.org/)** 实在是个良心组织。USENIX最初称为Unix User Group。它组织了OSDI 、ATC、FAST、NSDI、LISA等会议，不但学术水平很高，贴近工业界，而且免费提供全文下载，还提供一些论文作者在会议上的slides及演讲视频。slides是对文章的提炼，读论文时可以参考。拿slides和视频来学习做Presentation，练习英语听力和口语也不错。
 
 ## [arXiv](http://arxiv.org/)
-[arXiv](http://arxiv.org/)， 是archive(归档)的意思，是一个由康乃尔大学维护的免费的多学科论文**预**出版(preprint)数据库。所谓**预**出版，就是说论文还没有经过同行评审，文责自负，文章质量参差不齐，所以一般不会作为正式的学术成果。不过有的学科习惯上先把文章公开到arXiv上，然后再提交到会议上。
+[arXiv](http://arxiv.org/)， 是archive（归档）的意思，是一个由康乃尔大学维护的免费的多学科论文**预**出版（preprint）数据库。所谓**预**出版，就是说论文还没有经过同行评审，文责自负，文章质量参差不齐，所以一般不会作为正式的学术成果。不过有的学科习惯上先把文章公开到arXiv上，然后再提交到会议上。
 
 <a name="lib" />![图书馆电子资源](/img/lib.png)
 
 ## EI和SCI
 分别搜索上面的数据库还是有点麻烦，于是就有了一些聚合数据库，又称为索引。想必很多同学在读研之前早就听说EI和SCI，
-+ EI *Engineering Index* https://www.engineeringvillage.com/
-+ SCI *Science Citation Index* http://apps.webofknowledge.com/
++ EI **Engineering Index** https://www.engineeringvillage.com/
++ SCI **Science Citation Index** http://apps.webofknowledge.com/
 
-只看 *URL* 还以为是 *山寨网站*，它们的Web界面体验也不太友好，而且它们不止有CS一个学科，直接通过关键词搜索经常会给出不相关的内容。其实这两个数据库通常是在 **已知文章标题的情况下** 检索是不是被它们收录了，而 **不是** 用来收集文章的。
+**只看 URL 还以为是 山寨网站**，它们的Web界面体验也不太友好，而且它们不止有CS一个学科，直接通过关键词搜索经常会给出不相关的内容。其实这两个数据库通常是在 **已知文章标题的情况下** 检索是不是被它们收录了，而 **不是** 用来收集文章的。
 
 要确定某个会议论文集或者期刊[是否被EI或SCI收录](http://www.philippe-fournier-viger.com/links.php)，
 + 在[EI收录列表](https://www.elsevier.com/solutions/engineering-village/content) 页内搜索Compendex Source List，会找到一个Excel表格的链接，下载下来会发现这个表格是受保护的，但可以筛选标题（而且最后一个WorkSheet有中文翻译哦，满满的土洋结合，中国特色）。嘘~~ 也许你可以参考[这个脚本解除保护](/doc/crack_xls_vb.txt)，还要建议把title列中每个单元格开头的`=`替换掉。这个Excel的title是排好序的，方便顺序浏览，比如有个杂志名叫`Computing`，真是起的好名字，如果直接搜索是肯定搜出一堆结果，所以，即便找到名字一样的期刊，最好也要再确认一下ISSN号。**但是！**，这个Excel表格并不完整，如果没有在表中搜索到，还是需要在EI的网站上搜索文章标题才能最终确认。对了，EI的数据库叫 **Compendex**。
-+ 在`webofknowledge`的网站查询之前，**一定** 要选择数据库为`检索 Web of Science 核心合集`，等自动刷新候，还要在页面下部展开“更多设置”，只选中`Science Citation Index Expanded (SCIEXPANDED) 1900年至今`这一项，然后才能查询出根正苗红的`SCI（E）`。请**务必**参考[这个截图](/doc/SCI_E_Web_of_Science.pdf)。可以在[SCI收录列表](http://ip-science.thomsonreuters.com/cgi-bin/jrnlst/jlsearch.cgi?PC=K)直接输入期刊的名称来查询该期刊是否被SCI收录，但感觉这个查的也不全。还是要充分利用SCI的中国特色了，因为还有一个国内整理的SCI期刊列表：[中国科学技术信息研究所SCI（E）论文期刊分区列表(2016年)](http://scit.nju.edu.cn/Item/1162.aspx)，这是一个有13.8k多行的Excel表格，简洁粗暴。
++ 在`webofknowledge`的网站查询之前，**一定** 要选择数据库为`检索 Web of Science 核心合集`，等自动刷新候，还要在页面下部展开“更多设置”，只选中`Science Citation Index Expanded (SCIEXPANDED) 1900年至今`这一项，然后才能查询出根正苗红的`SCI（E）`。请**务必**参考[这个截图](/doc/SCI_E_Web_of_Science.pdf)。可以在[SCI收录列表](http://ip-science.thomsonreuters.com/cgi-bin/jrnlst/jlsearch.cgi?PC=K)直接输入期刊的名称来查询该期刊是否被SCI收录，但感觉这个查的也不全。还是要充分利用SCI的中国特色了，因为还有一个国内整理的SCI期刊列表：[中国科学技术信息研究所SCI（E）论文期刊分区列表（2016年）](http://scit.nju.edu.cn/Item/1162.aspx)，这是一个有13.8k多行的Excel表格，简洁粗暴。
 
 ----
 上面的这些数据库可以免费检索标题和摘要，购买全文则价格不菲。如果学校的图书馆购买了这些数据库，一般会识别用户的IP地址，在学校网络范围内可以直接下载PDF全文。
 校外就没有这么方便了，好在很多作者在Paper被录用后会在自己的主页上挂出PDF全文，从Google Scholar上可以搜索到这些PDF全文的链接，非常方便。
-话说只要是能花钱买到的东西，去万能的 **淘宝** 肯定能找到，就看是买 *VPN/代理*，*单篇文章*，还是 *整个数据库* 了。
+话说只要是能花钱买到的东西，去万能的 **淘宝** 肯定能找到，就看是买 **VPN/代理，单篇文章，还是 整个数据库** 了。
 
 ## dblp
-dblp [http://dblp.org] ，或[http://dblp.uni-trier.de]， 是专注于CS学科的文献 **元数据索引** 数据库，优势是收集得相当完整，链接也很有规律，比如特定会议的 FSE 2016 http://dblp.org/db/conf/sigsoft/fse2016.html 或者某个作者的全部论文列表(dblp对重名作者处理得很好)，但只能搜索标题或作者等元数据，用来初步筛选论文非常方便，需要获取全文时还是要跳转到上面的几个数据库，数据更新也稍微滞后一点。
+dblp [http://dblp.org] ，或[http://dblp.uni-trier.de]， 是专注于CS学科的文献 **元数据索引** 数据库，优势是收集得相当完整，链接也很有规律，比如特定会议的 FSE 2016 http://dblp.org/db/conf/sigsoft/fse2016.html 或者某个作者的全部论文列（dblp对重名作者处理得很好），但只能搜索标题或作者等元数据，用来初步筛选论文非常方便，需要获取全文时还是要跳转到上面的几个数据库，数据更新也稍微滞后一点。
 2015版CCF目录中的会议和期刊都是dblp的链接。
 
 dblp 列出了关于CS论文的一些统计数据，比如（2016年10月查询）
@@ -174,7 +135,7 @@ dblp 列出了关于CS论文的一些统计数据，比如（2016年10月查询�
 # CCF目录
 
 EI和SCI只是两个论文数据库，但能够发表被EI和SCI收录的文章变成了能够毕业，能否获得奖学金，能否获得基金的指标。由于时代的限制，EI和SCI被赋予了不相称的地位和意义，而且短期看还是如此。
-更 “*不幸*” 的是，对于CS的学生，还有一个[CCF目录](http://history.ccf.org.cn/sites/ccf/paiming.jsp)（[2015版的PDF](http://history.ccf.org.cn/sites/paiming/2015ccfmulu.pdf)）摆在面前。其实并非是不幸，而是十分幸运，因为CCF目录不像是一个紧箍咒，而更像是一个入门指南。
+更 “**不幸**” 的是，对于CS的学生，还有一个[CCF目录](http://history.ccf.org.cn/sites/ccf/paiming.jsp)（[2015版的PDF](http://history.ccf.org.cn/sites/paiming/2015ccfmulu.pdf)）摆在面前。其实并非是不幸，而是十分幸运，因为CCF目录不像是一个紧箍咒，而更像是一个入门指南。
 
 首先说[中国计算机学会 CCF](http://www.ccf.org.cn/)是国内的类似于ACM的计算机学术组织。也许某位同学的导师就是CCF会员。相比EI和SCI收录的成百上千的会议和期刊，CCF维护的目录显然[精简得多](https://ying-zhang.github.io/misc/2017/ccf-all-in-one/)。
 考虑到对EI和SCI指标要求的实际情况，目录选取的 **大多** 是被EI或SCI收录的，具体划分为10个子方向，并区分出A，B，C三个等级。
@@ -228,7 +189,7 @@ A，B类的会议和期刊的文章学术质量较高。这个质量不是简单
 + ASE@**A**   [DBLP](http://dblp.org/db/conf/kbse/) Int. Conf. on Automated Software Engineering
 + FSE/ESEC@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE201&tab=pubs) , [DBLP](http://dblp.org/db/conf/sigsoft/) SIGSOFT Symposium on the Foundation of Software Engineering / European Software Engineering Conf.
 + ICSE@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE228&tab=pubs) , [DBLP](http://dblp.org/db/conf/icse/) FOSE会议：七年一届的展望 Int. Conf. on Software Engineering
-+ OOPSLA/SPLASH@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE181&tab=pubs) , [DBLP](http://dblp.org/db/conf/oopsla/) Onward会议：创新(Nao Dong) Conf. on Object-Oriented Programming Systems, Languages, and Applications
++ OOPSLA/SPLASH@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE181&tab=pubs) , [DBLP](http://dblp.org/db/conf/oopsla/) Onward会议：创新（脑洞） Conf. on Object-Oriented Programming Systems, Languages, and Applications
 + OSDI@**A**   [USENIX](https://www.usenix.org/conferences/byname/179) , [DBLP](http://dblp.org/db/conf/osdi/) USENIX Symposium on Operating Systems Design and Implementations，**双数** 年份召开
 + SOSP@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE208&tab=pubs) , [DBLP](http://dblp.org/db/conf/sosp/)，Symposium on Operating Systems Principles， **单数** 年份召开，另，[SOSP 2015 History Day](http://sigops.org/sosp/sosp15/history/index.html)
 + PLDI@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE200&tab=pubs) , [DBLP](http://dblp.org/db/conf/pldi/) SIGPLAN Symposium on Programming Language Design and Implementation
@@ -308,8 +269,8 @@ A，B类的会议和期刊的文章学术质量较高。这个质量不是简单
 + [YOCSEF专题论坛：从LNCS事件反思中国学术论文的发表](http://www.yocsef.org.cn/sites/yocweb/yocltzw.jsp?contentId=2658502145582)  
 
 # 如何读论文
-+ [Efficient Reading of Papers in Science and Technology(.pdf)](http://www.cs.columbia.edu/~hgs/netbib/efficientReading.pdf)
-+ [How to Read a Paper(.pdf)](http://blizzard.cs.uwaterloo.ca/keshav/home/Papers/data/07/paper-reading.pdf)
++ [Efficient Reading of Papers in Science and Technology(pdf)](http://www.cs.columbia.edu/~hgs/netbib/efficientReading.pdf)
++ [How to Read a Paper(pdf)](http://blizzard.cs.uwaterloo.ca/keshav/home/Papers/data/07/paper-reading.pdf)
 + [How to Read a Technical Paper](https://www.cs.jhu.edu/~jason/advice/how-to-read-a-paper.html)
 + [《学术研究 - 你的成功之道》第3章](http://item.jd.com/11127141.html)
 
@@ -345,7 +306,7 @@ A，B类的会议和期刊的文章学术质量较高。这个质量不是简单
 
 ## **hosts文件的路径**
 + Windows：`C:\Windows\System32\drivers\etc\hosts`
-+ Linux，Mac，Android(均需要root权限)：`/etc/hosts`
++ Linux，Mac，Android（均需要root权限）：`/etc/hosts`
 
 # PS: [A Survival Guide to a PhD](http://karpathy.github.io/2016/09/07/phd/)
 
