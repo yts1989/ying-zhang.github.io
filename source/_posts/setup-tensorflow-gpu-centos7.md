@@ -20,9 +20,7 @@ date: 2017-12-04
 
 CUDA（Compute Unified Device Architecture，统一计算架构）是针对GPU计算加速的开发工具包，就像Windows SDK，或者JDK一样，一些深度学习库（比如TensorFlow）的底层是C++调用的CUDA库，它们提供给深度学习开发者的多是 Python 包装过的接口。一般的开发者直接用这些Python库就可以设计出多种多样的深度学习模型，不再需要跟CUDA打交道。
 
-如果**不需要从源码编译TensorFlow**，就没必要安装NVIDIA官网上的那个一个多GB的CUDA包和cuDNN库。直接通过<del>`pip`或</del>`conda`安装的`tensorflow-gpu`库就自带了对应版本的cuda动态链接库，包括 **libnvrtc-builtins.so，libnvrtc.so，libnvToolsExt.so，libnvvm.so，libcudart.so，libcublas.so，libcudnn.so，libcurand.so，libcufft.so，libcusolver.so，libcusparse.so** 等，还有mkl库（Linux的是`.so`文件，Windows的是`.dll`文件）。
-
-> 注意，见下面关于`pip`和`conda`的小节。
+如果**不需要从源码编译TensorFlow**，就没必要安装NVIDIA官网上的那个一个多GB的CUDA包和cuDNN库。直接通过<del>`pip`或</del>`conda`安装的`tensorflow-gpu`库就自带了对应版本的cuda动态链接库，包括 **libnvrtc-builtins.so，libnvrtc.so，libnvToolsExt.so，libnvvm.so，libcudart.so，libcublas.so，libcudnn.so，libcurand.so，libcufft.so，libcusolver.so，libcusparse.so** 等，还有**Intel MKL库**（Linux的是`.so`文件，Windows的是`.dll`文件）。
 
 最近（2017-12-4）Nvidia官网上的CUDA版本已经是9.0，而TensorFlow 1.4 使用的是cuda 8.0，cuDNN则是6.0，python又有2.7、3.5、3.6版。各种版本组合起来还有点麻烦呢。我们先从显卡驱动开始。
 
@@ -112,6 +110,13 @@ Anaconda官网下载页是[https://www.anaconda.com/download/] ，不过我们�
 安装过程需要用到`bzip2`，先安装一下`sudo yum install -y bzip2`
 执行 `bash Anaconda3-5.0.1-Linux-x86_64.sh` 开始安装，敲回车显示 license agreement ，敲几次空格翻到底，然后输入`yes`接受协议，再敲回车，安装到默认的路径`$HOME/anaconda3`，如果这个路径已经存在，就会安装失败，需要删掉或另选路径。
 安装脚本还会在`.bashrc`的`PATH`环境变量加上安装路径。安装结束后，执行`source .bashrc`，更新`PATH`环境变量，这时系统的`python`命令已经变成Anaconda安装的Python 3.6了（因为安装程序把`$HOME/anaconda3/bin`加在了`PATH`最前面）。
+
+> 静默模式安装Anaconda：
+```
+bash ~/Anaconda3-5.0.1-Linux-x86_64.sh -b -p $HOME/anaconda3
+echo 'export PATH=$HOME/anaconda3/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
 
 > 更改`conda`源：执行
 `conda config --add channels 'https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/'`
