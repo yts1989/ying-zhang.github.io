@@ -301,7 +301,7 @@ A，B类的会议和期刊的文章学术质量较高。这个质量不是简单
 # [Bonus] 如何访问Google Scholar
 
 ## **改hosts**
-+ IP v4， https://raw.githubusercontent.com/racaljk/hosts/master/hosts  或短网址 https://git.io/vWE1N
++ IP v4， https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts  或短网址 https://git.io/v5rKk
 + IP v6， https://raw.githubusercontent.com/lennylxx/ipv6-hosts/master/host 或短网址 https://git.io/vMjCk
 
 ## **hosts文件的路径**

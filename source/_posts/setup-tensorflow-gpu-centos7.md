@@ -1,5 +1,5 @@
 
-title: CentOS 7安装TensorFlow GPU深度学习环境
+title: CentOS 7 安装TensorFlow GPU深度学习环境
 category: [cloud]
 tags: 
 date: 2017-12-04
