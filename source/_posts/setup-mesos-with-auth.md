@@ -580,8 +580,7 @@ FROM local/dlkit:latest
 RUN  echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial main restricted' > /etc/apt/sources.list ; \
      echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial universe' >> /etc/apt/sources.list       ; \
      echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial multiverse' >> /etc/apt/sources.list     ; \
-     mv /etc/apt/sources.list.d/jonathonf-ubuntu-python-3_6-xenial.list                            \ 
-        /etc/apt/sources.list.d/jonathonf-ubuntu-python-3_6-xenial.list.save                     ; \
+     rm /etc/apt/sources.list.d/*                                                                ; \
      apt-get update ; apt-get install -y sudo ; apt-get clean ; apt-get autoremove               ; \
      rm -rf /var/lib/apt/lists/*       ; \
      groupadd -g 1000 mesos            ; \
@@ -640,7 +639,7 @@ Chronos提交GPU的容器作业配置文件内容如下：
 ```
 
 其中，
-+ ``"command": "cd /data/mnist ; env; pwd; python mnist_cnn.py > result`date +%Y%m%dT%H%M%S`.txt"`` 为便于排错，用`env; pwd`来输出环境信息，实际计算结果则重定向到``result`date +%Y%m%dT%H%M%S`.txt"``文件中；
++ ``"command": "cd /data/mnist ; env; python mnist_cnn.py | tee out-`date +%Y%m%dT%H%M%S`.txt"`` 为便于排错，用`env; pwd`来输出环境信息，实际计算结果则重定向到``result`date +%Y%m%dT%H%M%S`.txt"``文件中；
 + `"cpus": 10,  "disk": 1000,  "mem": 10240,  "gpus": 1`，这是为容器分配的资源，如果机器上有2个GPU，那么最多可以申请2个，申请更多的话，Job会一直排队等待资源Offer，无法执行。CPU和内存资源也要多申请一些，防止OOM；
 + `"runAsUser": "mesos"`，以容器内的mesos账号执行命令；
 + `container`一节设置了使用的镜像，类型必须写成`MESOS`，而不能是`DOCKER`，还要在`volumes`中设置Host上传文件的路径到容器路径的映射。
