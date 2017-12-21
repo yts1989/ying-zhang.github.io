@@ -6,3 +6,4 @@ public/
 .deploy_git/
 .npmignore
 .vs/
+db.json
