@@ -2,7 +2,7 @@
 title: CentOS 7 安装支持认证的Mesos集群
 category: [cloud]
 tags: 
-date: 2017-12-04
+date: 2017-12-20
 ---
 
 在CentOS 7上安装Mesos集群，设置对Slave和框架的认证，改为普通用户执行任务。Chronos在容器中执行GPU作业。
@@ -197,7 +197,10 @@ git clone https://github.com/reneploetz/chronos.git
 cd chronos
 # 自带的 ./build-release.sh 脚本是在Docker容器中构建的，这里直接用Maven编译
 # 需要预先安装Maven。构建的版本号是3.0.3。
-mvn clean package
+
+curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+yum install -y nodejs
+mvn clean package -Dmaven.test.skip=true
 ```
 
 下面停用从官方源安装的Chronos服务，从命令行启动支持GPU的Chronos（当然，也可以修改Chronos的Systemd服务配置文件，使用支持GPU的Chronos）：
@@ -398,6 +401,8 @@ Marathon和Chronos框架只需在某一台机器上启动即可，也可以启�
 集群已经把所有机器的硬盘加入了[Gluster分布式文件系统](https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart)，路径是`/gluster/volume2`，在其中新建文件夹`/gluster/volume2/mesosdata`作为用户上传文件的工作目录。
 所有机器上都能同步看到这个相同的文件路径。
 
+> GlusterFS有Linux系统的Native Client，可以[使用SSL/TLS安全验证](https://docs.gluster.org/en/latest/Administrator%20Guide/SSL/) 。由于不支持MacOS和Windows，且设置不方便，故不使用这种方式。
+
 ## SFTP 【X】
 本来想允许某台机器的mesos账号ssh登录，这样也就默认开启了scp和sftp，可以使用Filezilla等FTP工具传文件。
 但是，又想限制SFTP只能读写自己的`$HOME`，比如把mesos的`$HOME`设置为`/gluster/volume2/mesosdata`，只能读写这个文件夹。
@@ -566,14 +571,23 @@ FTP是不加密的，使用主机上的账号和密码登录，可以写在地�
 # Chronos在容器中执行GPU作业
 
 前面使用Chronos提交了基于Host命令的作业，更好的办法是把运行环境打包成容器，以便于部署和管理。
-我们创建了一个[`icsnju/dlkit`的Docker镜像](https://github.com/icsnju/dlkit)，然而由于网络原因，还有镜像本身太大了，在Docker Hub上没有构建成功，后来是在VPS上构建的，再Push到我们用[Harbor](https://github.com/vmware/harbor)搭建的本地镜像仓库。
+我们创建了一个[`icsnju/dlkit`的Docker镜像](https://github.com/icsnju/dlkit/blob/master/Dockerfile)，然而由于网络原因，还有镜像本身太大了，在Docker Hub上没有构建成功，后来是在VPS上构建的，再Push到我们用[Harbor](https://github.com/vmware/harbor)搭建的本地镜像仓库。
 
-为了配合Mesos使用低权限的mesos账号执行任务，需要在Docker镜像中也添加同名，同UID和GID的mesos用户，并将默认用户切换为mesos。
+为了配合Mesos使用低权限的mesos账号执行任务，需要在Docker镜像中也添加同名，同UID和GID的mesos用户，将其设置为可免输密码执行`sudo`命令，并将默认用户切换为mesos。
 Dockerfile内容如下，构建出的镜像tag设为`local/dlkit:mesos`，下面会用到这个镜像。
 ```
 FROM local/dlkit:latest
-RUN  groupadd -g 1000 mesos ; \
-     useradd  -m -u 1000 -g 1000 mesos
+RUN  echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial main restricted' > /etc/apt/sources.list ; \
+     echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial universe' >> /etc/apt/sources.list       ; \
+     echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial multiverse' >> /etc/apt/sources.list     ; \
+     mv /etc/apt/sources.list.d/jonathonf-ubuntu-python-3_6-xenial.list                            \ 
+        /etc/apt/sources.list.d/jonathonf-ubuntu-python-3_6-xenial.list.save                     ; \
+     apt-get update ; apt-get install -y sudo ; apt-get clean ; apt-get autoremove               ; \
+     rm -rf /var/lib/apt/lists/*       ; \
+     groupadd -g 1000 mesos            ; \
+     useradd  -m -u 1000 -g 1000 mesos ; \
+     echo "mesos ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/mesos
+
 USER mesos
 ```
 
@@ -581,7 +595,7 @@ Chronos提交GPU的容器作业配置文件内容如下：
 ```
 {
   "name": "dlkit-test",
-  "command": "cd /data/mnist ; env; pwd; python mnist_cnn.py > result`date +%Y%m%dT%H%M%S`.txt",
+  "command": "cd /data/mnist ; env; python mnist_cnn.py | tee out-`date +%Y%m%dT%H%M%S`.txt",
   "shell": true,
   "executor": "",
   "executorFlags": "",
