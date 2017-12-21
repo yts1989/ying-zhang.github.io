@@ -398,14 +398,14 @@ Marathon和Chronos框架只需在某一台机器上启动即可，也可以启�
 
 # 文件服务器设置
 为了方便其它用户使用mesos账号拷贝文件到集群，需要搭建一个文件服务器。
-集群已经把所有机器的硬盘加入了[Gluster分布式文件系统](https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart)，路径是`/gluster/volume2`，在其中新建文件夹`/gluster/volume2/mesosdata`作为用户上传文件的工作目录。
+集群已经把所有机器的硬盘加入了[Gluster分布式文件系统](https://wiki.centos.org/SpecialInterestGroup/Storage/gluster-Quickstart)，路径是`/gluster/volume2`，在其中新建文件夹`/gluster/volume2/data`作为用户上传文件的工作目录。
 所有机器上都能同步看到这个相同的文件路径。
 
 > GlusterFS有Linux系统的Native Client，可以[使用SSL/TLS安全验证](https://docs.gluster.org/en/latest/Administrator%20Guide/SSL/) 。由于不支持MacOS和Windows，且设置不方便，故不使用这种方式。
 
 ## SFTP 【X】
 本来想允许某台机器的mesos账号ssh登录，这样也就默认开启了scp和sftp，可以使用Filezilla等FTP工具传文件。
-但是，又想限制SFTP只能读写自己的`$HOME`，比如把mesos的`$HOME`设置为`/gluster/volume2/mesosdata`，只能读写这个文件夹。
+但是，又想限制SFTP只能读写自己的`$HOME`，比如把mesos的`$HOME`设置为`/gluster/volume2/data`，只能读写这个文件夹。
 OpenSSH确实可以[通过`chroot`限制某个组的用户 **只能读** 它的$HOME（或某个特定的文件夹）](https://bensmann.no/restrict-sftp-users-to-home-folder) 。
 又来了但是，`chroot`后，对这个用户而言，整个文件系统就只有`$HOME`下的那些文件了，没有`/bin`、`/usr`等，也就无法执行`ssh`或者`scp`；而`sftp`还可以用，是因为设置中改用了OpenSSH内置的sftp功能，而不是外部的sftp程序（ `/usr/libexec/openssh/sftp-server`）；
 而且必须把`$HOME`的owner设置为`root`，权限只能是`755`或`750`，就是说即便把owner group改为mesos，它也只能对自己的`$HOME`有读权限，但 **不能写**；
@@ -426,25 +426,25 @@ yum install -y glusterfs-ganesha nfs-ganesha nfs-ganesha-gluster
 ```
 
 修改配置文件`/etc/ganesha/ganesha.conf`，其中：
-+ Gluster卷的路径是`/gluster/volume2`，共享的是其子目录`/gluster/volume2/mesosdata`；
-+ 映射到的 NFS 路径是`10.1.1.5:/mesos`，所有客户端都映射到 mesos 账号的UID 1000和GID 1000；
++ Gluster卷的路径是`/gluster/volume2`，共享的是其子目录`/gluster/volume2/data`；
++ 映射到的 NFS 路径是`10.1.1.5:/data`，所有客户端都映射到 mesos 账号的UID 1000和GID 1000；
 + NFS 的版本是v3，没有用v4。
 
 完整内容如下：
 ```
 EXPORT{
       Export_Id = 1;
-      Path = "/mesos";
+      Path = "/data";
       FSAL {
            name = GLUSTER;
            hostname="localhost";
            volume="volume2";
-           volpath="/mesosdata";
+           volpath="/data";
            }
       Access_type = RW;
       Disable_ACL = true;
       Squash="All_Anonymous";
-      Pseudo="/mesos";
+      Pseudo="/data";
       Protocols = "3";
       Transports = "UDP","TCP";
       SecType = "sys";
@@ -466,9 +466,9 @@ gluster volume set volume2 features.cache-invalidation on
 systemctl restart nfs-ganesha
 ```
 
-执行`showmount -e localhost`查看是否正常，输出中应包含 `/mesos (everyone)`
+执行`showmount -e localhost`查看是否正常，输出中应包含 `/data (everyone)`
 
-在客户端挂载NFS到`/mnt` ： `sudo mount -t nfs 10.1.1.5:/mesos /mnt`，卸载`sudo umount -f /mnt`。
+在客户端挂载NFS到`/mnt` ： `sudo mount -t nfs 10.1.1.5:/data /mnt`，卸载`sudo umount -f /mnt`。
 
 NFSv4的话，如果客户端与服务器的域名不一致，会把用户映射为`nobody`和`nogroup`；
 NFSv3则会根据服务器的UID和GID，在客户端找有没有对应的账号：比如服务端用的mesos账号，UID是1000，碰巧客户端存在UID 1000的账号sosem，那就会显示sosem，没有找到对应的就直接显示UID或GID。
@@ -504,9 +504,9 @@ yum install -y samba
   cups options = raw
   smb ports = 4455
 
-[mesos]
+[data]
   comment = mesos work path
-  path = /gluster/volume2/mesosdata
+  path = /gluster/volume2/data
   writeable = yes
   create mask = 0664
   directory mask = 0775
@@ -520,18 +520,18 @@ yum install -y samba
 Linux客户端需要执行`yum install -y samba-client cifs-utils` 安装必要的软件。
 以挂载到`/mnt`为例，命令是
 ```
-sudo mount -t cifs //10.1.1.5/mesos /mnt -o user=mesos,pass=MesosSambaPassword,port=4455,rw,iocharset=utf8
+sudo mount -t cifs //10.1.1.5/data /mnt -o user=mesos,pass=MesosSambaPassword,port=4455,rw,iocharset=utf8
 ```
 
 或写入`/etc/fstab`末尾，
 ```
-//10.1.1.5/mesos /mnt cifs user=mesos,pass=MesosSambaPassword,port=4455,rw,iocharset=utf8 0 0
+//10.1.1.5/data /mnt cifs user=mesos,pass=MesosSambaPassword,port=4455,rw,iocharset=utf8 0 0
 ```
 
 这样系统启动后就会自动挂载了，或执行`sudo mount -a`手动挂载`/etc/fstab` 。
 
-可以在Linux桌面的文件管理器**地址栏**，或MacOS Finder的 **连接服务器 Command+K** 对话框输入`smb://10.1.1.5:4455/mesos`来访问Samba共享文件夹（会弹出账号密码窗口）。
-Windows的地址格式是`\\10.1.1.5\mesos`，但由于不支持非445的端口号，所以无法访问。。。
+可以在Linux桌面的文件管理器**地址栏**，或MacOS Finder的 **连接服务器 Command+K** 对话框输入`smb://10.1.1.5:4455/data`来访问Samba共享文件夹（会弹出账号密码窗口）。
+Windows的地址格式是`\\10.1.1.5\data`，但由于不支持非445的端口号，所以无法访问。。。
 
 ## FTP
 Windows和Linux客户端可以通过普通的FTP来上传文件，文件管理器可以直接打开FTP地址，也可以安装Filezilla。
@@ -560,7 +560,7 @@ tcp_wrappers=YES
 
 其中限制用户只能读写自己的`$HOME`。执行`touch /etc/vsftpd/chroot_list`建一个空的占位文件。
 需要设置Host的mesos账号：
-+ `$HOME`设置为`/gluster/volume2/mesosdata`，并设置为owner，有读写权限;
++ `$HOME`设置为`/gluster/volume2/data`，并设置为owner，有读写权限;
 + 还要设置`mesos`账号的密码 `passwd mesos`。
 
 FTP是不加密的，使用主机上的账号和密码登录，可以写在地址里，即
@@ -590,10 +590,11 @@ RUN  echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial main restricted' > /etc/
 USER mesos
 ```
 
+下面使用[Keras的MNIST CNN示例](https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py)
 Chronos提交GPU的容器作业配置文件内容如下：
 ```
 {
-  "name": "dlkit-test",
+  "name": "mnist-cnn-demo",
   "command": "cd /data/mnist ; env; python mnist_cnn.py | tee out-`date +%Y%m%dT%H%M%S`.txt",
   "shell": true,
   "executor": "",
@@ -624,7 +625,7 @@ Chronos提交GPU的容器作业配置文件内容如下：
     "networkInfos": [],
     "volumes": [
       {
-        "hostPath": "/gluster/volume2/mesosdata",
+        "hostPath": "/gluster/volume2/data",
         "containerPath": "/data",
         "mode": "RW"
       }
