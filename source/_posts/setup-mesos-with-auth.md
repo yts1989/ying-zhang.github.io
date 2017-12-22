@@ -146,6 +146,34 @@ WantedBy=multi-user.target
 
 保存上述设置文件后，执行`systemctl daemon-reload; systemctl restart marathon`重启服务，稍等一会儿，Mesos Web UI的Framworks列表中就有Marathon了。Marathon Web UI地址是`http://10.1.1.5:8080`。
 
+# 清理Mesos集群
+> 这节是为强迫症患者准备的。
+
+清理运行任务记录
+```
+systemctl stop mesos-master mesos-slave
+rm -rf /var/mesos
+rm -rf /var/log/mesos
+mkdir  /var/mesos /var/log/mesos
+
+/opt/zookeeper/bin/zkCli.sh #进入zk的shell，执行下面的命令
+rmr /mesos
+rmr /chronos
+rmr /marathon
+quit # 退出zk的shell
+
+systemctl start mesos-master mesos-slave
+```
+
+清理mesos下载的镜像文件
+```
+systemctl stop mesos-master mesos-slave
+rm -rf /tmp/mesos
+mkdir  /tmp/mesos
+
+systemctl start mesos-master mesos-slave
+```
+
 # 支持GPU资源
 
 ## Mesos Slave的设置
