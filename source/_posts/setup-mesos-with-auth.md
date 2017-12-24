@@ -323,7 +323,7 @@ acls=/etc/mesos/master-acls.json
 
 文件中，
 + `"principal":"MesosPrincipal"`是用户名，
-+ `"secret":"...."`是**明文的密码**，是用`sha256sum`命令计算的一个字符串的哈希值。当然，随便设置的密码都可以，但其中不能有英文的冒号“:”。
++ `"secret":"...."`是**明文的密码**，是用`sha256sum`或`openssl rand -hex 32`计算的一个字符串的哈希值。当然，随便设置的密码都可以，但其中不能有英文的冒号“:”。
 
 Slave和Framwork都可以用这个用户名密码。
 可以在Master设置为不同的Slave和Framwork使用不同的用户名密码，这里为了简便，只使用这一组。
@@ -671,8 +671,13 @@ Chronos提交GPU的容器作业配置文件内容如下：
 + ``"command": "cd /data/mnist ; env; python mnist_cnn.py | tee out-`date +%Y%m%dT%H%M%S`.txt"`` 为便于排错，用`env; pwd`来输出环境信息，实际计算结果则重定向到``result`date +%Y%m%dT%H%M%S`.txt"``文件中；
 + `"cpus": 10,  "disk": 1000,  "mem": 10240,  "gpus": 1`，这是为容器分配的资源，如果机器上有2个GPU，那么最多可以申请2个，申请更多的话，Job会一直排队等待资源Offer，无法执行。CPU和内存资源也要多申请一些，防止OOM；
 + `"runAsUser": "mesos"`，以容器内的mesos账号执行命令；
-+ `container`一节设置了使用的镜像，类型必须写成`MESOS`，而不能是`DOCKER`，还要在`volumes`中设置Host上传文件的路径到容器路径的映射。
++ `container`一节设置了使用的镜像，类型必须写成`MESOS`，而不能是`DOCKER`；
++ 还要在`volumes`中设置Host上传文件的路径到容器路径的映射，路径名中不能有`-`，否则无法挂载，导致容器无法启动。
 
 提交后就可以在容器中执行GPU作业了。
+
+> 在容器中执行任务已经支持了运行时的隔离，但文件服务使用的是同一个目录，没有隔离。
+> 其实只要额外开发一个提交任务的页面，不让用户设置路径名，然后为每个用户设置不同的文件路径，就可以支持多用户的隔离了。
+
 
 > PS，Mesos是Docker之前开发的，之后也没有充分利用Docker的隔离能力，设置上有点麻烦。
