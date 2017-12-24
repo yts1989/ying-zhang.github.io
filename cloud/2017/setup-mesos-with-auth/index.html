@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Ying的博客">
 <meta property="og:description" content="在CentOS 7上安装Mesos集群，设置对Slave和框架的认证，改为普通用户执行任务。Chronos在容器中执行GPU作业。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-22T15:03:15.781Z">
+<meta property="og:updated_time" content="2017-12-24T04:47:51.593Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 7 安装支持认证的Mesos集群">
 <meta name="twitter:description" content="在CentOS 7上安装Mesos集群，设置对Slave和框架的认证，改为普通用户执行任务。Chronos在容器中执行GPU作业。">
@@ -127,7 +127,7 @@
 <p>文件中，</p>
 <ul>
 <li><code>&quot;principal&quot;:&quot;MesosPrincipal&quot;</code>是用户名，</li>
-<li><code>&quot;secret&quot;:&quot;....&quot;</code>是<strong>明文的密码</strong>，是用<code>sha256sum</code>命令计算的一个字符串的哈希值。当然，随便设置的密码都可以，但其中不能有英文的冒号“:”。</li>
+<li><code>&quot;secret&quot;:&quot;....&quot;</code>是<strong>明文的密码</strong>，是用<code>sha256sum</code>或<code>openssl rand -hex 32</code>计算的一个字符串的哈希值。当然，随便设置的密码都可以，但其中不能有英文的冒号“:”。</li>
 </ul>
 <p>Slave和Framwork都可以用这个用户名密码。<br>可以在Master设置为不同的Slave和Framwork使用不同的用户名密码，这里为了简便，只使用这一组。</p>
 <p><code>/etc/mesos/master-acls.json</code>是访问控制列表，与Host的账号及上面设置的Principal都相关，内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&#123;       </div><div class="line">  &quot;run_tasks&quot;:[</div><div class="line">    &#123;</div><div class="line">      &quot;principals&quot;:&#123;&quot;values&quot;:[&quot;MesosPrincipal&quot;]&#125;,</div><div class="line">      &quot;users&quot;:&#123;&quot;values&quot;:[&quot;mesos&quot;]&#125;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      &quot;principals&quot;:&#123;&quot;type&quot;:&quot;NONE&quot;&#125;,</div><div class="line">      &quot;users&quot;:&#123;&quot;values&quot;:[&quot;root&quot;]&#125;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
@@ -214,10 +214,12 @@
 <li><code>&quot;command&quot;: &quot;cd /data/mnist ; env; python mnist_cnn.py | tee out-`date +%Y%m%dT%H%M%S`.txt&quot;</code> 为便于排错，用<code>env; pwd</code>来输出环境信息，实际计算结果则重定向到<code>result`date +%Y%m%dT%H%M%S`.txt&quot;</code>文件中；</li>
 <li><code>&quot;cpus&quot;: 10,  &quot;disk&quot;: 1000,  &quot;mem&quot;: 10240,  &quot;gpus&quot;: 1</code>，这是为容器分配的资源，如果机器上有2个GPU，那么最多可以申请2个，申请更多的话，Job会一直排队等待资源Offer，无法执行。CPU和内存资源也要多申请一些，防止OOM；</li>
 <li><code>&quot;runAsUser&quot;: &quot;mesos&quot;</code>，以容器内的mesos账号执行命令；</li>
-<li><code>container</code>一节设置了使用的镜像，类型必须写成<code>MESOS</code>，而不能是<code>DOCKER</code>，还要在<code>volumes</code>中设置Host上传文件的路径到容器路径的映射。</li>
+<li><code>container</code>一节设置了使用的镜像，类型必须写成<code>MESOS</code>，而不能是<code>DOCKER</code>；</li>
+<li>还要在<code>volumes</code>中设置Host上传文件的路径到容器路径的映射，路径名中不能有<code>-</code>，否则无法挂载，导致容器无法启动。</li>
 </ul>
 <p>提交后就可以在容器中执行GPU作业了。</p>
 <blockquote>
+<p>在容器中执行任务已经支持了运行时的隔离，但文件服务使用的是同一个目录，没有隔离。<br>其实只要额外开发一个提交任务的页面，不让用户设置路径名，然后为每个用户设置不同的文件路径，就可以支持多用户的隔离了。</p>
 <p>PS，Mesos是Docker之前开发的，之后也没有充分利用Docker的隔离能力，设置上有点麻烦。</p>
 </blockquote>
 
