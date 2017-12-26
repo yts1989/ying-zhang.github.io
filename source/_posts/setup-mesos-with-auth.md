@@ -605,11 +605,11 @@ FTP是不加密的，使用主机上的账号和密码登录，可以写在地�
 Dockerfile内容如下，构建出的镜像tag设为`local/dlkit:mesos`，下面会用到这个镜像。
 ```
 FROM local/dlkit:latest
-RUN  echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial main restricted' > /etc/apt/sources.list ; \
-     echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial universe' >> /etc/apt/sources.list       ; \
-     echo 'deb http://mirrors.nju.edu.cn/ubuntu/ xenial multiverse' >> /etc/apt/sources.list     ; \
-     rm /etc/apt/sources.list.d/*                                                                ; \
-     apt-get update ; apt-get install -y sudo ; apt-get clean ; apt-get autoremove               ; \
+RUN  echo 'deb http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse' > /etc/apt/sources.list ; \
+     rm /etc/apt/sources.list.d/*      ; \
+     apt-get update                    ; \
+     apt-get install -y sudo           ; \
+     apt-get clean; apt-get autoremove ; \
      rm -rf /var/lib/apt/lists/*       ; \
      groupadd -g 1000 mesos            ; \
      useradd  -m -u 1000 -g 1000 mesos ; \

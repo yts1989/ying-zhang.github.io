@@ -159,10 +159,78 @@ b'Hello, TensorFlow!'
 result: [ 3.  3.  3.  3.]
 ```
 
-OK，下面就要开始学习深度学习模型了。。。
+## TensorFlow CPU版
+TensorFlow 使用**CPU**的官方版本没有使用SSE等向量化指令，执行时有Warning 
+`W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.` 。
 
-> TensorFlow禁用没有使用sse编译的Warning，需添加环境变量 `export TF_CPP_MIN_LOG_LEVEL=2`
-> 参考：https://github.com/tensorflow/tensorflow/issues/8037
+禁用该Warning可添加环境变量 `export TF_CPP_MIN_LOG_LEVEL=2`。
+当然最好的解决方案是 **重新构建**TensorFlow，开启SSE，AVX的编译选项。
+
+> 参考：
++ https://www.tensorflow.org/install/install_sources
++ https://software.intel.com/en-us/articles/tensorflow-optimizations-on-modern-intel-architecture
++ https://github.com/tensorflow/tensorflow/issues/8037 
++ https://stackoverflow.com/questions/41293077/how-to-compile-tensorflow-with-sse4-2-and-avx-instructions
+
+下面的构建过程是在Ubuntu 16.04的容器中完成的。涉及到机器的指令集，CPU型号是 i7-6700 CPU @ 3.40GHz。
+
+### 安装bazel
+
+安装必要的软件
+```
+apt install git wget
+apt install openjdk-8-jdk pkg-config zip g++ zlib1g-dev unzip python
+```
+
+修改系统默认的python为上面安装的python3.5
+```
+ln -s /usr/bin/python3.5 /usr/local/bin/python
+```
+
+下载bazel的安装包，
+https://github.com/bazelbuild/bazel/releases/download/0.9.0/bazel-0.9.0-without-jdk-installer-linux-x86_64.sh
+
+然后执行
+```
+bash bazel-0.9.0-without-jdk-installer-linux-x86_64.sh
+```
+
+### 构建TensorFlow CPU版
+
+下载1.4版的源码
+```
+git clone -b r1.4 --depth=1 https://github.com/tensorflow/tensorflow 
+```
+
+安装必要的python包。
+注意，**不要用pip3安装numpy**
+```
+apt install python3-numpy python3-dev python3-pip python3-wheel
+```
+
+配置构建参数 
+```
+cd tensorflow
+./configure 
+```
+
+敲回车接受默认的bazel和python3.5路径，后面的其它选项均选择 n，最后提示使用本机的CPU架构作为编译选项，因为现在的CPU都是支持SSE，AVX等指令的，所以也就会在构建选项中加入了相应的选项。
+
+开始构建，约二十多分钟
+```
+bazel build --incompatible_load_argument_is_label=false \
+ -c opt --copt=-march=native //tensorflow/tools/pip_package:build_pip_package 
+```
+
+构建完成后，将其打包为whl
+```
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /root/
+ls /root
+
+# tensorflow-1.4.1-cp35-cp35m-linux_x86_64.whl
+```
+
+保存上面打包好的whl，可以安装到其它Linux系统上。
 
 -----
 
@@ -243,7 +311,7 @@ http://2.2.2.170:8000/?token=79f542ddc22fb567f3c2900c9310f1ce30847d5c5f927cba
 > pip换源，在文件`$HOME/.pip/pip.conf`中添加
 ```
 [global]
-trusted-host =  mirrors.tuna.tsinghua.edu.cn
+trusted-host = mirrors.tuna.tsinghua.edu.cn
 index-url = https://mirrors.tuna.tsinghua.edu.cn/pypi/simple
  ```
 
