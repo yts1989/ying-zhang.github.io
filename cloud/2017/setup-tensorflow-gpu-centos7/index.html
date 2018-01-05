@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Ying的博客">
 <meta property="og:description" content="在CentOS 7上安装Nvidia GTX 1080 Ti显卡的驱动，以及TensorFlow GPU等深度学习开发环境。就这么突然，跟深度学习扯上边了；-)">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-26T11:38:34.259Z">
+<meta property="og:updated_time" content="2018-01-05T13:16:56.960Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 7 安装TensorFlow GPU深度学习环境">
 <meta name="twitter:description" content="在CentOS 7上安装Nvidia GTX 1080 Ti显卡的驱动，以及TensorFlow GPU等深度学习开发环境。就这么突然，跟深度学习扯上边了；-)">
@@ -123,7 +123,7 @@
 </blockquote>
 <h1 id="pip-和-cuda"><a href="#pip-和-cuda" class="headerlink" title="pip 和 cuda"></a>pip 和 cuda</h1><p>如果不是按上面小节的步骤使用<code>conda</code>，就要按照教程的步骤，先安装cuda了。</p>
 <blockquote>
-<p>pip换源，在文件<code>$HOME/.pip/pip.conf</code>中添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[global]</div><div class="line">trusted-host = mirrors.tuna.tsinghua.edu.cn</div><div class="line">index-url = https://mirrors.tuna.tsinghua.edu.cn/pypi/simple</div></pre></td></tr></table></figure></p>
+<p>pip换源，在文件<code>$HOME/.pip/pip.conf</code> 或 <code>/etc/pip.conf</code> 中添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[global]</div><div class="line">trusted-host = mirrors.tuna.tsinghua.edu.cn</div><div class="line">index-url = https://mirrors.tuna.tsinghua.edu.cn/pypi/simple</div></pre></td></tr></table></figure></p>
 </blockquote>
 <p>没有安装cuda，直接执行<code>pip install tensorflow-gpu</code>，取决于系统的Python版本，不论2.7，3.5或3.6版，都可以安装对应1.4.0版本，但执行上面的测试例子，就会报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">... ...</div><div class="line">ImportError: libcublas.so.8.0: cannot open shared object file: No such file or directory</div><div class="line">... ...</div></pre></td></tr></table></figure></p>
 <p>就是说找不到cuda的动态库。</p>
@@ -199,7 +199,7 @@
       <footer id="footer">
   
 	<div id="footer-info" class="inner">
-	  &copy; 2017 Ying ZHANG 
+	  &copy; 2018 Ying ZHANG 
 	  - Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
 	  - Theme <a href="https://github.com/hejianxian/hexo-theme-jane/" target="_blank">Jane</a>
 		- Project Source at <a href="https://github.com/ying-zhang/ying-zhang.github.io/" target="_blank">Github</a>
