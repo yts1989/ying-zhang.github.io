@@ -152,8 +152,7 @@ WantedBy=multi-user.target
 清理运行任务记录
 ```
 systemctl stop mesos-master mesos-slave
-rm -rf /var/mesos
-rm -rf /var/log/mesos
+rm -rf /var/mesos /var/log/mesos
 mkdir  /var/mesos /var/log/mesos
 
 /opt/zookeeper/bin/zkCli.sh #进入zk的shell，执行下面的命令
@@ -198,7 +197,8 @@ executor_environment_variables=/etc/mesos/slave-executor-env.json
 "PATH":"/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 "LD_LIBRARY_PATH":"/usr/local/cuda/extras/CUPTI/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64",
 "http_proxy": "http://n147:3128",
-"https_proxy":"http://n147:3128"
+"https_proxy":"http://n147:3128",
+"TZ":"GMT-8"
 }
 ```
 

@@ -308,7 +308,7 @@ http://2.2.2.170:8000/?token=79f542ddc22fb567f3c2900c9310f1ce30847d5c5f927cba
 
 如果不是按上面小节的步骤使用`conda`，就要按照教程的步骤，先安装cuda了。
 
-> pip换源，在文件`$HOME/.pip/pip.conf`中添加
+> pip换源，在文件`$HOME/.pip/pip.conf` 或 `/etc/pip.conf` 中添加
 ```
 [global]
 trusted-host = mirrors.tuna.tsinghua.edu.cn
