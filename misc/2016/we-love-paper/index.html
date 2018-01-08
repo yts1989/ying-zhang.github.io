@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://ying-zhang.github.io/img/lib.png">
 <meta property="og:image" content="https://ying-zhang.github.io/img/pubs.png">
 <meta property="og:image" content="https://ying-zhang.github.io/img/scholar_adv.png">
-<meta property="og:updated_time" content="2017-12-10T08:09:51.792Z">
+<meta property="og:updated_time" content="2018-01-08T14:05:45.068Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何收集和整理论文（面向CS专业）">
 <meta name="twitter:description" content="论文（Paper）是每个研究生读研路上挥之不去的“阴云”。无论是否已经有了一个好的课题或想法，都首先要收集某个研究方向一定数量的论文，来了解相关的工作和最新进展（State of the art &amp;amp; practice）。本文介绍了如何检索、收集计算机科学（CS）专业的论文，还介绍了相关的机构，学术会议和论文数据库。文末有 Bonus 哦;-)">
@@ -64,7 +64,7 @@
 <hr>
 <h1 id="tl-dr"><a href="#tl-dr" class="headerlink" title="tl;dr"></a>tl;dr</h1><ul>
 <li>从<a href="https://ying-zhang.github.io/misc/2017/ccf-all-in-one/">CCF推荐目录</a>中自己感兴趣的方向的 <strong>A类会议及期刊</strong> 中找论文即可。</li>
-<li>我关注的云计算，程序分析方向的<a href="#tldr">会议和期刊列表</a></li>
+<li>云计算，程序分析方向的<a href="#tldr">会议和期刊链接列表</a></li>
 <li><a href="#hosts"><strong>Bonus</strong></a> 修改Hosts</li>
 </ul>
 <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>按理说，开篇应该先要强调一下Paper对于科研的重要性的，直接把前辈的经验拿来吧：</p>
@@ -193,66 +193,275 @@ Idea -> 编程、实验、写Paper、投稿 <                                   
 <p>话说体验一下<a href="http://www.bing.com/academic" target="_blank" rel="external">必应学术</a>、<a href="http://xueshu.baidu.com/" target="_blank" rel="external">百度学术</a>和<a href="http://scholar.sogou.com/" target="_blank" rel="external">搜狗学术</a>也未尝不可。</p>
 </blockquote>
 <p><a name="tldr"></a></p>
-<h1 id="tl-dr：链接列表"><a href="#tl-dr：链接列表" class="headerlink" title="tl,dr：链接列表"></a>tl,dr：链接列表</h1><h2 id="体系结构，系统，存储，分布式系统"><a href="#体系结构，系统，存储，分布式系统" class="headerlink" title="体系结构，系统，存储，分布式系统"></a>体系结构，系统，存储，分布式系统</h2><ul>
-<li>ASPLOS@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE178&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/asplos/" target="_blank" rel="external">DBLP</a> Architectural Support for Programming Languages and Operating Systems</li>
-<li>FAST@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE425&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/fast/" target="_blank" rel="external">DBLP</a> Conf. on File and Storage Technologies</li>
-<li>HPCA@<strong>A</strong>   <a href="http://ieeexplore.ieee.org/servlet/opac?punumber=1000335" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/conf/hpca/" target="_blank" rel="external">DBLP</a> High-Performance Computer Architecture</li>
-<li>ISCA@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE239&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/isca/" target="_blank" rel="external">DBLP</a> Int. Symposium on Computer Architecture</li>
-<li>MICRO@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE203&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/micro/" target="_blank" rel="external">DBLP</a> Microarchitecture</li>
-<li>PPoPP@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE241&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/ppopp/" target="_blank" rel="external">DBLP</a> Principles and Practice of Parallel Programming</li>
-<li>SC@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE207&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sc/" target="_blank" rel="external">DBLP</a> Int. Conf. for High Performance Computing, Networking, Storage, and Analysis</li>
-<li>ATC@<strong>A</strong>   <a href="https://www.usenix.org/conferences/byname/131" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/usenix/" target="_blank" rel="external">DBLP</a> USENIX Annul Technical Conf.</li>
-<li>CGO@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE256&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/cgo/" target="_blank" rel="external">DBLP</a> Code Generation and Optimization</li>
-<li>EuroSys@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE101&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/eurosys/" target="_blank" rel="external">DBLP</a> European Conf. on Computer Systems</li>
-<li>HotCHIPS@<strong>B</strong>   <a href="http://www.hotchips.org/" target="_blank" rel="external">HotChips</a> Symposium on High Performance Chips</li>
-<li>HPDC@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE300&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/hpdc/" target="_blank" rel="external">DBLP</a> High-Performance Distributed Computing</li>
-<li>LISA@<strong>B</strong>   <a href="https://www.usenix.org/conferences/byname/5" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/lisa/" target="_blank" rel="external">DBLP</a> Large Installation system Administration Conf.</li>
-<li>PODC@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE221&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/podc/" target="_blank" rel="external">DBLP</a> Symposium on Principles of Distributed Computing</li>
-<li>SIGMETRICS@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE187&amp;tab=pubs" target="_blank" rel="external">ACM</a>，<a href="http://dl.acm.org/citation.cfm?id=J618" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigmetrics/" target="_blank" rel="external">DBLP</a> Int. Conf. on Measurement and Modeling of Computer Systems</li>
-<li>VEE@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE287&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/vee/" target="_blank" rel="external">DBLP</a> Virtual Execution Environments</li>
-<li>TC@<strong>A</strong>   <a href="https://www.computer.org/web/tc" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tc/" target="_blank" rel="external">DBLP</a> Trans. on Computers</li>
-<li>TOCS@<strong>A</strong>   <a href="http://dl.acm.org/pub.cfm?id=J774&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/tocs/" target="_blank" rel="external">DBLP</a> Trans. on Computer Systems</li>
-<li>TOS@<strong>A</strong>   <a href="http://dl.acm.org/pub.cfm?id=J960&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/tos/" target="_blank" rel="external">DBLP</a> Trans. on Storage</li>
-<li>TPDS@<strong>A</strong>   <a href="https://www.computer.org/web/tpds" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tpds/" target="_blank" rel="external">DBLP</a> Trans. on Parallel and Distributed Systems</li>
-<li>ISMM   <a href="http://dl.acm.org/event.cfm?id=RE149&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/ismm/" target="_blank" rel="external">DBLP</a> Int. Conf. on Memory Management</li>
-</ul>
-<h2 id="软件工程（软件分析）"><a href="#软件工程（软件分析）" class="headerlink" title="软件工程（软件分析）"></a>软件工程（软件分析）</h2><ul>
+<h1 id="tl-dr：链接列表"><a href="#tl-dr：链接列表" class="headerlink" title="tl,dr：链接列表"></a>tl,dr：链接列表</h1><table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>CCF级别</th>
+<th>链接</th>
+<th>全称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASPLOS</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE178&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/asplos/" target="_blank" rel="external">DBLP</a></td>
+<td>Architectural Support for Programming Languages and Operating Systems</td>
+</tr>
+<tr>
+<td>HPCA</td>
+<td><strong>A</strong></td>
+<td><a href="http://ieeexplore.ieee.org/servlet/opac?punumber=1000335" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/conf/hpca/" target="_blank" rel="external">DBLP</a></td>
+<td>High-Performance Computer Architecture</td>
+</tr>
+<tr>
+<td>ISCA</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE239&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/isca/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Symposium on Computer Architecture</td>
+</tr>
+<tr>
+<td>MICRO</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE203&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/micro/" target="_blank" rel="external">DBLP</a></td>
+<td>Microarchitecture</td>
+</tr>
+<tr>
+<td>PPoPP</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE241&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/ppopp/" target="_blank" rel="external">DBLP</a></td>
+<td>Principles and Practice of Parallel Programming</td>
+</tr>
+<tr>
+<td>SC</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE207&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sc/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Conf. for High Performance Computing, Networking, Storage, and Analysis</td>
+</tr>
+<tr>
+<td>ATC</td>
+<td><strong>A</strong></td>
+<td><a href="https://www.usenix.org/conferences/byname/131" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/usenix/" target="_blank" rel="external">DBLP</a></td>
+<td>USENIX Annul Technical Conf.</td>
+</tr>
+<tr>
+<td>EuroSys</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE101&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/eurosys/" target="_blank" rel="external">DBLP</a></td>
+<td>European Conf. on Computer Systems</td>
+</tr>
+<tr>
+<td>HPDC</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE300&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/hpdc/" target="_blank" rel="external">DBLP</a></td>
+<td>High-Performance Distributed Computing</td>
+</tr>
+<tr>
+<td>LISA</td>
+<td><strong>B</strong></td>
+<td><a href="https://www.usenix.org/conferences/byname/5" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/lisa/" target="_blank" rel="external">DBLP</a></td>
+<td>Large Installation system Administration Conf.</td>
+</tr>
+<tr>
+<td>PODC</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE221&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/podc/" target="_blank" rel="external">DBLP</a></td>
+<td>Symposium on Principles of Distributed Computing</td>
+</tr>
+<tr>
+<td>SigMetrics</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE187&amp;tab=pubs" target="_blank" rel="external">ACM</a>，<a href="http://dl.acm.org/citation.cfm?id=J618" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigmetrics/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Conf. on Measurement and Modeling of Computer Systems</td>
+</tr>
+<tr>
+<td>TC</td>
+<td><strong>A</strong></td>
+<td><a href="https://www.computer.org/web/tc" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tc/" target="_blank" rel="external">DBLP</a></td>
+<td>Trans. on Computers</td>
+</tr>
+<tr>
+<td>ToCS</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/pub.cfm?id=J774&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/tocs/" target="_blank" rel="external">DBLP</a></td>
+<td>Trans. on Computer Systems</td>
+</tr>
+<tr>
+<td>TPDS</td>
+<td><strong>A</strong></td>
+<td><a href="https://www.computer.org/web/tpds" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tpds/" target="_blank" rel="external">DBLP</a></td>
+<td>Trans. on Parallel and Distributed Systems</td>
+</tr>
+</tbody>
+</table>
+<h2 id="云计算，大数据"><a href="#云计算，大数据" class="headerlink" title="云计算，大数据"></a>云计算，大数据</h2><table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>CCF级别</th>
+<th>链接</th>
+<th>全称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SIGMOD</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE227&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigmod/" target="_blank" rel="external">DBLP</a></td>
+<td>Conf. on Management of Data</td>
+</tr>
+<tr>
+<td>SoCC</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE227&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/cloud/" target="_blank" rel="external">DBLP</a></td>
+<td>Symposium on Cloud Computing</td>
+</tr>
+<tr>
+<td>PODS</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE227&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/pods/" target="_blank" rel="external">DBLP</a></td>
+<td>SIGMOD Conf. on Principles of DB Systems</td>
+</tr>
+<tr>
+<td>VLDB Endowment</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/pub.cfm?id=J1174&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/vldb/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Conf. on Very Large Data Bases</td>
+</tr>
+<tr>
+<td>VLDB Journal</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/pub.cfm?id=J869&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/vldb/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Journal on Very Large Data Bases</td>
+</tr>
+<tr>
+<td>NSDI</td>
+<td><strong>B</strong></td>
+<td><a href="https://www.usenix.org/conferences/byname/178" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/nsdi/" target="_blank" rel="external">DBLP</a></td>
+<td>Network System Design and Implementation</td>
+</tr>
+<tr>
+<td>SigComm</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE258&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigcomm/" target="_blank" rel="external">DBLP</a></td>
+<td>The Conf. of the ACM Special Interest Group on Data Communication</td>
+</tr>
+</tbody>
+</table>
+<p>体系结构中的 ASPLOS、ISCA、Micro、ATC、EuroSys、HPDC、LISA、SIGMETRICS、TPDS等，及软工的OSDI、SOSP等也都有不少云计算相关的文章。<br>IEEE 云计算系列（CLOUD等）也可以看看。 <a href="http://cloudcomputing.ieee.org/conferences" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/conf/IEEEcloud/" target="_blank" rel="external">DBLP</a> </p>
+<h2 id="软件工程（偏程序分析）"><a href="#软件工程（偏程序分析）" class="headerlink" title="软件工程（偏程序分析）"></a>软件工程（偏程序分析）</h2><ul>
 <li>Github上的<a href="https://github.com/tue-mdse/conferenceMetrics" target="_blank" rel="external">软件工程方向会议的数据</a></li>
-<li>UIUC的<a href="http://taoxie.cs.illinois.edu/" target="_blank" rel="external">谢涛老师</a>维护的<a href="http://taoxie.cs.illinois.edu/seconferences.htm" target="_blank" rel="external">软件工程方向的会议统计列表</a></li>
-<li>ASE@<strong>A</strong>   <a href="http://dblp.org/db/conf/kbse/" target="_blank" rel="external">DBLP</a> Int. Conf. on Automated Software Engineering</li>
-<li>FSE/ESEC@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE201&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigsoft/" target="_blank" rel="external">DBLP</a> SIGSOFT Symposium on the Foundation of Software Engineering / European Software Engineering Conf.</li>
-<li>ICSE@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE228&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/icse/" target="_blank" rel="external">DBLP</a> FOSE会议：七年一届的展望 Int. Conf. on Software Engineering</li>
-<li>OOPSLA/SPLASH@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE181&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/oopsla/" target="_blank" rel="external">DBLP</a> Onward会议：创新（脑洞） Conf. on Object-Oriented Programming Systems, Languages, and Applications</li>
-<li>OSDI@<strong>A</strong>   <a href="https://www.usenix.org/conferences/byname/179" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/osdi/" target="_blank" rel="external">DBLP</a> USENIX Symposium on Operating Systems Design and Implementations，<strong>双数</strong> 年份召开</li>
-<li>SOSP@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE208&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sosp/" target="_blank" rel="external">DBLP</a>，Symposium on Operating Systems Principles， <strong>单数</strong> 年份召开，另，<a href="http://sigops.org/sosp/sosp15/history/index.html" target="_blank" rel="external">SOSP 2015 History Day</a></li>
-<li>PLDI@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE200&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/pldi/" target="_blank" rel="external">DBLP</a> SIGPLAN Symposium on Programming Language Design and Implementation</li>
-<li>POPL@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE180&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/popl/" target="_blank" rel="external">DBLP</a> SIGPLAN&amp;SIGACT Symposium on Principles of Programming Languages</li>
-<li>ECOOP@<strong>B</strong>   <a href="http://www.ecoop.org/" target="_blank" rel="external">ECOOP</a> , <a href="http://dblp.org/db/conf/ecoop/" target="_blank" rel="external">DBLP</a> European Conf. on Object-Oriented Programming</li>
-<li>HotOS@<strong>B</strong>   <a href="https://www.usenix.org/conferences/byname/155" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/hotos/" target="_blank" rel="external">DBLP</a> USENIX Workshop on Hot Topics in Operating Systems</li>
-<li>ICSME@<strong>B</strong>   <a href="http://conferences.computer.org/icsm/" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/conf/icsm/" target="_blank" rel="external">DBLP</a> Int. Conf. on Software Maintenance</li>
-<li>ISSTA@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE222&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/issta/" target="_blank" rel="external">DBLP</a> Int. Symposium on Software Testing and Analysis</li>
-<li>TOPLAS@<strong>A</strong>   <a href="http://dl.acm.org/pub.cfm?id=J783&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/toplas/" target="_blank" rel="external">DBLP</a> Trans. on Programming Languages and Systems</li>
-<li>TOSEM@<strong>A</strong>   <a href="http://dl.acm.org/pub.cfm?id=J790&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/tosem/" target="_blank" rel="external">DBLP</a> Trans. on Software Engineering Methodology</li>
-<li>TSE@<strong>A</strong>   <a href="https://www.computer.org/web/tse" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tse/" target="_blank" rel="external">DBLP</a> Trans. on Software Engineering</li>
+<li>UIUC的<a href="http://taoxie.cs.illinois.edu/" target="_blank" rel="external">谢涛老师</a>维护的<a href="http://taoxie.cs.illinois.edu/seconferences.htm" target="_blank" rel="external">软件工程方向的会议统计列表</a> </li>
 </ul>
-<h2 id="云计算，网络，大数据"><a href="#云计算，网络，大数据" class="headerlink" title="云计算，网络，大数据"></a>云计算，网络，大数据</h2><ul>
-<li>SIGMOD@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE227&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigmod/" target="_blank" rel="external">DBLP</a> Conf. on Management of Data</li>
-<li>SoCC@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE227&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/cloud/" target="_blank" rel="external">DBLP</a> Symposium on Cloud Computing</li>
-<li>PODS@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE227&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/pods/" target="_blank" rel="external">DBLP</a> SIGMOD Conf. on Principles of DB Systems</li>
-<li>VLDB Endowment@<strong>A</strong>   <a href="http://dl.acm.org/pub.cfm?id=J1174&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/vldb/" target="_blank" rel="external">DBLP</a> Int. Conf. on Very Large Data Bases</li>
-<li>VLDB Journal@<strong>A</strong>   <a href="http://dl.acm.org/pub.cfm?id=J869&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/vldb/" target="_blank" rel="external">DBLP</a> Int. Journal on Very Large Data Bases</li>
-<li>NSDI@<strong>B</strong>   <a href="https://www.usenix.org/conferences/byname/178" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/nsdi/" target="_blank" rel="external">DBLP</a> Network System Design and Implementation</li>
-<li>IEEE 云计算系列@<strong>B/C</strong>  <a href="http://cloudcomputing.ieee.org/conferences" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/conf/IEEEcloud/" target="_blank" rel="external">DBLP</a></li>
-<li>HotCloud   <a href="https://www.usenix.org/conferences/byname/1" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/hotcloud/" target="_blank" rel="external">DBLP</a> Hot Topics on Cloud Computing</li>
-<li>TCC   <a href="https://www.computer.org/web/tcc" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tcc/" target="_blank" rel="external">DBLP</a> IEEE Trans. on Cloud Computing</li>
-<li>TSC@<strong>B</strong>   <a href="https://www.computer.org/web/tsc" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tsc/" target="_blank" rel="external">DBLP</a> IEEE Trans. on Services Computing</li>
-<li>SigComm@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE258&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/conf/sigcomm/" target="_blank" rel="external">DBLP</a><br>上面体系结构中的 ASPLOS、FAST、ISCA、Micro、ATC、EuroSys、HPDC、LISA、SIGMETRICS、TPDS等，及软工的OSDI、SOSP等也都有不少云计算相关的文章。</li>
-</ul>
-<h2 id="移动计算"><a href="#移动计算" class="headerlink" title="移动计算"></a>移动计算</h2><ul>
-<li>MobiCom@<strong>A</strong>   <a href="http://dl.acm.org/event.cfm?id=RE366&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/mobicom/" target="_blank" rel="external">DBLP</a> Mobile Computing and Networking</li>
-<li>MobiSys@<strong>B</strong>   <a href="http://dl.acm.org/event.cfm?id=RE191&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/mobisys/" target="_blank" rel="external">DBLP</a> Mobile Systems, Applications, and Services</li>
-<li>HotMobile   <a href="http://dl.acm.org/event.cfm?id=RE142&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/wmcsa/" target="_blank" rel="external">DBLP</a> Mobile Computing Systems and Applications</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>CCF级别</th>
+<th>链接</th>
+<th>全称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASE</td>
+<td><strong>A</strong></td>
+<td><a href="http://dblp.org/db/conf/kbse/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Conf. on Automated Software Engineering</td>
+</tr>
+<tr>
+<td>FSE/ESEC</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE201&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sigsoft/" target="_blank" rel="external">DBLP</a></td>
+<td>Symposium on the Foundation of Software Engineering / European Softw. Eng. Conf.</td>
+</tr>
+<tr>
+<td>ICSE</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE228&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/icse/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Conf. on Software Engineering 另，FOSE会议：七年一届的展望</td>
+</tr>
+<tr>
+<td>OOPSLA</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE181&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/oopsla/" target="_blank" rel="external">DBLP</a></td>
+<td>Conf. on Object-Oriented Programming Systems, Languages, and Applications</td>
+</tr>
+<tr>
+<td>OSDI</td>
+<td><strong>A</strong></td>
+<td><a href="https://www.usenix.org/conferences/byname/179" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/osdi/" target="_blank" rel="external">DBLP</a></td>
+<td>USENIX Symposium on Operating Systems Design and Implementations，<strong>双数</strong> 年份召开</td>
+</tr>
+<tr>
+<td>SOSP</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE208&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/sosp/" target="_blank" rel="external">DBLP</a></td>
+<td>Symposium on Operating Systems Principles， <strong>单数</strong> 年份召开，另，<a href="http://sigops.org/sosp/sosp15/history/index.html" target="_blank" rel="external">SOSP 2015 History Day</a></td>
+</tr>
+<tr>
+<td>PLDI</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE200&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/pldi/" target="_blank" rel="external">DBLP</a></td>
+<td>SIGPLAN Symposium on Programming Language Design and Implementation</td>
+</tr>
+<tr>
+<td>POPL</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE180&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/popl/" target="_blank" rel="external">DBLP</a></td>
+<td>SIGPLAN&amp;SIGACT Symposium on Principles of Programming Languages</td>
+</tr>
+<tr>
+<td>ECOOP</td>
+<td><strong>B</strong></td>
+<td><a href="http://www.ecoop.org/" target="_blank" rel="external">ECOOP</a> , <a href="http://dblp.org/db/conf/ecoop/" target="_blank" rel="external">DBLP</a></td>
+<td>European Conf. on Object-Oriented Programming</td>
+</tr>
+<tr>
+<td>HotOS</td>
+<td><strong>B</strong></td>
+<td><a href="https://www.usenix.org/conferences/byname/155" target="_blank" rel="external">USENIX</a> , <a href="http://dblp.org/db/conf/hotos/" target="_blank" rel="external">DBLP</a></td>
+<td>USENIX Workshop on Hot Topics in Operating Systems</td>
+</tr>
+<tr>
+<td>ICSME</td>
+<td><strong>B</strong></td>
+<td><a href="http://conferences.computer.org/icsm/" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/conf/icsm/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Conf. on Software Maintenance</td>
+</tr>
+<tr>
+<td>ISSTA</td>
+<td><strong>B</strong></td>
+<td><a href="http://dl.acm.org/event.cfm?id=RE222&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/conf/issta/" target="_blank" rel="external">DBLP</a></td>
+<td>Int. Symposium on Software Testing and Analysis</td>
+</tr>
+<tr>
+<td>TOPLAS</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/pub.cfm?id=J783&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/toplas/" target="_blank" rel="external">DBLP</a></td>
+<td>Trans. on Programming Languages and Systems</td>
+</tr>
+<tr>
+<td>TOSEM</td>
+<td><strong>A</strong></td>
+<td><a href="http://dl.acm.org/pub.cfm?id=J790&amp;tab=pubs" target="_blank" rel="external">ACM</a> , <a href="http://dblp.org/db/journals/tosem/" target="_blank" rel="external">DBLP</a></td>
+<td>Trans. on Software Engineering Methodology</td>
+</tr>
+<tr>
+<td>TSE</td>
+<td><strong>A</strong></td>
+<td><a href="https://www.computer.org/web/tse" target="_blank" rel="external">IEEE</a> , <a href="http://dblp.org/db/journals/tse/" target="_blank" rel="external">DBLP</a></td>
+<td>Trans. on Software Engineering</td>
+</tr>
+<tr>
+<td>SPE</td>
+<td><strong>B</strong></td>
+<td><a href="http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1097-024X" target="_blank" rel="external">Wiley</a>, <a href="http://dblp.org/db/journals/spe/" target="_blank" rel="external">DBLP</a></td>
+<td>Software - Practice and Experience</td>
+</tr>
+</tbody>
+</table>
 <h2 id="ACM-DL列表"><a href="#ACM-DL列表" class="headerlink" title="ACM DL列表"></a>ACM DL列表</h2><ul>
 <li><a href="http://dl.acm.org/contents_dl.cfm" target="_blank" rel="external">收录会议和期刊的完整列表</a></li>
 <li><a href="http://dl.acm.org/events.cfm" target="_blank" rel="external">会议</a></li>
