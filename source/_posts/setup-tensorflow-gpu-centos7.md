@@ -110,12 +110,14 @@ Anaconda官网下载页是[https://www.anaconda.com/download/] ，不过我们�
 安装过程需要用到`bzip2`，先安装一下`sudo yum install -y bzip2`
 执行 `bash Anaconda3-5.0.1-Linux-x86_64.sh` 开始安装，敲回车显示 license agreement ，敲几次空格翻到底，然后输入`yes`接受协议，再敲回车，安装到默认的路径`$HOME/anaconda3`，如果这个路径已经存在，就会安装失败，需要删掉或另选路径。
 安装脚本还会在`.bashrc`的`PATH`环境变量加上安装路径。安装结束后，执行`source .bashrc`，更新`PATH`环境变量，这时系统的`python`命令已经变成Anaconda安装的Python 3.6了（因为安装程序把`$HOME/anaconda3/bin`加在了`PATH`最前面）。
-
+> 为了让其他用户也能使用Anaconda，可将其安装到系统目录，如`/opt/anaconda3`，并修改系统的`PATH`
 > 静默模式安装Anaconda：
 ```
-bash ~/Anaconda3-5.0.1-Linux-x86_64.sh -b -p $HOME/anaconda3
-echo 'export PATH=$HOME/anaconda3/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
+cd ~
+curl -kO https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+bash ~/Anaconda3-5.0.1-Linux-x86_64.sh -b -p   /opt/anaconda3
+echo 'export PATH=/opt/anaconda3/bin:$PATH' >> /etc/profile
+source /etc/profile
 ```
 
 > 更改`conda`源：执行

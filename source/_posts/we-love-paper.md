@@ -15,7 +15,7 @@ tags:
 
 # tl;dr
 + 从[CCF推荐目录](https://ying-zhang.github.io/misc/2017/ccf-all-in-one/)中自己感兴趣的方向的 **A类会议及期刊** 中找论文即可。
-+ 我关注的云计算，程序分析方向的[会议和期刊列表](#tldr)
++ 云计算，程序分析方向的[会议和期刊链接列表](#tldr)
 + [**Bonus**](#hosts) 修改Hosts
 
 # 引子
@@ -159,67 +159,62 @@ A，B类的会议和期刊的文章学术质量较高。这个质量不是简单
 <a name="tldr" />
 
 # tl,dr：链接列表
+| 缩写 | CCF级别 | 链接 | 全称 | 
+|------|--------|------|------| 
+| ASPLOS | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE178&tab=pubs) , [DBLP](http://dblp.org/db/conf/asplos/) | Architectural Support for Programming Languages and Operating Systems |
+| HPCA | **A** | [IEEE](http://ieeexplore.ieee.org/servlet/opac?punumber=1000335) , [DBLP](http://dblp.org/db/conf/hpca/) | High-Performance Computer Architecture |
+| ISCA | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE239&tab=pubs) , [DBLP](http://dblp.org/db/conf/isca/) | Int. Symposium on Computer Architecture |
+| MICRO | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE203&tab=pubs) , [DBLP](http://dblp.org/db/conf/micro/) | Microarchitecture |
+| PPoPP | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE241&tab=pubs) , [DBLP](http://dblp.org/db/conf/ppopp/) | Principles and Practice of Parallel Programming |
+| SC | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE207&tab=pubs) , [DBLP](http://dblp.org/db/conf/sc/) | Int. Conf. for High Performance Computing, Networking, Storage, and Analysis |
+| ATC | **A** | [USENIX](https://www.usenix.org/conferences/byname/131) , [DBLP](http://dblp.org/db/conf/usenix/) | USENIX Annul Technical Conf. |
+| EuroSys | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE101&tab=pubs) , [DBLP](http://dblp.org/db/conf/eurosys/) | European Conf. on Computer Systems |
+| HPDC | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE300&tab=pubs) , [DBLP](http://dblp.org/db/conf/hpdc/) | High-Performance Distributed Computing |
+| LISA | **B** | [USENIX](https://www.usenix.org/conferences/byname/5) , [DBLP](http://dblp.org/db/conf/lisa/) | Large Installation system Administration Conf. |
+| PODC | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE221&tab=pubs) , [DBLP](http://dblp.org/db/conf/podc/) | Symposium on Principles of Distributed Computing |
+| SigMetrics | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE187&tab=pubs)，[ACM](http://dl.acm.org/citation.cfm?id=J618) , [DBLP](http://dblp.org/db/conf/sigmetrics/) | Int. Conf. on Measurement and Modeling of Computer Systems |
+| TC | **A** | [IEEE](https://www.computer.org/web/tc) , [DBLP](http://dblp.org/db/journals/tc/) | Trans. on Computers |
+| ToCS | **A** | [ACM](http://dl.acm.org/pub.cfm?id=J774&tab=pubs) , [DBLP](http://dblp.org/db/journals/tocs/) | Trans. on Computer Systems |
+| TPDS | **A** | [IEEE](https://www.computer.org/web/tpds) , [DBLP](http://dblp.org/db/journals/tpds/) | Trans. on Parallel and Distributed Systems |
 
-## 体系结构，系统，存储，分布式系统
-+ ASPLOS@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE178&tab=pubs) , [DBLP](http://dblp.org/db/conf/asplos/) Architectural Support for Programming Languages and Operating Systems
-+ FAST@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE425&tab=pubs) , [DBLP](http://dblp.org/db/conf/fast/) Conf. on File and Storage Technologies
-+ HPCA@**A**   [IEEE](http://ieeexplore.ieee.org/servlet/opac?punumber=1000335) , [DBLP](http://dblp.org/db/conf/hpca/) High-Performance Computer Architecture
-+ ISCA@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE239&tab=pubs) , [DBLP](http://dblp.org/db/conf/isca/) Int. Symposium on Computer Architecture
-+ MICRO@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE203&tab=pubs) , [DBLP](http://dblp.org/db/conf/micro/) Microarchitecture
-+ PPoPP@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE241&tab=pubs) , [DBLP](http://dblp.org/db/conf/ppopp/) Principles and Practice of Parallel Programming
-+ SC@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE207&tab=pubs) , [DBLP](http://dblp.org/db/conf/sc/) Int. Conf. for High Performance Computing, Networking, Storage, and Analysis
-+ ATC@**A**   [USENIX](https://www.usenix.org/conferences/byname/131) , [DBLP](http://dblp.org/db/conf/usenix/) USENIX Annul Technical Conf.
-+ CGO@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE256&tab=pubs) , [DBLP](http://dblp.org/db/conf/cgo/) Code Generation and Optimization
-+ EuroSys@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE101&tab=pubs) , [DBLP](http://dblp.org/db/conf/eurosys/) European Conf. on Computer Systems
-+ HotCHIPS@**B**   [HotChips](http://www.hotchips.org/) Symposium on High Performance Chips
-+ HPDC@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE300&tab=pubs) , [DBLP](http://dblp.org/db/conf/hpdc/) High-Performance Distributed Computing
-+ LISA@**B**   [USENIX](https://www.usenix.org/conferences/byname/5) , [DBLP](http://dblp.org/db/conf/lisa/) Large Installation system Administration Conf.
-+ PODC@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE221&tab=pubs) , [DBLP](http://dblp.org/db/conf/podc/) Symposium on Principles of Distributed Computing
-+ SIGMETRICS@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE187&tab=pubs)，[ACM](http://dl.acm.org/citation.cfm?id=J618) , [DBLP](http://dblp.org/db/conf/sigmetrics/) Int. Conf. on Measurement and Modeling of Computer Systems
-+ VEE@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE287&tab=pubs) , [DBLP](http://dblp.org/db/conf/vee/) Virtual Execution Environments
-+ TC@**A**   [IEEE](https://www.computer.org/web/tc) , [DBLP](http://dblp.org/db/journals/tc/) Trans. on Computers
-+ TOCS@**A**   [ACM](http://dl.acm.org/pub.cfm?id=J774&tab=pubs) , [DBLP](http://dblp.org/db/journals/tocs/) Trans. on Computer Systems
-+ TOS@**A**   [ACM](http://dl.acm.org/pub.cfm?id=J960&tab=pubs) , [DBLP](http://dblp.org/db/journals/tos/) Trans. on Storage
-+ TPDS@**A**   [IEEE](https://www.computer.org/web/tpds) , [DBLP](http://dblp.org/db/journals/tpds/) Trans. on Parallel and Distributed Systems
-+ ISMM   [ACM](http://dl.acm.org/event.cfm?id=RE149&tab=pubs) , [DBLP](http://dblp.org/db/conf/ismm/) Int. Conf. on Memory Management
+## 云计算，大数据
+| 缩写 | CCF级别 | 链接 | 全称 | 
+|------|--------|------|------| 
+| SIGMOD | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE227&tab=pubs) , [DBLP](http://dblp.org/db/conf/sigmod/) | Conf. on Management of Data |
+| SoCC | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE227&tab=pubs) , [DBLP](http://dblp.org/db/conf/cloud/) | Symposium on Cloud Computing |
+| PODS | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE227&tab=pubs) , [DBLP](http://dblp.org/db/conf/pods/) | SIGMOD Conf. on Principles of DB Systems |
+| VLDB Endowment | **A** | [ACM](http://dl.acm.org/pub.cfm?id=J1174&tab=pubs) , [DBLP](http://dblp.org/db/conf/vldb/) | Int. Conf. on Very Large Data Bases |
+| VLDB Journal | **A** | [ACM](http://dl.acm.org/pub.cfm?id=J869&tab=pubs) , [DBLP](http://dblp.org/db/journals/vldb/) | Int. Journal on Very Large Data Bases |
+| NSDI | **B** | [USENIX](https://www.usenix.org/conferences/byname/178) , [DBLP](http://dblp.org/db/conf/nsdi/) | Network System Design and Implementation |
+| SigComm | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE258&tab=pubs) , [DBLP](http://dblp.org/db/conf/sigcomm/) | The Conf. of the ACM Special Interest Group on Data Communication |
 
-## 软件工程（软件分析）
+
+体系结构中的 ASPLOS、ISCA、Micro、ATC、EuroSys、HPDC、LISA、SIGMETRICS、TPDS等，及软工的OSDI、SOSP等也都有不少云计算相关的文章。 
+IEEE 云计算系列（CLOUD等）也可以看看。 [IEEE](http://cloudcomputing.ieee.org/conferences) , [DBLP](http://dblp.org/db/conf/IEEEcloud/) 
+
+## 软件工程（偏程序分析）
 + Github上的[软件工程方向会议的数据](https://github.com/tue-mdse/conferenceMetrics)
-+ UIUC的[谢涛老师](http://taoxie.cs.illinois.edu/)维护的[软件工程方向的会议统计列表](http://taoxie.cs.illinois.edu/seconferences.htm)
-+ ASE@**A**   [DBLP](http://dblp.org/db/conf/kbse/) Int. Conf. on Automated Software Engineering
-+ FSE/ESEC@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE201&tab=pubs) , [DBLP](http://dblp.org/db/conf/sigsoft/) SIGSOFT Symposium on the Foundation of Software Engineering / European Software Engineering Conf.
-+ ICSE@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE228&tab=pubs) , [DBLP](http://dblp.org/db/conf/icse/) FOSE会议：七年一届的展望 Int. Conf. on Software Engineering
-+ OOPSLA/SPLASH@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE181&tab=pubs) , [DBLP](http://dblp.org/db/conf/oopsla/) Onward会议：创新（脑洞） Conf. on Object-Oriented Programming Systems, Languages, and Applications
-+ OSDI@**A**   [USENIX](https://www.usenix.org/conferences/byname/179) , [DBLP](http://dblp.org/db/conf/osdi/) USENIX Symposium on Operating Systems Design and Implementations，**双数** 年份召开
-+ SOSP@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE208&tab=pubs) , [DBLP](http://dblp.org/db/conf/sosp/)，Symposium on Operating Systems Principles， **单数** 年份召开，另，[SOSP 2015 History Day](http://sigops.org/sosp/sosp15/history/index.html)
-+ PLDI@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE200&tab=pubs) , [DBLP](http://dblp.org/db/conf/pldi/) SIGPLAN Symposium on Programming Language Design and Implementation
-+ POPL@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE180&tab=pubs) , [DBLP](http://dblp.org/db/conf/popl/) SIGPLAN&SIGACT Symposium on Principles of Programming Languages
-+ ECOOP@**B**   [ECOOP](http://www.ecoop.org/) , [DBLP](http://dblp.org/db/conf/ecoop/) European Conf. on Object-Oriented Programming
-+ HotOS@**B**   [USENIX](https://www.usenix.org/conferences/byname/155) , [DBLP](http://dblp.org/db/conf/hotos/) USENIX Workshop on Hot Topics in Operating Systems
-+ ICSME@**B**   [IEEE](http://conferences.computer.org/icsm/) , [DBLP](http://dblp.org/db/conf/icsm/) Int. Conf. on Software Maintenance
-+ ISSTA@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE222&tab=pubs) , [DBLP](http://dblp.org/db/conf/issta/) Int. Symposium on Software Testing and Analysis
-+ TOPLAS@**A**   [ACM](http://dl.acm.org/pub.cfm?id=J783&tab=pubs) , [DBLP](http://dblp.org/db/journals/toplas/) Trans. on Programming Languages and Systems
-+ TOSEM@**A**   [ACM](http://dl.acm.org/pub.cfm?id=J790&tab=pubs) , [DBLP](http://dblp.org/db/journals/tosem/) Trans. on Software Engineering Methodology
-+ TSE@**A**   [IEEE](https://www.computer.org/web/tse) , [DBLP](http://dblp.org/db/journals/tse/) Trans. on Software Engineering
++ UIUC的[谢涛老师](http://taoxie.cs.illinois.edu/)维护的[软件工程方向的会议统计列表](http://taoxie.cs.illinois.edu/seconferences.htm) 
 
-## 云计算，网络，大数据
-+ SIGMOD@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE227&tab=pubs) , [DBLP](http://dblp.org/db/conf/sigmod/) Conf. on Management of Data
-+ SoCC@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE227&tab=pubs) , [DBLP](http://dblp.org/db/conf/cloud/) Symposium on Cloud Computing
-+ PODS@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE227&tab=pubs) , [DBLP](http://dblp.org/db/conf/pods/) SIGMOD Conf. on Principles of DB Systems
-+ VLDB Endowment@**A**   [ACM](http://dl.acm.org/pub.cfm?id=J1174&tab=pubs) , [DBLP](http://dblp.org/db/conf/vldb/) Int. Conf. on Very Large Data Bases
-+ VLDB Journal@**A**   [ACM](http://dl.acm.org/pub.cfm?id=J869&tab=pubs) , [DBLP](http://dblp.org/db/journals/vldb/) Int. Journal on Very Large Data Bases
-+ NSDI@**B**   [USENIX](https://www.usenix.org/conferences/byname/178) , [DBLP](http://dblp.org/db/conf/nsdi/) Network System Design and Implementation
-+ IEEE 云计算系列@**B/C**  [IEEE](http://cloudcomputing.ieee.org/conferences) , [DBLP](http://dblp.org/db/conf/IEEEcloud/)
-+ HotCloud   [USENIX](https://www.usenix.org/conferences/byname/1) , [DBLP](http://dblp.org/db/conf/hotcloud/) Hot Topics on Cloud Computing
-+ TCC   [IEEE](https://www.computer.org/web/tcc) , [DBLP](http://dblp.org/db/journals/tcc/) IEEE Trans. on Cloud Computing
-+ TSC@**B**   [IEEE](https://www.computer.org/web/tsc) , [DBLP](http://dblp.org/db/journals/tsc/) IEEE Trans. on Services Computing
-+ SigComm@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE258&tab=pubs) , [DBLP](http://dblp.org/conf/sigcomm/)
-上面体系结构中的 ASPLOS、FAST、ISCA、Micro、ATC、EuroSys、HPDC、LISA、SIGMETRICS、TPDS等，及软工的OSDI、SOSP等也都有不少云计算相关的文章。
 
-## 移动计算
-+ MobiCom@**A**   [ACM](http://dl.acm.org/event.cfm?id=RE366&tab=pubs) , [DBLP](http://dblp.org/db/conf/mobicom/) Mobile Computing and Networking
-+ MobiSys@**B**   [ACM](http://dl.acm.org/event.cfm?id=RE191&tab=pubs) , [DBLP](http://dblp.org/db/conf/mobisys/) Mobile Systems, Applications, and Services
-+ HotMobile   [ACM](http://dl.acm.org/event.cfm?id=RE142&tab=pubs) , [DBLP](http://dblp.org/db/conf/wmcsa/) Mobile Computing Systems and Applications
+| 缩写 | CCF级别 | 链接 | 全称 | 
+|------| ----   |    --|------| 
+| ASE | **A** | [DBLP](http://dblp.org/db/conf/kbse/) | Int. Conf. on Automated Software Engineering |
+| FSE/ESEC | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE201&tab=pubs) , [DBLP](http://dblp.org/db/conf/sigsoft/) | Symposium on the Foundation of Software Engineering / European Softw. Eng. Conf. |
+| ICSE | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE228&tab=pubs) , [DBLP](http://dblp.org/db/conf/icse/) | Int. Conf. on Software Engineering 另，FOSE会议：七年一届的展望 |
+| OOPSLA | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE181&tab=pubs) , [DBLP](http://dblp.org/db/conf/oopsla/) | Conf. on Object-Oriented Programming Systems, Languages, and Applications |
+| OSDI | **A** | [USENIX](https://www.usenix.org/conferences/byname/179) , [DBLP](http://dblp.org/db/conf/osdi/) | USENIX Symposium on Operating Systems Design and Implementations，**双数** 年份召开 |
+| SOSP | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE208&tab=pubs) , [DBLP](http://dblp.org/db/conf/sosp/) | Symposium on Operating Systems Principles， **单数** 年份召开，另，[SOSP 2015 History Day](http://sigops.org/sosp/sosp15/history/index.html) |
+| PLDI | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE200&tab=pubs) , [DBLP](http://dblp.org/db/conf/pldi/) | SIGPLAN Symposium on Programming Language Design and Implementation |
+| POPL | **A** | [ACM](http://dl.acm.org/event.cfm?id=RE180&tab=pubs) , [DBLP](http://dblp.org/db/conf/popl/) | SIGPLAN&SIGACT Symposium on Principles of Programming Languages |
+| ECOOP | **B** | [ECOOP](http://www.ecoop.org/) , [DBLP](http://dblp.org/db/conf/ecoop/)  | European Conf. on Object-Oriented Programming |
+| HotOS | **B** | [USENIX](https://www.usenix.org/conferences/byname/155) , [DBLP](http://dblp.org/db/conf/hotos/)  | USENIX Workshop on Hot Topics in Operating Systems |
+| ICSME | **B** | [IEEE](http://conferences.computer.org/icsm/) , [DBLP](http://dblp.org/db/conf/icsm/) | Int. Conf. on Software Maintenance |
+| ISSTA | **B** | [ACM](http://dl.acm.org/event.cfm?id=RE222&tab=pubs) , [DBLP](http://dblp.org/db/conf/issta/) | Int. Symposium on Software Testing and Analysis |
+| TOPLAS | **A** | [ACM](http://dl.acm.org/pub.cfm?id=J783&tab=pubs) , [DBLP](http://dblp.org/db/journals/toplas/) | Trans. on Programming Languages and Systems |
+| TOSEM | **A** | [ACM](http://dl.acm.org/pub.cfm?id=J790&tab=pubs) , [DBLP](http://dblp.org/db/journals/tosem/) | Trans. on Software Engineering Methodology |
+| TSE | **A** | [IEEE](https://www.computer.org/web/tse) , [DBLP](http://dblp.org/db/journals/tse/) | Trans. on Software Engineering |
+| SPE | **B** | <a href="http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1097-024X" target="_blank" rel="external">Wiley</a>, [DBLP](http://dblp.org/db/journals/spe/) | Software - Practice and Experience |
 
 ## ACM DL列表
 + [收录会议和期刊的完整列表](http://dl.acm.org/contents_dl.cfm)

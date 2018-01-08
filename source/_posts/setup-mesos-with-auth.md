@@ -194,7 +194,7 @@ executor_environment_variables=/etc/mesos/slave-executor-env.json
 其中`/etc/mesos/slave-executor-env.json`是手动创建的文件，内容为：
 ```
 {
-"PATH":"/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+"PATH":"/opt/anaconda3/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 "LD_LIBRARY_PATH":"/usr/local/cuda/extras/CUPTI/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64",
 "http_proxy": "http://n147:3128",
 "https_proxy":"http://n147:3128",
