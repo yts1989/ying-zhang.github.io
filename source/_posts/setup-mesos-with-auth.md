@@ -17,7 +17,7 @@ date: 2017-12-20
 
 # Mesos集群基本设置
 
-## 安装JDK和Zookeeper
+## 安装JDK
 
 先安装Open JDK 8
 ```
@@ -28,10 +28,11 @@ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 export PATH=$PATH:$JAVA_HOME/bin:/opt/zookeeper/bin
 ```
 
+## 安装Zookeeper
 下载并设置Zookeeper，参考[https://zookeeper.apache.org/doc/r3.4.11/zookeeperStarted.html] 。
 ```
 cd ~
-curl http://mirrors.nju.edu.cn/apache/zookeeper/zookeeper-3.4.11/zookeeper-3.4.11.tar.gz -O
+curl -O http://mirrors.nju.edu.cn/apache/zookeeper/zookeeper-3.4.11/zookeeper-3.4.11.tar.gz
 tar axf zookeeper-3.4.11.tar.gz -C /opt/
 rm  zookeeper-3.4.11.tar.gz
 mv  /opt/zookeeper-3.4.11/ /opt/zookeeper
@@ -52,9 +53,10 @@ mkdir /var/lib/zookeeper /var/log/zookeeper
 echo  1 >/var/lib/zookeeper/myid
 ```
 
-执行`zkServer.sh start`就可以启动Zookeeper了。
-执行`zkServer.sh status`，正常的话会输出包含`Mode: standalone`的信息，即处于单独运行模式。
-执行`zkCli.sh -server n5:2181`可以进入Zookeeper的Shell，在其中查看和修改Zookeeper的值。
+因为前面将`/opt/zookeeper/bin`加入了`$PATH`环境变量，所以可以直接输入下面的命令，
++ `zkServer.sh start`，启动Zookeeper。
++ `zkServer.sh status`，正常的话会输出包含`Mode: standalone`的信息，即处于单独运行模式。
++ `zkCli.sh -server n5:2181` 或 `zkCli.sh`，以进入Zookeeper的Shell，在其中查看和修改Zookeeper的值。
 
 设置Zookeeper的Systemd服务配置文件，编辑文件 `/lib/systemd/system/zookeeper.service` ，内容如下：
 ```
@@ -85,18 +87,18 @@ WantedBy=multi-user.target
 > Ubuntu的源是 [http://repos.mesosphere.io/ubuntu]
 
 ```
-rpm -Uvh http://repos.mesosphere.io/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
+# rpm -Uvh http://repos.mesosphere.io/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
+yum install -y http://repos.mesosphere.io/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
 yum install -y mesos marathon chronos haproxy
 ```
 
-安装的版本分别是（2017-12）：Mesos 1.4.1，Marathon 1.5.4，Chronos 2.5.1
-
+安装的版本分别是（2017-12-21）：Mesos 1.4.1，Marathon 1.5.4，Chronos 2.5.1
 
 安装后，会创建 Mesos Master 和 Slave 的Systemd服务配置文件，还设置了`/etc/mesos/zk`文件内容为`zk://localhost:2181/mesos`，这正是Zookeeper的默认端口，就无需更改了。
 
 对多个网卡的机器，如果要mesos使用某个特定的网卡，就需要在`/etc/default/mesos-master`中设置该网卡对应的IP地址，这里是`IP=10.1.1.5`。还可以在这个文件设置`HOSTNAME`（机器名）和`CLUSTER`（mesos集群名）。
-
 其实也可以在这个文件设置`zk`，不过这只对Master有效。
+
 在`/etc/default/mesos`这个文件的设置对master和slave都有效。
 
 > 一些参数既可以直接作为启动命令的命令行参数，也可以作为环境变量写到上面提到的配置文件中。
@@ -109,6 +111,8 @@ systemctl restart mesos-master mesos-slave chronos marathon
 systemctl status  mesos-master mesos-slave chronos marathon
 
 ```
+
+> Mesosphere的yum仓库中也有zookeeper，可执行`yum install -y mesosphere-zookeeper`安装，会安装到`/opt/mesosphere/zookeeper/bin/`，并生成`zookeeper.service`的systemd服务（当然需要配置server.id，并手动启用服务）。
 
 通过（其它机器的）浏览器访问`http://10.1.1.5:5050`，应该就可以打开Mesos Web UI了，在Framworks中会列出Chronos，访问`http://10.1.1.5:4400`，可以打开Chronos Web UI。但**Marathon没有启动成功**。
 
@@ -288,8 +292,32 @@ nohup java -jar /root/chronos/target/chronos-3.0.3-SNAPSHOT.jar \
 + 然后在Completed Tasks中选择任务ID对应的Sandbox链接，
 + 再打开`stdout`或`stderr`的链接。
 
-> Windows 上用 Chrome v63 打开 Edit Job 的界面，编辑光标总是错位，但在MacOS的Chrome则正常。。。
+> Windows 上用 Chrome v63 打开 Edit Job 的界面，编辑光标总是 **错位**，但在MacOS的Chrome则正常。。。
 > 所以先用 VS Code 编辑好再粘贴过去吧。
+
+## 使用Chronos的RESTful API
+在客户端，将上面的JSON作业配置示例保存为 `dlkit.json`（注意，需修改 `name` ，否则会 **覆盖** 同名作业的配置），然后使用 `curl` 提交`POST`请求：
+```
+curl -iL -H "Content-Type: application/json" -d @dlkit.json n5:4400/v1/scheduler/iso8601
+```
+
+提交后会返回 http/1.1 204 No Content ，这时从Chronos Web UI可以看到添加的作业。
+由于设置的 schedule 是未来的时刻，作业需要执行下面的命令手动启动（注意，链接的参数是 作业名）：
+```
+curl -iL -X PUT n5:4400/v1/scheduler/job/host-gpu-test
+```
+提交后会返回 http/1.1 204 No Content ，这时从Chronos Web UI可以看到作业的状态已经转为 QUEUED 或 RUNNING。
+
+参数`-H "Authorization: Basic <Base64 Code>" ` 可以添加Base64编码的Chronos Basic验证方式的用户名密码，设置方法见下面小节。
+也可使用 `--user <name>:<password>`。如，获取当前作业列表：
+```
+curl -s --user <name>:<password> n5:4400/v1/scheduler/jobs | jq
+```
+
+`jq` 是JSON格式化工具，可通过 `sudo apt install jq` 安装。
+
+更多Chronos Restful API可参考：https://mesos.github.io/chronos/docs/api.html
+Mesos Restful API 可参看：http://mesos.apache.org/documentation/latest/endpoints/ 
 
 # 对Slave，Framwork的验证
 
