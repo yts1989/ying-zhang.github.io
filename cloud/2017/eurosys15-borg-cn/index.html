@@ -22,7 +22,7 @@
 <meta property="og:image" content="https://ying-zhang.github.io/img/borg-fig-08-09-10-11.png">
 <meta property="og:image" content="https://ying-zhang.github.io/img/borg-fig-12.png">
 <meta property="og:image" content="https://ying-zhang.github.io/img/borg-fig-13.png">
-<meta property="og:updated_time" content="2017-12-03T14:59:36.640Z">
+<meta property="og:updated_time" content="2018-01-14T02:27:40.757Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【译文修订】使用Borg在Google管理大规模集群">
 <meta name="twitter:description" content="发表于EuroSys 2015的 Large-scale cluster management at Google with Borg 详细介绍了Google的Borg资源管理器。已经有网友“难易（HardySimpson）” 翻译了此文，这里对其稍作修订。之前读过两三遍此文，每遍都感觉有新的体会，这次修订就是为了更仔细地读一遍。">
@@ -71,12 +71,25 @@
 <hr>
 <h1 id="Large-scale-cl-uster-management-at-Google-with-Borg"><a href="#Large-scale-cl-uster-management-at-Google-with-Borg" class="headerlink" title="Large-scale cl uster management at Google with Borg"></a>Large-scale cl uster management at Google with Borg</h1><h1 id="使用Borg在Google管理大规模集群"><a href="#使用Borg在Google管理大规模集群" class="headerlink" title="使用Borg在Google管理大规模集群"></a>使用Borg在Google管理大规模集群</h1><p>作者：Abhishek Vermay, Luis Pedrosaz, Madhukar Korupolu, David Oppenheimer, Eric Tune, John Wilkes</p>
 <p>EuroSys’15, <a href="http://dx.doi.org/10.1145/2741948.2741964" target="_blank" rel="external">http://dx.doi.org/10.1145/2741948.2741964</a></p>
-<p><a href="http://research.google.com/pubs/pub43438.html" target="_blank" rel="external">http://research.google.com/pubs/pub43438.html</a> 或 <a href="https://ying-zhang.github.io/doc/EuroSys15_Borg.pdf">下载转存的英文全文PDF</a></p>
+<p><a href="http://research.google.com/pubs/pub43438.html" target="_blank" rel="external">http://research.google.com/pubs/pub43438.html</a> 如果不方便翻墙，可以直接 <a href="https://ying-zhang.github.io/doc/EuroSys15_Borg.pdf">下载的英文全文PDF</a></p>
 <p><a href="https://ying-zhang.github.io/doc/EuroSys15_Borg_CN_Ying_201711.pdf"><strong>中文译文全文PDF</strong></a></p>
-<p>译者：难易 <a href="http://my.oschina.net/HardySimpson" target="_blank" rel="external">http://my.oschina.net/HardySimpson</a></p>
+<p>原译者：难易 <a href="https://my.oschina.net/HardySimpson/blog/515398" target="_blank" rel="external">https://my.oschina.net/HardySimpson/blog/515398</a> </p>
 <blockquote>
 <p><strong>修订：Ying 2017-10-31 ~ 2017-11-09</strong></p>
 </blockquote>
+<p>最近又看到一版译文<a href="http://geek.csdn.net/news/detail/189597" target="_blank" rel="external">深度译文｜Google的大规模集群管理系统Borg - 王勇桥</a> 。<br>对比一下摘要吧，</p>
+<blockquote>
+<p>难易：<br>谷歌的Borg系统群集管理器运行几十万个以上的jobs，来自几千个不同的应用，跨多个集群，每个集群有上万个机器。<br>它通过管理控制、高效的任务包装、超售、和进程级别性能隔离实现了高利用率。它支持高可用性应用程序与运行时功能，最大限度地减少故障恢复时间，减少相关故障概率的调度策略。Borg简化了用户生活，通过提供一个声明性的工作规范语言，名称服务集成，实时作业监控，和分析和模拟系统行为的工具。<br>我们将会展现Borg系统架构和特点，重要的设计决策，定量分析它的一些策略，和十年以来的运维经验和学到的东西。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>王：<br>Google的Borg系统是一个运行着成千上万项作业的集群管理器，它同时管理着很多个应用集群，每个集群都有成千上万台机器，这些集群之上运行着Google的很多不同的应用。Borg通过准入控制，高效的任务打包，超额的资源分配和进程级隔离的机器共享，来实现超高的资源利用率。它通过最小化故障恢复时间的运行时特性和减少相关运行时故障的调度策略来支持高可用的应用程序Borg通过提供一个作业声明的标准语言，命名服务的集成机制，实时的作业监控，以及一套分析和模拟系统行为的工具来简化用户的使用。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>原文：<br>Google’s Borg system is a cluster manager that runs hundreds of thousands of jobs, from many thousands of different applications, across a number of clusters each with up to tens of thousands of machines. It achieves high utilization by combining admission control, efficient task-packing, over-commitment, and machine sharing with process-level performance isolation. It supports high-availability applications with runtime features that minimize fault-recovery time, and scheduling policies that reduce the probability of correlated failures. Borg simplifies life for its users by offering a declarative job specification language, name service integration, real-time job monitoring, and tools to analyze and simulate system behavior.<br>We present a summary of the Borg system architecture and features, important design decisions, a quantitative analysis of some of its policy decisions, and a qualitative examination of lessons learned from a decade of operational experience with it.</p>
+</blockquote>
+<hr>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>Google的Borg系统是一个集群管理器。它在多个万台机器规模的集群上运行着来自几千个不同的应用的几十万个作业。</p>
 <p>Borg通过准入控制、高效的任务装箱、超售、机器共享、以及进程级别的性能隔离，实现了高利用率。它为高可用应用提供了可以减少故障恢复时间的运行时特性，以及降低关联故障概率的调度策略。Borg提供了声明式的作业描述语言、名字服务集成、实时作业监控、分析和模拟系统行为的工具。这些简化了用户的使用。</p>
 <p>本文介绍了Borg系统架构和特性，重要的设计决策，对某些策略选择的定量分析，以及十年来的运营经验和教训。</p>
