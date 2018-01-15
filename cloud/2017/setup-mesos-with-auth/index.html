@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Ying的博客">
 <meta property="og:description" content="在CentOS 7上安装Mesos集群，设置对Slave和框架的认证，改为普通用户执行任务。Chronos在容器中执行GPU作业。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-14T02:16:13.328Z">
+<meta property="og:updated_time" content="2018-01-14T03:18:34.450Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 7 安装支持认证的Mesos集群">
 <meta name="twitter:description" content="在CentOS 7上安装Mesos集群，设置对Slave和框架的认证，改为普通用户执行任务。Chronos在容器中执行GPU作业。">
@@ -124,8 +124,14 @@
 <li>再打开<code>stdout</code>或<code>stderr</code>的链接。</li>
 </ul>
 <blockquote>
-<p>Windows 上用 Chrome v63 打开 Edit Job 的界面，编辑光标总是错位，但在MacOS的Chrome则正常。。。<br>所以先用 VS Code 编辑好再粘贴过去吧。</p>
+<p>Windows 上用 Chrome v63 打开 Edit Job 的界面，编辑光标总是 <strong>错位</strong>，但在MacOS的Chrome则正常。。。<br>所以先用 VS Code 编辑好再粘贴过去吧。</p>
 </blockquote>
+<h2 id="使用Chronos的RESTful-API"><a href="#使用Chronos的RESTful-API" class="headerlink" title="使用Chronos的RESTful API"></a>使用Chronos的RESTful API</h2><p>在客户端，将上面的JSON作业配置示例保存为 <code>dlkit.json</code>（注意，需修改 <code>name</code> ，否则会 <strong>覆盖</strong> 同名作业的配置），然后使用 <code>curl</code> 提交<code>POST</code>请求：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -iL -H &quot;Content-Type: application/json&quot; -d @dlkit.json n5:4400/v1/scheduler/iso8601</div></pre></td></tr></table></figure></p>
+<p>提交后会返回 http/1.1 204 No Content ，这时从Chronos Web UI可以看到添加的作业。<br>由于设置的 schedule 是未来的时刻，作业需要执行下面的命令手动启动（注意，链接的参数是 作业名）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -iL -X PUT n5:4400/v1/scheduler/job/host-gpu-test</div></pre></td></tr></table></figure></p>
+<p>提交后会返回 http/1.1 204 No Content ，这时从Chronos Web UI可以看到作业的状态已经转为 QUEUED 或 RUNNING。</p>
+<p>参数<code>-H &quot;Authorization: Basic &lt;Base64 Code&gt;&quot;</code> 可以添加Base64编码的Chronos Basic验证方式的用户名密码，设置方法见下面小节。<br>也可使用 <code>--user &lt;name&gt;:&lt;password&gt;</code>。如，获取当前作业列表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -s --user &lt;name&gt;:&lt;password&gt; n5:4400/v1/scheduler/jobs | jq</div></pre></td></tr></table></figure></p>
+<p><code>jq</code> 是JSON格式化工具，可通过 <code>sudo apt install jq</code> 安装。</p>
+<p>更多Chronos Restful API可参考：<a href="https://mesos.github.io/chronos/docs/api.html" target="_blank" rel="external">https://mesos.github.io/chronos/docs/api.html</a><br>Mesos Restful API 可参看：<a href="http://mesos.apache.org/documentation/latest/endpoints/" target="_blank" rel="external">http://mesos.apache.org/documentation/latest/endpoints/</a> </p>
 <h1 id="对Slave，Framwork的验证"><a href="#对Slave，Framwork的验证" class="headerlink" title="对Slave，Framwork的验证"></a>对Slave，Framwork的验证</h1><h2 id="Mesos-Master的设置"><a href="#Mesos-Master的设置" class="headerlink" title="Mesos Master的设置"></a>Mesos Master的设置</h2><blockquote>
 <p>参考：<br><a href="http://mesos.readthedocs.io/en/latest/authentication/" target="_blank" rel="external">http://mesos.readthedocs.io/en/latest/authentication/</a><br><a href="http://mesos.readthedocs.io/en/latest/authorization/" target="_blank" rel="external">http://mesos.readthedocs.io/en/latest/authorization/</a> </p>
 </blockquote>
